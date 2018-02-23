@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{341B9557-A193-4E2A-8CFD-F7D3511C752A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nunit", "nunit", "{5273FE0D-AF11-4757-B0D0-F1A87E1EF5E1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CC46CD06-CEC1-416E-8F6E-22825FC60D8E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B5E4E568-F325-4FA3-A76F-69554EACC9E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keeker.Gui", "src\Keeker.Gui\Keeker.Gui.csproj", "{48EAA43A-E921-4165-90E9-CDA18FD9CD5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keeker.Core", "src\Keeker.Core\Keeker.Core.csproj", "{AF446FE4-67AE-4E9C-A95B-71DB676B85A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keeker.Core.Test", "test\Keeker.Core.Test\Keeker.Core.Test.csproj", "{32086352-F513-4F29-88CE-6C99C8BA6AA4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{48EAA43A-E921-4165-90E9-CDA18FD9CD5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48EAA43A-E921-4165-90E9-CDA18FD9CD5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48EAA43A-E921-4165-90E9-CDA18FD9CD5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48EAA43A-E921-4165-90E9-CDA18FD9CD5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF446FE4-67AE-4E9C-A95B-71DB676B85A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF446FE4-67AE-4E9C-A95B-71DB676B85A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF446FE4-67AE-4E9C-A95B-71DB676B85A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF446FE4-67AE-4E9C-A95B-71DB676B85A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32086352-F513-4F29-88CE-6C99C8BA6AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32086352-F513-4F29-88CE-6C99C8BA6AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32086352-F513-4F29-88CE-6C99C8BA6AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32086352-F513-4F29-88CE-6C99C8BA6AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{48EAA43A-E921-4165-90E9-CDA18FD9CD5C} = {CC46CD06-CEC1-416E-8F6E-22825FC60D8E}
+		{AF446FE4-67AE-4E9C-A95B-71DB676B85A3} = {CC46CD06-CEC1-416E-8F6E-22825FC60D8E}
+		{32086352-F513-4F29-88CE-6C99C8BA6AA4} = {B5E4E568-F325-4FA3-A76F-69554EACC9E6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89390666-BFE2-414C-9E00-CC60CB9DA997}
+	EndGlobalSection
+EndGlobal

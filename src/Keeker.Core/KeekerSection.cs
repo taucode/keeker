@@ -2,14 +2,30 @@
 
 namespace Keeker.Core
 {
-    public class KeekerConfiguration : ConfigurationSection
+    public class KeekerSection : ConfigurationSection
     {
+        [ConfigurationProperty("ipAddress", IsRequired = true)]
+        public string IpAddress
+        {
+            get => (string)this["ipAddress"];
+            set => this["ipAddress"] = value;
+        }
+
+        [ConfigurationProperty("port", IsRequired = true)]
+        public int Port
+        {
+            get => (int)this["port"];
+            set => this["port"] = value;
+        }
+
         [ConfigurationProperty("hosts", IsDefaultCollection = true)]
         public HostElementCollection Hosts
         {
             get => this["hosts"] as HostElementCollection;
             set => this["hosts"] = value;
         }
+
+        public ConfigurationPropertyCollection Props;
     }
 
     [ConfigurationCollection(typeof(HostElement))]
@@ -28,7 +44,7 @@ namespace Keeker.Core
 
     public class HostElement : ConfigurationElement
     {
-        [ConfigurationProperty("name", DefaultValue = "", IsKey = true, IsRequired = true)]
+        [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
         public string Name
         {
             get => (string)this["name"];
@@ -42,11 +58,11 @@ namespace Keeker.Core
             set => this["targets"] = value;
         }
 
-        [ConfigurationProperty("cert", IsRequired = true)]
-        public CertElement Cert
+        [ConfigurationProperty("certificate", IsRequired = true)]
+        public CertificateElement Certificate
         {
-            get => (CertElement)this["cert"];
-            set => this["name"] = value;
+            get => (CertificateElement)this["certificate"];
+            set => this["certificate"] = value;
         }
     }
 
@@ -66,35 +82,35 @@ namespace Keeker.Core
 
     public class TargetElement : ConfigurationElement
     {
-        [ConfigurationProperty("name", DefaultValue = "", IsKey = true, IsRequired = true)]
+        [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
         public string Name
         {
             get => (string)this["name"];
             set => this["name"] = value;
         }
 
-        [ConfigurationProperty("isActive", DefaultValue = "false", IsRequired = true)]
+        [ConfigurationProperty("isActive", IsRequired = true)]
         public bool IsActive
         {
             get => (bool)this["isActive"];
             set => this["isActive"] = value;
         }
 
-        [ConfigurationProperty("host", DefaultValue = "", IsRequired = true)]
+        [ConfigurationProperty("host", IsRequired = true)]
         public string Host
         {
             get => (string)this["host"];
             set => this["host"] = value;
         }
 
-        [ConfigurationProperty("ipAddress", DefaultValue = "", IsRequired = true)]
+        [ConfigurationProperty("ipAddress", IsRequired = true)]
         public string IpAddress
         {
             get => (string)this["ipAddress"];
             set => this["ipAddress"] = value;
         }
 
-        [ConfigurationProperty("port", DefaultValue = "", IsRequired = true)]
+        [ConfigurationProperty("port", IsRequired = true)]
         public int Port
         {
             get => (int)this["port"];
@@ -102,16 +118,16 @@ namespace Keeker.Core
         }
     }
 
-    public class CertElement : ConfigurationElement
+    public class CertificateElement : ConfigurationElement
     {
-        [ConfigurationProperty("filePath", DefaultValue = "", IsRequired = true)]
+        [ConfigurationProperty("filePath", IsRequired = true)]
         public string FilePath
         {
             get => (string)this["filePath"];
             set => this["filePath"] = value;
         }
 
-        [ConfigurationProperty("password", DefaultValue = "", IsKey = true, IsRequired = true)]
+        [ConfigurationProperty("password", IsKey = true, IsRequired = true)]
         public string Password
         {
             get => (string)this["password"];

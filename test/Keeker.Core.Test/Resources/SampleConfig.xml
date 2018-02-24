@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="keeker" type="Keeker.Core.KeekerSection, Keeker.Core"/>
+  </configSections>
+
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.7" />
+  </startup>
+
+
+
+  <connectionStrings>
+    <add name="trial" connectionString="" />
+  </connectionStrings>
+
+  <keeker ipAddress="127.0.0.1" port="443" >
+    <hosts>
+      <add name="rho.me">
+        <targets>
+          <add name="dev"
+                  isActive="true"
+                  host="localhost"
+                  ipAddress="127.0.0.1"
+                  port="53808" />
+
+          <add name="prod"
+                  isActive="true"
+                  host="rho.me"
+                  ipAddress="127.0.0.1"
+                  port="80" />
+
+        </targets>
+        
+        <certificate filePath="c:\certs\rho.me.pfx"
+                     password="the-password" />
+      </add>
+    </hosts>
+  </keeker>
+</configuration>

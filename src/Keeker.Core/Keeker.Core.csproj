@@ -41,8 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KeekerConfiguration.cs" />
-    <Compile Include="PlainConfiguration.cs" />
+    <Compile Include="CoreHelper.cs" />
+    <Compile Include="KeekerSection.cs" />
+    <Compile Include="PlainKeekerSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,9 +5,9 @@ namespace Keeker.Core
 {
     public static class CoreHelper
     {
-        public static PlainKeekerSection ToPlainKeekerSection(this KeekerSection keekerSection)
+        public static ProxyPlainConf ToPlainKeekerSection(this ProxySection keekerSection)
         {
-            var plainKeekerSection = new PlainKeekerSection
+            var plainKeekerSection = new ProxyPlainConf
             {
                 IpAddress = IPAddress.Parse(keekerSection.IpAddress),
                 Port = keekerSection.Port,
@@ -15,12 +15,12 @@ namespace Keeker.Core
                     .Cast<HostElement>()
                     .ToDictionary(
                         x => x.Name,
-                        x => new PlainKeekerSection.HostEntry
+                        x => new ProxyPlainConf.HostEntry
                         {
                             Name = x.Name,
                             Targets = x.Targets
                                 .Cast<TargetElement>()
-                                .Select(y => new PlainKeekerSection.TargetEntry
+                                .Select(y => new ProxyPlainConf.TargetEntry
                                 {
                                     Name = y.Name,
                                     IsActive = y.IsActive,
@@ -29,7 +29,7 @@ namespace Keeker.Core
                                     Port = y.Port,
                                 })
                                 .ToArray(),
-                            Certificate = new PlainKeekerSection.Certificate
+                            Certificate = new ProxyPlainConf.Certificate
                             {
                                 FilePath = x.Certificate.FilePath,
                                 Password = x.Certificate.Password,

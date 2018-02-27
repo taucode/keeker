@@ -2,7 +2,7 @@
 
 namespace Keeker.Core
 {
-    public class KeekerSection : ConfigurationSection
+    public class ProxySection : ConfigurationSection
     {
         [ConfigurationProperty("ipAddress", IsRequired = true)]
         public string IpAddress

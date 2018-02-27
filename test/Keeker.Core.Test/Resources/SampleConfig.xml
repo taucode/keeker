@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
-    <section name="keeker" type="Keeker.Core.KeekerSection, Keeker.Core"/>
+    <section name="proxy" type="Keeker.Core.ProxySection, Keeker.Core"/>
   </configSections>
 
   <startup>
@@ -14,27 +14,27 @@
     <add name="trial" connectionString="" />
   </connectionStrings>
 
-  <keeker ipAddress="127.0.0.1" port="443" >
+  <proxy ipAddress="127.0.0.1" port="443" >
     <hosts>
       <add name="rho.me">
         <targets>
           <add name="dev"
-                  isActive="true"
-                  host="localhost"
-                  ipAddress="127.0.0.1"
-                  port="53808" />
+               isActive="true"
+               host="localhost"
+               ipAddress="127.0.0.1"
+               port="53808" />
 
           <add name="prod"
-                  isActive="true"
-                  host="rho.me"
-                  ipAddress="127.0.0.1"
-                  port="80" />
+               isActive="false"
+               host="rho.me"
+               ipAddress="127.0.0.1"
+               port="80" />
 
         </targets>
-        
+
         <certificate filePath="c:\certs\rho.me.pfx"
                      password="the-password" />
       </add>
     </hosts>
-  </keeker>
+  </proxy>
 </configuration>

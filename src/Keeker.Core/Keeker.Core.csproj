@@ -42,8 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CoreHelper.cs" />
-    <Compile Include="KeekerSection.cs" />
-    <Compile Include="PlainKeekerSection.cs" />
+    <Compile Include="KeekStream.cs" />
+    <Compile Include="ProxySection.cs" />
+    <Compile Include="ProxyPlainConf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

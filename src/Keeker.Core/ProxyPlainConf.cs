@@ -3,7 +3,7 @@ using System.Net;
 
 namespace Keeker.Core
 {
-    public class PlainKeekerSection
+    public class ProxyPlainConf
     {
         public IPAddress IpAddress { get; set; }
         public int Port { get; set; }

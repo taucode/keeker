@@ -104,9 +104,6 @@ namespace Keeker.Core
             var wrappingStream = new KeekStream(networkStream);
             var target = this.ResolveHost(wrappingStream);
 
-            //var wrappingStream = networkStream;
-            //var target = _targets.Values.Single(x => x.ExternalHostName == "rho.me");
-
             if (target == null)
             {
                 // could not resolve.
@@ -126,14 +123,13 @@ namespace Keeker.Core
             var clientStream = new SslStream(wrappingStream, false);
             clientStream.AuthenticateAsServer(target.Certificate, false, SslProtocols.Tls12, false);
 
-            throw new NotImplementedException();
+            var tcpclient = new TcpClient();
+            tcpclient.Connect(target.EndPoint);
 
-            //var serverStream = new TcpClient(target.EndPoint).GetStream();
+            var serverStream = tcpclient.GetStream();
 
-
-            //var connection = new WebConnection(clientStream, serverStream);
-
-            //connection.Start();
+            var connection = new WebConnection(clientStream, serverStream);
+            connection.Start();
         }
 
         private Target ResolveHost(KeekStream keekStream)

@@ -52,6 +52,7 @@
     <Compile Include="ProxySection.cs" />
     <Compile Include="ProxyPlainConf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebConnection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

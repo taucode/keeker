@@ -8,7 +8,7 @@ namespace Keeker.Core
         #region Fields
 
         private readonly Stream _innerStream;
-        private readonly object _lock;
+        private readonly object _readLock;
         //private readonly List<byte[]> _peekedSegments;
 
         private readonly ByteAccumulator _accumulator;
@@ -22,7 +22,7 @@ namespace Keeker.Core
             _innerStream = innerStream ?? throw new ArgumentException(nameof(innerStream));
             //_peekedSegments = new List<byte[]>();
             _accumulator = new ByteAccumulator();
-            _lock = new object();
+            _readLock = new object();
         }
 
         #endregion
@@ -46,7 +46,7 @@ namespace Keeker.Core
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            lock (_lock)
+            lock (_readLock)
             {
                 if (_accumulator.IsEmpty)
                 {
@@ -76,10 +76,7 @@ namespace Keeker.Core
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            lock (_lock)
-            {
-                _innerStream.Write(buffer, offset, count);
-            }
+            _innerStream.Write(buffer, offset, count);
         }
 
         public override bool CanRead => true;
@@ -125,7 +122,7 @@ namespace Keeker.Core
                 throw new ArgumentOutOfRangeException(nameof(maxCount));
             }
 
-            lock (_lock)
+            lock (_readLock)
             {
                 var buffer = new byte[maxCount];
                 var bytesRead = _innerStream.Read(buffer, 0, maxCount);
@@ -143,7 +140,10 @@ namespace Keeker.Core
 
         public int Peek(byte[] buffer, int offset, int count)
         {
-            return _accumulator.Peek(buffer, offset, count);
+            lock (_readLock)
+            {
+                return _accumulator.Peek(buffer, offset, count);
+            }
         }
 
         #endregion

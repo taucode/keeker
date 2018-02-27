@@ -41,8 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ByteAccumulator.cs" />
+    <Compile Include="ConnectionAcceptedEventArgs.cs" />
     <Compile Include="CoreHelper.cs" />
+    <Compile Include="IListener.cs" />
+    <Compile Include="IProxy.cs" />
+    <Compile Include="Listener.cs" />
     <Compile Include="KeekStream.cs" />
+    <Compile Include="Proxy.cs" />
     <Compile Include="ProxySection.cs" />
     <Compile Include="ProxyPlainConf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

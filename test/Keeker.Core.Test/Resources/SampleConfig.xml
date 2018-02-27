@@ -14,20 +14,20 @@
     <add name="trial" connectionString="" />
   </connectionStrings>
 
-  <proxy ipAddress="127.0.0.1" port="443" >
+  <proxy address="127.0.0.1" port="443" >
     <hosts>
-      <add name="rho.me">
+      <add externalHostName="rho.me">
         <targets>
-          <add name="dev"
+          <add id="dev"
                isActive="true"
-               host="localhost"
-               ipAddress="127.0.0.1"
+               domesticHostName="localhost"
+               address="127.0.0.1"
                port="53808" />
 
-          <add name="prod"
+          <add id="prod"
                isActive="false"
-               host="rho.me"
-               ipAddress="127.0.0.1"
+               domesticHostName="rho.me"
+               address="127.0.0.1"
                port="80" />
 
         </targets>

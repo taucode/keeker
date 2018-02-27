@@ -24,35 +24,37 @@ namespace Keeker.Core.Test
             var proxySection = (ProxySection)configuration.GetSection("proxy");
 
             // Act
-            var plainSection = proxySection.ToPlainKeekerSection();
+            var plainSection = proxySection.ToProxyPlainConf();
 
             // Assert
             Assert.That(plainSection, Is.Not.Null);
-            Assert.That(plainSection.IpAddress, Is.EqualTo(IPAddress.Parse("127.0.0.1")));
+            Assert.That(plainSection.Address, Is.EqualTo(IPAddress.Parse("127.0.0.1")));
             Assert.That(plainSection.Port, Is.EqualTo(443));
 
             var hosts = plainSection.Hosts;
             Assert.That(plainSection.Hosts, Has.Count.EqualTo(1));
             var host = hosts.Single().Value;
 
-            Assert.That(host.Name, Is.EqualTo("rho.me"));
+            Assert.That(host.ExternalHostName, Is.EqualTo("rho.me"));
             var targets = host.Targets;
             Assert.That(targets, Has.Length.EqualTo(2));
 
             var target = targets[0];
-            Assert.That(target.Name, Is.EqualTo("dev"));
+            Assert.That(target.Id, Is.EqualTo("dev"));
             Assert.That(target.IsActive, Is.EqualTo(true));
-            Assert.That(target.Host, Is.EqualTo("localhost"));
-            Assert.That(target.IpAddress.ToString(), Is.EqualTo("127.0.0.1"));
+            Assert.That(target.DomesticHostName, Is.EqualTo("localhost"));
+            Assert.That(target.Address.ToString(), Is.EqualTo("127.0.0.1"));
             Assert.That(target.Port, Is.EqualTo(53808));
 
             target = targets[1];
-            Assert.That(target.Name, Is.EqualTo("prod"));
+            Assert.That(target.Id, Is.EqualTo("prod"));
             Assert.That(target.IsActive, Is.EqualTo(false));
-            Assert.That(target.Host, Is.EqualTo("rho.me"));
-            Assert.That(target.IpAddress.ToString(), Is.EqualTo("127.0.0.1"));
+            Assert.That(target.DomesticHostName, Is.EqualTo("rho.me"));
+            Assert.That(target.Address.ToString(), Is.EqualTo("127.0.0.1"));
             Assert.That(target.Port, Is.EqualTo(80));
 
+            Assert.That(host.Certificate.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
+            Assert.That(host.Certificate.Password, Is.EqualTo("the-password"));
         }
     }
 }

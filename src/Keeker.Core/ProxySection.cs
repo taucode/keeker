@@ -4,11 +4,11 @@ namespace Keeker.Core
 {
     public class ProxySection : ConfigurationSection
     {
-        [ConfigurationProperty("ipAddress", IsRequired = true)]
-        public string IpAddress
+        [ConfigurationProperty("address", IsRequired = true)]
+        public string Address
         {
-            get => (string)this["ipAddress"];
-            set => this["ipAddress"] = value;
+            get => (string)this["address"];
+            set => this["address"] = value;
         }
 
         [ConfigurationProperty("port", IsRequired = true)]
@@ -38,17 +38,17 @@ namespace Keeker.Core
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((HostElement)element).Name;
+            return ((HostElement)element).ExternalHostName;
         }
     }
 
     public class HostElement : ConfigurationElement
     {
-        [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
-        public string Name
+        [ConfigurationProperty("externalHostName", IsKey = true, IsRequired = true)]
+        public string ExternalHostName
         {
-            get => (string)this["name"];
-            set => this["name"] = value;
+            get => (string)this["externalHostName"];
+            set => this["externalHostName"] = value;
         }
 
         [ConfigurationProperty("targets", IsDefaultCollection = true)]
@@ -76,17 +76,17 @@ namespace Keeker.Core
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((TargetElement)element).Name;
+            return ((TargetElement)element).Id;
         }
     }
 
     public class TargetElement : ConfigurationElement
     {
-        [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
-        public string Name
+        [ConfigurationProperty("id", IsKey = true, IsRequired = true)]
+        public string Id
         {
-            get => (string)this["name"];
-            set => this["name"] = value;
+            get => (string)this["id"];
+            set => this["id"] = value;
         }
 
         [ConfigurationProperty("isActive", IsRequired = true)]
@@ -96,18 +96,18 @@ namespace Keeker.Core
             set => this["isActive"] = value;
         }
 
-        [ConfigurationProperty("host", IsRequired = true)]
-        public string Host
+        [ConfigurationProperty("domesticHostName", IsRequired = true)]
+        public string DomesticHostName
         {
-            get => (string)this["host"];
-            set => this["host"] = value;
+            get => (string)this["domesticHostName"];
+            set => this["domesticHostName"] = value;
         }
 
-        [ConfigurationProperty("ipAddress", IsRequired = true)]
-        public string IpAddress
+        [ConfigurationProperty("address", IsRequired = true)]
+        public string Address
         {
-            get => (string)this["ipAddress"];
-            set => this["ipAddress"] = value;
+            get => (string)this["address"];
+            set => this["address"] = value;
         }
 
         [ConfigurationProperty("port", IsRequired = true)]

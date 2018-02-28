@@ -4,8 +4,6 @@ namespace Keeker.Core
 {
     public class HttpRequestMetadata
     {
-        private static readonly byte[] CRLF_BYTES = "\r\n".ToAsciiBytes();
-
         public HttpRequestMetadata(HttpRequestLine line, HttpHeaderCollection headers)
         {
             this.Line = line;
@@ -23,7 +21,7 @@ namespace Keeker.Core
                 stream.WriteAll(this.Line.ToArray());
                 stream.WriteAll(this.Headers.ToArray());
 
-                stream.WriteAll(CRLF_BYTES);
+                stream.WriteAll(HttpHelper.CrLfBytes);
 
                 return stream.ToArray();
             }

@@ -6,8 +6,6 @@ namespace Keeker.Core
 {
     public class HttpRequestLine
     {
-        private const string CRLF = "\r\n";
-        private static readonly byte[] CRLF_BYTES = CRLF.ToAsciiBytes();
         private const byte SPACE_BYTE = (byte)' ';
 
         public HttpRequestLine(HttpMethod method, string requestUri, string version)
@@ -19,7 +17,7 @@ namespace Keeker.Core
             this.ByteCount =
                 this.Method.ToString().Length + 1 +
                 this.RequestUri.Length + 1 +
-                this.Version.Length + CRLF_BYTES.Length;
+                this.Version.Length + HttpHelper.CrLfBytes.Length;
         }
 
         public HttpMethod Method { get; }
@@ -28,7 +26,7 @@ namespace Keeker.Core
 
         public override string ToString()
         {
-            return $"{this.Method} {this.RequestUri} {this.Version}{CRLF}";
+            return $"{this.Method} {this.RequestUri} {this.Version}{HttpHelper.CrLf}";
         }
 
         public byte[] ToArray()
@@ -40,7 +38,7 @@ namespace Keeker.Core
 
         public static HttpRequestLine Parse(byte[] buffer, int offset)
         {
-            var crLfIndex = buffer.IndexOfSubarray(CRLF_BYTES, offset, -1);
+            var crLfIndex = buffer.IndexOfSubarray(HttpHelper.CrLfBytes, offset, -1);
             if (crLfIndex == -1)
             {
                 throw new ApplicationException(); // todo1[ak]

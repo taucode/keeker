@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Keeker.Core
 {
-    public class HttpHeaderCollection
+    public class HttpHeaderCollection : IEnumerable<HttpHeader>
     {
-        private static readonly byte[] CRLF_CRLF_BYTES = "\r\n\r\n".ToAsciiBytes();
-        private static readonly byte[] CRLF_BYTES = "\r\n".ToAsciiBytes();
-
         private readonly List<HttpHeader> _headers;
 
         public HttpHeaderCollection()
@@ -15,9 +14,25 @@ namespace Keeker.Core
             _headers = new List<HttpHeader>();
         }
 
+        public HttpHeaderCollection(IEnumerable<HttpHeader> headers)
+        {
+            _headers = new List<HttpHeader>(headers);
+        }
+
         public void Add(HttpHeader header)
         {
             _headers.Add(header);
+        }
+
+        public bool ContainsName(string name)
+        {
+            var contains = _headers.Any(x => x.Name == name);
+            return contains;
+        }
+
+        public int GetContentLength()
+        {
+            return _headers.Single(x => x.Name == "Content-Length").Value.ToInt32();
         }
 
         public byte[] ToArray()
@@ -31,6 +46,16 @@ namespace Keeker.Core
 
                 return stream.ToArray();
             }
+        }
+
+        public IEnumerator<HttpHeader> GetEnumerator()
+        {
+            return _headers.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         public static HttpHeaderCollection Parse(byte[] buffer, int offset)

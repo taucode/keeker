@@ -45,9 +45,14 @@
     <Compile Include="ConnectionAcceptedEventArgs.cs" />
     <Compile Include="CoreHelper.cs" />
     <Compile Include="HttpHeader.cs" />
+    <Compile Include="HttpHeaderBuilder.cs" />
     <Compile Include="HttpHeaderCollection.cs" />
+    <Compile Include="HttpHeaderCollectionBuilder.cs" />
+    <Compile Include="HttpHelper.cs" />
     <Compile Include="HttpRequestLine.cs" />
+    <Compile Include="HttpRequestLineBuilder.cs" />
     <Compile Include="HttpRequestMetadata.cs" />
+    <Compile Include="HttpRequestMetadataBuilder.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="IProxy.cs" />
     <Compile Include="Listener.cs" />

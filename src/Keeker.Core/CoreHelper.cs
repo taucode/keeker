@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -189,6 +190,11 @@ namespace Keeker.Core
         public static void WriteAll(this Stream stream, byte[] buffer)
         {
             stream.Write(buffer, 0, buffer.Length);
+        }
+
+        public static int ToInt32(this string s)
+        {
+            return int.Parse(s, CultureInfo.InvariantCulture);
         }
     }
 }

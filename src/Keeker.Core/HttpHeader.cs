@@ -5,9 +5,6 @@ namespace Keeker.Core
 {
     public class HttpHeader
     {
-        private const string CRLF = "\r\n";
-        private static readonly byte[] CRLF_BYTES = CRLF.ToAsciiBytes();
-
         public HttpHeader(string name, string value)
         {
             this.Name = name;
@@ -15,7 +12,7 @@ namespace Keeker.Core
 
             this.ByteCount =
                 this.Name.Length + 1 + 1 + // ':' and ' '
-                this.Value.Length + CRLF_BYTES.Length;
+                this.Value.Length + HttpHelper.CrLfBytes.Length;
         }
 
         public string Name { get; }
@@ -26,7 +23,7 @@ namespace Keeker.Core
 
         public override string ToString()
         {
-            return $"{this.Name}: {this.Value}{CRLF}";
+            return $"{this.Name}: {this.Value}{HttpHelper.CrLf}";
         }
 
         public byte[] ToArray()
@@ -36,7 +33,7 @@ namespace Keeker.Core
 
         public static HttpHeader Parse(byte[] buffer, int start)
         {
-            var crlfIndex = buffer.IndexOfSubarray(CRLF_BYTES, start);
+            var crlfIndex = buffer.IndexOfSubarray(HttpHelper.CrLfBytes, start);
             if (crlfIndex == start)
             {
                 return null;

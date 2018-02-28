@@ -8,16 +8,19 @@ namespace Keeker.Core
         private readonly Stream _clientStream;
         private readonly Stream _serverStream;
 
+        private readonly WebRequestRelay _relay;
+
         public WebConnection(Stream clientStream, Stream serverStream)
         {
             _clientStream = clientStream;
             _serverStream = serverStream;
+            _relay = new WebRequestRelay(new KeekStream(_clientStream), serverStream);
         }
 
         public void Start()
         {
-            new Task(() => Redirect(_clientStream, _serverStream)).Start();
-            new Task(() => Redirect(_serverStream, _clientStream)).Start();
+            _relay.Start();
+            new Task(() => this.Redirect(_serverStream, _clientStream)).Start();
         }
 
         private void Redirect(Stream from, Stream to)

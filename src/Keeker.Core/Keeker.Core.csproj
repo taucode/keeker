@@ -44,6 +44,10 @@
     <Compile Include="ByteAccumulator.cs" />
     <Compile Include="ConnectionAcceptedEventArgs.cs" />
     <Compile Include="CoreHelper.cs" />
+    <Compile Include="HttpHeader.cs" />
+    <Compile Include="HttpHeaderCollection.cs" />
+    <Compile Include="HttpRequestLine.cs" />
+    <Compile Include="HttpRequestMetadata.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="IProxy.cs" />
     <Compile Include="Listener.cs" />
@@ -53,6 +57,7 @@
     <Compile Include="ProxyPlainConf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebConnection.cs" />
+    <Compile Include="WebRequestRelay.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

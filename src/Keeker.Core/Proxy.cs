@@ -110,7 +110,7 @@ namespace Keeker.Core
 
                 try
                 {
-                    client.Dispose();
+                    wrappingStream.Dispose();
                 }
                 catch
                 {

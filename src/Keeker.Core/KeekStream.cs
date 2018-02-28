@@ -146,6 +146,16 @@ namespace Keeker.Core
             }
         }
 
+        public int PeekIndexOf(byte[] subarray)
+        {
+            lock (_readLock)
+            {
+                var allBytes = _accumulator.PeekAll(); // todo0[ak] not much good
+                var index = allBytes.IndexOfSubarray(subarray, 0, allBytes.Length);
+                return index;
+            }
+        }
+
         #endregion
     }
 }

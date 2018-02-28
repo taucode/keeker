@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -52,7 +54,12 @@ namespace Keeker.Core
             return Encoding.ASCII.GetBytes(s);
         }
 
-        public static int IndexOfSubarray<T>(this T[] array, T[] subarray, int start, int length) 
+        public static string ToAsciiString(this byte[] bytes)
+        {
+            return Encoding.ASCII.GetString(bytes);
+        }
+
+        public static int IndexOfSubarray<T>(this T[] array, T[] subarray, int start, int length = -1)
             where T : IEquatable<T>
         {
             const int NOT_FOUND = -1;
@@ -77,9 +84,14 @@ namespace Keeker.Core
             {
                 length = array.Length;
             }
-            else if (length <= 0)
+            else if (length < 0)
             {
                 throw new ArgumentException("Bad value for length. To default to array's length, use value -1.", nameof(length));
+            }
+            else if (length == 0)
+            {
+                // 0-length array doesn't contain any non-empty subarray
+                return NOT_FOUND;
             }
 
             if (length > array.Length)
@@ -88,7 +100,6 @@ namespace Keeker.Core
             }
 
             var curr = start;
-            //var arrayLen = array.Length;
             var subarrayLen = subarray.Length;
 
             while (true)
@@ -121,9 +132,63 @@ namespace Keeker.Core
             }
         }
 
-        public static void PutEntireSegment(this ByteAccumulator accumulator, byte[] segment)
+        //public static void PutEntireSegment(this ByteAccumulator accumulator, byte[] segment)
+        //{
+        //    accumulator.Put(segment, 0, segment.Length);
+        //}
+
+        public static byte[] PeekAll(this ByteAccumulator accumulator)
         {
-            accumulator.Put(segment, 0, segment.Length);
+            var count = accumulator.Count;
+            var buffer = new byte[count];
+
+            accumulator.Peek(buffer, 0, count);
+            return buffer;
+        }
+
+        ///<summary>Finds the index of the first item matching an expression in an enumerable.</summary>
+        ///<param name="items">The enumerable to search.</param>
+        ///<param name="predicate">The expression to test the items against.</param>
+        ///<returns>The index of the first matching item, or -1 if no items match.</returns>
+        public static int FindIndex<T>(this IList<T> items, Func<T, bool> predicate, int start = 0)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            if (predicate == null)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            for (int i = start; i < items.Count; i++)
+            {
+                var item = items[i];
+                if (predicate(item)) return i;
+            }
+
+            return -1;
+        }
+
+        ///<summary>Finds the index of the first occurrence of an item in an enumerable.</summary>
+        ///<param name="items">The enumerable to search.</param>
+        ///<param name="item">The item to find.</param>
+        ///<returns>The index of the first matching item, or -1 if the item was not found.</returns>
+        public static int IndexOf<T>(this IList<T> items, T item, int length = 0)
+        {
+            return items.FindIndex(i => EqualityComparer<T>.Default.Equals(item, i), length);
+        }
+
+        public static string GetAsciiSubstring(this byte[] bytes, int index, int count)
+        {
+            var s = Encoding.ASCII.GetString(bytes, index, count);
+            return s;
+        }
+
+        public static void WriteAll(this Stream stream, byte[] buffer)
+        {
+            stream.Write(buffer, 0, buffer.Length);
         }
     }
 }

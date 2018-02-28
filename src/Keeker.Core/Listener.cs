@@ -57,7 +57,7 @@ namespace Keeker.Core
 
         #endregion
 
-        #region IKeekerListener Members
+        #region IListener Members
 
         public void Start()
         {

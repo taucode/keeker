@@ -14,38 +14,45 @@ namespace Keeker.Core
         {
             var plainKeekerSection = new ProxyPlainConf
             {
-                Address = IPAddress.Parse(proxySection.Address),
-                Port = proxySection.Port,
-                Hosts = proxySection.Hosts
-                    .Cast<HostElement>()
+                Listeners = proxySection.Listeners
+                    .Cast<ListenerElement>()
                     .ToDictionary(
-                        x => x.ExternalHostName,
-                        x => new ProxyPlainConf.HostEntry
+                        x => x.Id,
+                        x => new ListenerPlainConf
                         {
-                            ExternalHostName = x.ExternalHostName,
-                            Targets = x.Targets
-                                .Cast<TargetElement>()
-                                .Select(y => new ProxyPlainConf.TargetEntry
-                                {
-                                    Id = y.Id,
-                                    IsActive = y.IsActive,
-                                    DomesticHostName = y.DomesticHostName,
-                                    Address = IPAddress.Parse(y.Address),
-                                    Port = y.Port,
-                                })
-                                .ToArray(),
-                            Certificate = new ProxyPlainConf.Certificate
-                            {
-                                FilePath = x.Certificate.FilePath,
-                                Password = x.Certificate.Password,
-                            },
-                        }),
+                            Address = IPAddress.Parse(x.Address),
+                            Port = x.Port,
+                            Hosts = x.Hosts?
+                                .Cast<HostElement>()
+                                .ToDictionary(
+                                    y => y.ExternalHostName,
+                                    y => new HostPlainConf
+                                    {
+                                        ExternalHostName = y.ExternalHostName,
+                                        Targets = y.Targets?
+                                            .Cast<TargetElement>()
+                                            .Select(z => new TargetPlainConf
+                                            {
+                                                Id = z.Id,
+                                                IsActive = z.IsActive,
+                                                DomesticHostName = z.DomesticHostName,
+                                                Address = IPAddress.Parse(z.Address),
+                                                Port = z.Port,
+                                            })
+                                            .ToArray(),
+                                        Certificate = new CertificatePlainConf
+                                        {
+                                            FilePath = y.Certificate.FilePath,
+                                            Password = y.Certificate.Password,
+                                        },
+                                    }),
+                        })
             };
 
             return plainKeekerSection;
         }
 
-        public static IPEndPoint ClonEndPoint(this IPEndPoint endPoint)
+        public static IPEndPoint CloneEndPoint(this IPEndPoint endPoint)
         {
             return new IPEndPoint(endPoint.Address, endPoint.Port);
         }

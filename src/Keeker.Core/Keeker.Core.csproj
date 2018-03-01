@@ -58,8 +58,8 @@
     <Compile Include="Listener.cs" />
     <Compile Include="KeekStream.cs" />
     <Compile Include="Proxy.cs" />
-    <Compile Include="ProxySection.cs" />
-    <Compile Include="ProxyPlainConf.cs" />
+    <Compile Include="Conf\ProxySection.cs" />
+    <Compile Include="Conf\ProxyPlainConf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebConnection.cs" />
     <Compile Include="WebRequestRelay.cs" />

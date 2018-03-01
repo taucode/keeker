@@ -4,6 +4,37 @@ namespace Keeker.Core
 {
     public class ProxySection : ConfigurationSection
     {
+        [ConfigurationProperty("listeners", IsDefaultCollection = true)]
+        public ListenerElementCollection Listeners
+        {
+            get => this["listeners"] as ListenerElementCollection;
+            set => this["listeners"] = value;
+        }
+    }
+
+    [ConfigurationCollection(typeof(ListenerElement))]
+    public class ListenerElementCollection : ConfigurationElementCollection
+    {
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new ListenerElement();
+        }
+
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((ListenerElement)element).Id;
+        }
+    }
+
+    public class ListenerElement : ConfigurationElement
+    {
+        [ConfigurationProperty("id", IsKey = true, IsRequired = true)]
+        public string Id
+        {
+            get => (string)this["id"];
+            set => this["id"] = value;
+        }
+
         [ConfigurationProperty("address", IsRequired = true)]
         public string Address
         {
@@ -24,8 +55,6 @@ namespace Keeker.Core
             get => this["hosts"] as HostElementCollection;
             set => this["hosts"] = value;
         }
-
-        public ConfigurationPropertyCollection Props;
     }
 
     [ConfigurationCollection(typeof(HostElement))]

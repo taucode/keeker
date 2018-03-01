@@ -80,7 +80,11 @@ namespace Keeker.Core.Test
             Assert.That(hostConf.HttpRedirect, Is.Not.Null);
             Assert.That(hostConf.HttpRedirect.ToHostName, Is.EqualTo("rho.me"));
             Assert.That(hostConf.Relay, Is.Null);
-            Assert.That(hostConf.Certificate, Is.Null);
+
+            var cert = hostConf.Certificate;
+            Assert.That(cert, Is.Not.Null);
+            Assert.That(cert.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
+            Assert.That(cert.Password, Is.EqualTo(@"doresaq1488"));
 
             // host: rho.me
             hostConf = listenerConf.Hosts["rho.me"];
@@ -91,7 +95,7 @@ namespace Keeker.Core.Test
             Assert.That(relay.DomesticHostName, Is.EqualTo("localhost"));
             Assert.That(relay.GetEndPoint().ToString(), Is.EqualTo("127.0.0.1:53808"));
 
-            var cert = hostConf.Certificate;
+            cert = hostConf.Certificate;
             Assert.That(cert, Is.Not.Null);
             Assert.That(cert.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
             Assert.That(cert.Password, Is.EqualTo(@"doresaq1488"));
@@ -154,7 +158,11 @@ namespace Keeker.Core.Test
             Assert.That(hostConf.HttpRedirect, Is.Not.Null);
             Assert.That(hostConf.HttpRedirect.ToHostName, Is.EqualTo("rho.me"));
             Assert.That(hostConf.Relay, Is.Null);
-            Assert.That(hostConf.Certificate, Is.Null);
+
+            var cert = hostConf.Certificate;
+            Assert.That(cert, Is.Not.Null);
+            Assert.That(cert.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
+            Assert.That(cert.Password, Is.EqualTo(@"doresaq1488"));
 
             // host: rho.me
             hostConf = listenerConf.Hosts["rho.me"];
@@ -165,7 +173,7 @@ namespace Keeker.Core.Test
             Assert.That(relay.DomesticHostName, Is.EqualTo("localhost"));
             Assert.That(relay.GetEndPoint().ToString(), Is.EqualTo("127.0.0.1:53808"));
 
-            var cert = hostConf.Certificate;
+            cert = hostConf.Certificate;
             Assert.That(cert, Is.Not.Null);
             Assert.That(cert.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
             Assert.That(cert.Password, Is.EqualTo(@"doresaq1488"));

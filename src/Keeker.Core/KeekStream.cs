@@ -111,6 +111,11 @@ namespace Keeker.Core
             }
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Public

@@ -41,6 +41,9 @@
         <hosts>
           <add externalHostName="www.rho.me">
             <httpRedirect toHostName="rho.me" />
+
+            <certificate filePath="c:\certs\rho.me.pfx"
+                         password="doresaq1488" />
           </add>
 
           <add externalHostName="rho.me">

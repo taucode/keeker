@@ -1,4 +1,5 @@
 ﻿using Keeker.Core.Conf;
+using Keeker.Core.Relays;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,32 +15,6 @@ namespace Keeker.Core
 {
     public class Listener : IListener
     {
-        #region Nested
-
-        private class Target
-        {
-            internal Target(HostPlainConf hostEntry)
-            {
-                throw new NotImplementedException();
-                //this.ExternalHostName = hostEntry.ExternalHostName;
-                //this.ExternalHostNameBytes = this.ExternalHostName.ToAsciiBytes();
-
-                //var entryTarget = hostEntry.Targets.Single(x => x.IsActive);
-
-                //this.DomesticHostName = entryTarget.DomesticHostName;
-                //this.Certificate = new X509Certificate(hostEntry.Certificate.FilePath, hostEntry.Certificate.Password);
-                //this.EndPoint = new IPEndPoint(entryTarget.Address, entryTarget.Port);
-            }
-
-            internal string ExternalHostName { get; }
-            internal byte[] ExternalHostNameBytes { get; }
-            internal string DomesticHostName { get; }
-            internal X509Certificate Certificate { get; }
-            internal IPEndPoint EndPoint { get; }
-        }
-
-        #endregion
-
         #region Constants
 
         private const int HANDSHAKE_MESSAGE_MAX_LENGTH = 1000;
@@ -49,11 +24,12 @@ namespace Keeker.Core
         #region Fields
 
         private readonly ListenerPlainConf _conf;
-        //private readonly IPEndPoint _endPoint;
         private readonly TcpListener _tcpListener;
         private bool _isStarted;
         private readonly object _lock;
-        private readonly Dictionary<string, Target> _targets;
+
+        private readonly Dictionary<string, byte[]> _hostNameBytes;
+        private Dictionary<string, X509Certificate> _certificates;
 
         #endregion
 
@@ -62,6 +38,11 @@ namespace Keeker.Core
         public Listener(ListenerPlainConf conf)
         {
             _conf = conf.Clone();
+            _hostNameBytes = _conf.Hosts.Values
+                .ToDictionary(
+                    x => x.ExternalHostName,
+                    x => x.ExternalHostName.ToAsciiBytes());
+
             _tcpListener = new TcpListener(_conf.Address, _conf.Port);
             _lock = new object();
         }
@@ -70,12 +51,18 @@ namespace Keeker.Core
 
         #region Private
 
+        private static X509Certificate OpenCertificate(CertificatePlainConf certificateConf)
+        {
+            var cert = new X509Certificate(certificateConf.FilePath, certificateConf.Password);
+            return cert;
+        }
+
         private void StartImpl()
         {
             var task = new Task(this.ListeningRoutine);
             _isStarted = true;
             task.Start();
-            this.Started?.Invoke(this, EventArgs.Empty);
+            //this.Started?.Invoke(this, EventArgs.Empty);
         }
 
         private void ListeningRoutine()
@@ -87,7 +74,10 @@ namespace Keeker.Core
                 while (true)
                 {
                     var client = _tcpListener.AcceptTcpClient();
-                    this.ConnectionAccepted?.Invoke(this, new ConnectionAcceptedEventArgs(client));
+
+                    this.EstablishConnection(client);
+
+                    //this.ConnectionAccepted?.Invoke(this, new ConnectionAcceptedEventArgs(client));
                 }
             }
             catch (Exception e)
@@ -96,51 +86,43 @@ namespace Keeker.Core
             }
         }
 
-        private Dictionary<string, Target> BuildTargets()
-        {
-            var result = _conf.Hosts.Values
-                .Select(x => new Target(x))
-                .ToDictionary(x => x.ExternalHostName, x => x);
-
-            return result;
-        }
-
         private void EstablishConnection(TcpClient client)
         {
-            var networkStream = client.GetStream();
-
-            var wrappingStream = new KeekStream(networkStream);
-            var target = this.ResolveHost(wrappingStream);
-
-            if (target == null)
+            if (_conf.IsHttps)
             {
-                // could not resolve.
+                var networkStream = client.GetStream();
+                var wrappingStream = new KeekStream(networkStream);
+                var hostConf = this.ResolveHost(wrappingStream);
 
-                try
+                if (hostConf == null)
                 {
-                    wrappingStream.Dispose();
-                }
-                catch
-                {
-                    // dismiss
+                    wrappingStream.Dispose(); // refuse the connection.
+                    return;
                 }
 
-                return;
+                var clientStream = new SslStream(wrappingStream, false);
+                var certificate = _certificates[hostConf.ExternalHostName];
+                clientStream.AuthenticateAsServer(certificate, false, SslProtocols.Tls12, false);
+
+                if (hostConf.Relay != null)
+                {
+                    // this is a relay host
+                    var relay = new SecureRelay(clientStream, hostConf.Relay);
+                    relay.Start();
+                }
+                else if (hostConf.HttpRedirect != null)
+                {
+                    // this is a redirect host
+                    throw new NotImplementedException();
+                }
             }
-
-            var clientStream = new SslStream(wrappingStream, false);
-            clientStream.AuthenticateAsServer(target.Certificate, false, SslProtocols.Tls12, false);
-
-            var tcpclient = new TcpClient();
-            tcpclient.Connect(target.EndPoint);
-
-            var serverStream = tcpclient.GetStream();
-
-            var connection = new WebConnection(clientStream, serverStream);
-            connection.Start();
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        private Target ResolveHost(KeekStream keekStream)
+        private HostPlainConf ResolveHost(KeekStream keekStream)
         {
             const int TIMEOUT = 1; // we are waiting for incoming handshake for 1 second.
             var timeout = TimeSpan.FromSeconds(TIMEOUT);
@@ -154,14 +136,14 @@ namespace Keeker.Core
                 keekStream.ReadInnerStream(HANDSHAKE_MESSAGE_MAX_LENGTH);
                 var peekedBytesCount = keekStream.Peek(peekedBytes, 0, HANDSHAKE_MESSAGE_MAX_LENGTH);
 
-                foreach (var target in _targets.Values)
+                foreach (var hostConf in _conf.Hosts.Values)
                 {
-                    var hostNameBytes = target.ExternalHostNameBytes;
-                    var pos = peekedBytes.IndexOfSubarray(hostNameBytes, 0, HANDSHAKE_MESSAGE_MAX_LENGTH);
+                    var hostNameBytes = _hostNameBytes[hostConf.ExternalHostName];
+                    var pos = peekedBytes.IndexOfSubarray(hostNameBytes, 0, peekedBytesCount);
 
                     if (pos >= 0)
                     {
-                        return target;
+                        return hostConf;
                     }
                 }
 
@@ -175,7 +157,6 @@ namespace Keeker.Core
             }
         }
 
-
         #endregion
 
         #region IListener Members
@@ -184,6 +165,15 @@ namespace Keeker.Core
         {
             lock (_lock)
             {
+                if (_conf.IsHttps && _certificates == null)
+                {
+                    _certificates = _conf.Hosts
+                        .ToDictionary(
+                            x => x.Key,
+                            x => OpenCertificate(x.Value.Certificate));
+                }
+
+
                 if (_isStarted)
                 {
                     throw new InvalidOperationException("Listener already started");
@@ -192,7 +182,7 @@ namespace Keeker.Core
                 this.StartImpl();
             }
         }
-        
+
         public bool IsStarted
         {
             get
@@ -211,11 +201,11 @@ namespace Keeker.Core
 
         public IPEndPoint EndPoint => _conf.GetEndPoint();
 
-        public event EventHandler Started;
+        //public event EventHandler Started;
 
-        public event EventHandler Stopped;
+        //public event EventHandler Stopped;
 
-        public event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
+        //public event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
 
         #endregion
 
@@ -223,7 +213,7 @@ namespace Keeker.Core
 
         public void Dispose()
         {
-
+            throw new NotImplementedException();
         }
 
         #endregion

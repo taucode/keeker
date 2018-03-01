@@ -13,10 +13,10 @@ namespace Keeker.Core
 
         IPEndPoint EndPoint { get; }
 
-        event EventHandler Started;
+        //event EventHandler Started;
 
-        event EventHandler Stopped;
+        //event EventHandler Stopped;
         
-        event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
+        //event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
     }
 }

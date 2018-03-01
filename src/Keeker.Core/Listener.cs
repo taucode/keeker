@@ -104,17 +104,8 @@ namespace Keeker.Core
                 var certificate = _certificates[hostConf.ExternalHostName];
                 clientStream.AuthenticateAsServer(certificate, false, SslProtocols.Tls12, false);
 
-                if (hostConf.Relay != null)
-                {
-                    // this is a relay host
-                    var relay = new SecureRelay(clientStream, hostConf.Relay);
-                    relay.Start();
-                }
-                else if (hostConf.HttpRedirect != null)
-                {
-                    // this is a redirect host
-                    throw new NotImplementedException();
-                }
+                var relay = new SecureRelay(clientStream, hostConf.Relay);
+                relay.Start();
             }
             else
             {
@@ -173,7 +164,6 @@ namespace Keeker.Core
                             x => OpenCertificate(x.Value.Certificate));
                 }
 
-
                 if (_isStarted)
                 {
                     throw new InvalidOperationException("Listener already started");
@@ -199,7 +189,16 @@ namespace Keeker.Core
             throw new System.NotImplementedException();
         }
 
-        public IPEndPoint EndPoint => _conf.GetEndPoint();
+        public IPEndPoint EndPoint
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _conf.GetEndPoint();
+                }
+            }
+        }
 
         //public event EventHandler Started;
 

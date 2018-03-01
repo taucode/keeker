@@ -75,7 +75,6 @@ namespace Keeker.Core
             var res = new HostPlainConf
             {
                 ExternalHostName = hostElement.ExternalHostName,
-                HttpRedirect = hostElement.HttpRedirect.ToHttpRedirectPlainConf(),
                 Relay = hostElement.Relay.ToRelayPlainConf(),
                 Certificate = hostElement.Certificate.ToCertificatePlainConf(),
             };
@@ -88,37 +87,8 @@ namespace Keeker.Core
             return new HostPlainConf
             {
                 ExternalHostName = conf.ExternalHostName,
-                HttpRedirect = conf.HttpRedirect.Clone(),
                 Relay = conf.Relay.Clone(),
                 Certificate = conf.Certificate.Clone(),
-            };
-        }
-
-        public static HttpRedirectPlainConf ToHttpRedirectPlainConf(this HttpRedirectElement httpRedirectElement)
-        {
-            if (httpRedirectElement == null || !httpRedirectElement.ElementInformation.IsPresent)
-            {
-                return null;
-            }
-
-            var res = new HttpRedirectPlainConf
-            {
-                ToHostName = httpRedirectElement.ToHostName,
-            };
-
-            return res;
-        }
-
-        public static HttpRedirectPlainConf Clone(this HttpRedirectPlainConf conf)
-        {
-            if (conf == null)
-            {
-                return null;
-            }
-
-            return new HttpRedirectPlainConf
-            {
-                ToHostName = conf.ToHostName,
             };
         }
 

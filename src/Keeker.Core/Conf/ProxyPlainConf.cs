@@ -34,7 +34,6 @@ namespace Keeker.Core.Conf
     public class HostPlainConf
     {
         public string ExternalHostName { get; set; }
-        public HttpRedirectPlainConf HttpRedirect { get; set; }
         public RelayPlainConf Relay { get; set; }
         public CertificatePlainConf Certificate { get; set; }
     }
@@ -44,11 +43,6 @@ namespace Keeker.Core.Conf
         public string DomesticHostName { get; set; }
         public IPAddress Address { get; set; }
         public int Port { get; set; }
-    }
-
-    public class HttpRedirectPlainConf
-    {
-        public string ToHostName { get; set; }
     }
 
     public class CertificatePlainConf

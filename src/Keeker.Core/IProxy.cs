@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Keeker.Core.Conf;
 
 namespace Keeker.Core
 {
@@ -10,10 +10,10 @@ namespace Keeker.Core
 
         void Stop();
 
-        event EventHandler Started;
+        //event EventHandler Started;
 
-        event EventHandler Stopped;
+        //event EventHandler Stopped;
 
-        event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
+        //event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
     }
 }

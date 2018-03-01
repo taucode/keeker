@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Keeker.Core.Conf;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -14,42 +15,183 @@ namespace Keeker.Core
         {
             var plainKeekerSection = new ProxyPlainConf
             {
-                Listeners = proxySection.Listeners
+                Listeners = proxySection.Listeners?
                     .Cast<ListenerElement>()
                     .ToDictionary(
                         x => x.Id,
-                        x => new ListenerPlainConf
-                        {
-                            Address = IPAddress.Parse(x.Address),
-                            Port = x.Port,
-                            Hosts = x.Hosts?
-                                .Cast<HostElement>()
-                                .ToDictionary(
-                                    y => y.ExternalHostName,
-                                    y => new HostPlainConf
-                                    {
-                                        ExternalHostName = y.ExternalHostName,
-                                        Targets = y.Targets?
-                                            .Cast<TargetElement>()
-                                            .Select(z => new TargetPlainConf
-                                            {
-                                                Id = z.Id,
-                                                IsActive = z.IsActive,
-                                                DomesticHostName = z.DomesticHostName,
-                                                Address = IPAddress.Parse(z.Address),
-                                                Port = z.Port,
-                                            })
-                                            .ToArray(),
-                                        Certificate = new CertificatePlainConf
-                                        {
-                                            FilePath = y.Certificate.FilePath,
-                                            Password = y.Certificate.Password,
-                                        },
-                                    }),
-                        })
+                        x => x.ToListenerPlainConf())
             };
 
+            plainKeekerSection.Listeners = plainKeekerSection.Listeners ?? new Dictionary<string, ListenerPlainConf>();
+
             return plainKeekerSection;
+        }
+
+        public static ProxyPlainConf Clone(this ProxyPlainConf conf)
+        {
+            var clone = new ProxyPlainConf
+            {
+                Listeners = conf.Listeners?
+                    .ToDictionary(x => x.Key, x => x.Value.Clone()),
+            };
+
+            clone.Listeners = clone.Listeners ?? new Dictionary<string, ListenerPlainConf>();
+            return clone;
+        }
+
+        public static ListenerPlainConf ToListenerPlainConf(this ListenerElement listenerElement)
+        {
+            var res = new ListenerPlainConf
+            {
+                Id = listenerElement.Id,
+                Address = IPAddress.Parse(listenerElement.Address),
+                Port = listenerElement.Port,
+                IsHttps = listenerElement.IsHttps,
+                Hosts = listenerElement.Hosts?
+                    .Cast<HostElement>()
+                    .ToDictionary(
+                        x => x.ExternalHostName,
+                        x => x.ToHostPlainConf()),
+            };
+
+            return res;
+        }
+
+        public static ListenerPlainConf Clone(this ListenerPlainConf conf)
+        {
+            return new ListenerPlainConf
+            {
+                Id = conf.Id,
+                Address = conf.Address,
+                Port = conf.Port,
+                IsHttps = conf.IsHttps,
+                Hosts = conf.Hosts?
+                    .ToDictionary(x => x.Key, x => x.Value.Clone()),
+            };
+        }
+
+        public static HostPlainConf ToHostPlainConf(this HostElement hostElement)
+        {
+            var res = new HostPlainConf
+            {
+                ExternalHostName = hostElement.ExternalHostName,
+                HttpRedirect = hostElement.HttpRedirect.ToHttpRedirectPlainConf(),
+                Relay = hostElement.Relay.ToRelayPlainConf(),
+                Certificate = hostElement.Certificate.ToCertificatePlainConf(),
+            };
+
+            return res;
+        }
+
+        public static HostPlainConf Clone(this HostPlainConf conf)
+        {
+            return new HostPlainConf
+            {
+                ExternalHostName = conf.ExternalHostName,
+                HttpRedirect = conf.HttpRedirect.Clone(),
+                Relay = conf.Relay.Clone(),
+                Certificate = conf.Certificate.Clone(),
+            };
+        }
+
+        public static HttpRedirectPlainConf ToHttpRedirectPlainConf(this HttpRedirectElement httpRedirectElement)
+        {
+            if (httpRedirectElement == null || !httpRedirectElement.ElementInformation.IsPresent)
+            {
+                return null;
+            }
+
+            var res = new HttpRedirectPlainConf
+            {
+                ToHostName = httpRedirectElement.ToHostName,
+            };
+
+            return res;
+        }
+
+        public static HttpRedirectPlainConf Clone(this HttpRedirectPlainConf conf)
+        {
+            if (conf == null)
+            {
+                return null;
+            }
+
+            return new HttpRedirectPlainConf
+            {
+                ToHostName = conf.ToHostName,
+            };
+        }
+
+        public static RelayPlainConf ToRelayPlainConf(this RelayElement relayElement)
+        {
+            if (relayElement == null || !relayElement.ElementInformation.IsPresent)
+            {
+                return null;
+            }
+
+            var res = new RelayPlainConf
+            {
+                DomesticHostName = relayElement.DomesticHostName,
+                Address = IPAddress.Parse(relayElement.Address),
+                Port = relayElement.Port,
+            };
+
+            return res;
+        }
+
+        public static RelayPlainConf Clone(this RelayPlainConf conf)
+        {
+            if (conf == null)
+            {
+                return null;
+            }
+
+            return new RelayPlainConf
+            {
+                DomesticHostName = conf.DomesticHostName,
+                Address = conf.Address,
+                Port = conf.Port,
+            };
+        }
+
+        public static CertificatePlainConf ToCertificatePlainConf(this CertificateElement certificateElement)
+        {
+            if (certificateElement == null || !certificateElement.ElementInformation.IsPresent)
+            {
+                return null;
+            }
+
+            var res = new CertificatePlainConf
+            {
+                FilePath = certificateElement.FilePath,
+                Password = certificateElement.Password,
+            };
+
+            return res;
+        }
+
+        public static CertificatePlainConf Clone(this CertificatePlainConf conf)
+        {
+            if (conf == null)
+            {
+                return null;
+            }
+
+            return new CertificatePlainConf
+            {
+                FilePath = conf.FilePath,
+                Password = conf.Password,
+            };
+        }
+
+        public static IPEndPoint GetEndPoint(this ListenerPlainConf conf)
+        {
+            return new IPEndPoint(conf.Address, conf.Port);
+        }
+
+        public static IPEndPoint GetEndPoint(this RelayPlainConf conf)
+        {
+            return new IPEndPoint(conf.Address, conf.Port);
         }
 
         public static IPEndPoint CloneEndPoint(this IPEndPoint endPoint)

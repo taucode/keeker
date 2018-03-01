@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Keeker.Core.Conf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Keeker.Core
@@ -17,14 +20,15 @@ namespace Keeker.Core
         {
             internal Target(HostPlainConf hostEntry)
             {
-                this.ExternalHostName = hostEntry.ExternalHostName;
-                this.ExternalHostNameBytes = this.ExternalHostName.ToAsciiBytes();
+                throw new NotImplementedException();
+                //this.ExternalHostName = hostEntry.ExternalHostName;
+                //this.ExternalHostNameBytes = this.ExternalHostName.ToAsciiBytes();
 
-                var entryTarget = hostEntry.Targets.Single(x => x.IsActive);
+                //var entryTarget = hostEntry.Targets.Single(x => x.IsActive);
 
-                this.DomesticHostName = entryTarget.DomesticHostName;
-                this.Certificate = new X509Certificate(hostEntry.Certificate.FilePath, hostEntry.Certificate.Password);
-                this.EndPoint = new IPEndPoint(entryTarget.Address, entryTarget.Port);
+                //this.DomesticHostName = entryTarget.DomesticHostName;
+                //this.Certificate = new X509Certificate(hostEntry.Certificate.FilePath, hostEntry.Certificate.Password);
+                //this.EndPoint = new IPEndPoint(entryTarget.Address, entryTarget.Port);
             }
 
             internal string ExternalHostName { get; }
@@ -36,10 +40,17 @@ namespace Keeker.Core
 
         #endregion
 
+        #region Constants
+
+        private const int HANDSHAKE_MESSAGE_MAX_LENGTH = 1000;
+
+        #endregion
+
         #region Fields
 
-        private readonly IPEndPoint _endPoint;
-        private readonly TcpListener _listener;
+        private readonly ListenerPlainConf _conf;
+        //private readonly IPEndPoint _endPoint;
+        private readonly TcpListener _tcpListener;
         private bool _isStarted;
         private readonly object _lock;
         private readonly Dictionary<string, Target> _targets;
@@ -48,10 +59,10 @@ namespace Keeker.Core
 
         #region Constructor
 
-        public Listener(IPEndPoint endPoint)
+        public Listener(ListenerPlainConf conf)
         {
-            _endPoint = endPoint.CloneEndPoint();
-            _listener = new TcpListener(_endPoint);
+            _conf = conf.Clone();
+            _tcpListener = new TcpListener(_conf.Address, _conf.Port);
             _lock = new object();
         }
 
@@ -69,13 +80,13 @@ namespace Keeker.Core
 
         private void ListeningRoutine()
         {
-            _listener.Start();
+            _tcpListener.Start();
 
             try
             {
                 while (true)
                 {
-                    var client = _listener.AcceptTcpClient();
+                    var client = _tcpListener.AcceptTcpClient();
                     this.ConnectionAccepted?.Invoke(this, new ConnectionAcceptedEventArgs(client));
                 }
             }
@@ -198,7 +209,7 @@ namespace Keeker.Core
             throw new System.NotImplementedException();
         }
 
-        public IPEndPoint EndPoint => _endPoint.CloneEndPoint();
+        public IPEndPoint EndPoint => _conf.GetEndPoint();
 
         public event EventHandler Started;
 

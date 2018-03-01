@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Net;
 
-namespace Keeker.Core
+namespace Keeker.Core.Conf
 {
     public class ProxyPlainConf
     {
@@ -20,15 +19,6 @@ namespace Keeker.Core
 
             return section.ToProxyPlainConf();
         }
-
-        internal ProxyPlainConf Clone()
-        {
-            return new ProxyPlainConf
-            {
-                Listeners = this.Listeners?
-                    .ToDictionary(x => x.Key, x => x.Value.Clone()),
-            };
-        }
     }
 
     public class ListenerPlainConf
@@ -36,75 +26,34 @@ namespace Keeker.Core
         public string Id { get; set; }
         public IPAddress Address { get; set; }
         public int Port { get; set; }
-        public Dictionary<string, HostPlainConf> Hosts { get; set; }
+        public bool IsHttps { get; set; }
 
-        internal ListenerPlainConf Clone()
-        {
-            return new ListenerPlainConf
-            {
-                Id = this.Id,
-                Address = this.Address,
-                Port = this.Port,
-                Hosts = this.Hosts?
-                    .ToDictionary(
-                        x => x.Key,
-                        x => x.Value.Clone()),
-            };
-        }
+        public Dictionary<string, HostPlainConf> Hosts { get; set; }
     }
 
     public class HostPlainConf
     {
         public string ExternalHostName { get; set; }
-        public TargetPlainConf[] Targets { get; set; }
+        public HttpRedirectPlainConf HttpRedirect { get; set; }
+        public RelayPlainConf Relay { get; set; }
         public CertificatePlainConf Certificate { get; set; }
-
-        internal HostPlainConf Clone()
-        {
-            return new HostPlainConf
-            {
-                ExternalHostName = this.ExternalHostName,
-                Targets = this.Targets?
-                    .Select(x => x.Clone())
-                    .ToArray(),
-                Certificate = this.Certificate.Clone(),
-            };
-        }
     }
 
-    public class TargetPlainConf
+    public class RelayPlainConf
     {
-        public string Id { get; set; }
-        public bool IsActive { get; set; }
         public string DomesticHostName { get; set; }
         public IPAddress Address { get; set; }
         public int Port { get; set; }
+    }
 
-        internal TargetPlainConf Clone()
-        {
-            return new TargetPlainConf
-            {
-                Id = this.Id,
-                IsActive = this.IsActive,
-                DomesticHostName = this.DomesticHostName,
-                Address = this.Address,
-                Port = this.Port,
-            };
-        }
+    public class HttpRedirectPlainConf
+    {
+        public string ToHostName { get; set; }
     }
 
     public class CertificatePlainConf
     {
         public string FilePath { get; set; }
         public string Password { get; set; }
-
-        internal CertificatePlainConf Clone()
-        {
-            return new CertificatePlainConf
-            {
-                FilePath = this.FilePath,
-                Password = this.Password,
-            };
-        }
     }
 }

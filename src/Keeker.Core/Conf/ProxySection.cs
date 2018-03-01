@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace Keeker.Core
+namespace Keeker.Core.Conf
 {
     public class ProxySection : ConfigurationSection
     {
@@ -49,6 +49,13 @@ namespace Keeker.Core
             set => this["port"] = value;
         }
 
+        [ConfigurationProperty("isHttps", IsRequired = true)]
+        public bool IsHttps
+        {
+            get => (bool)this["isHttps"];
+            set => this["isHttps"] = value;
+        }
+
         [ConfigurationProperty("hosts", IsDefaultCollection = true)]
         public HostElementCollection Hosts
         {
@@ -80,14 +87,21 @@ namespace Keeker.Core
             set => this["externalHostName"] = value;
         }
 
-        [ConfigurationProperty("targets", IsDefaultCollection = true)]
-        public TargetElementCollection Targets
+        [ConfigurationProperty("httpRedirect", IsRequired = false, DefaultValue = null)]
+        public HttpRedirectElement HttpRedirect
         {
-            get => this["targets"] as TargetElementCollection;
-            set => this["targets"] = value;
+            get => (HttpRedirectElement)this["httpRedirect"];
+            set => this["httpRedirect"] = value;
         }
 
-        [ConfigurationProperty("certificate", IsRequired = true)]
+        [ConfigurationProperty("relay", IsRequired = false, DefaultValue = null)]
+        public RelayElement Relay
+        {
+            get => (RelayElement)this["relay"];
+            set => this["relay"] = value;
+        }
+
+        [ConfigurationProperty("certificate", IsRequired = false, DefaultValue = null)]
         public CertificateElement Certificate
         {
             get => (CertificateElement)this["certificate"];
@@ -95,36 +109,18 @@ namespace Keeker.Core
         }
     }
 
-    [ConfigurationCollection(typeof(TargetElement))]
-    public class TargetElementCollection : ConfigurationElementCollection
+    public class HttpRedirectElement : ConfigurationElement
     {
-        protected override ConfigurationElement CreateNewElement()
+        [ConfigurationProperty("toHostName", IsRequired = true)]
+        public string ToHostName
         {
-            return new TargetElement();
-        }
-
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((TargetElement)element).Id;
+            get => (string)this["toHostName"];
+            set => this["toHostName"] = value;
         }
     }
 
-    public class TargetElement : ConfigurationElement
+    public class RelayElement : ConfigurationElement
     {
-        [ConfigurationProperty("id", IsKey = true, IsRequired = true)]
-        public string Id
-        {
-            get => (string)this["id"];
-            set => this["id"] = value;
-        }
-
-        [ConfigurationProperty("isActive", IsRequired = true)]
-        public bool IsActive
-        {
-            get => (bool)this["isActive"];
-            set => this["isActive"] = value;
-        }
-
         [ConfigurationProperty("domesticHostName", IsRequired = true)]
         public string DomesticHostName
         {
@@ -156,7 +152,7 @@ namespace Keeker.Core
             set => this["filePath"] = value;
         }
 
-        [ConfigurationProperty("password", IsKey = true, IsRequired = true)]
+        [ConfigurationProperty("password", IsRequired = true)]
         public string Password
         {
             get => (string)this["password"];

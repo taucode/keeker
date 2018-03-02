@@ -44,14 +44,12 @@ namespace Keeker.Core
             var res = new ListenerPlainConf
             {
                 Id = listenerElement.Id,
-                Address = IPAddress.Parse(listenerElement.Address),
-                Port = listenerElement.Port,
+                EndPoint = listenerElement.EndPoint.ToIPEndPoint(),
                 IsHttps = listenerElement.IsHttps,
-                Hosts = listenerElement.Hosts?
-                    .Cast<HostElement>()
-                    .ToDictionary(
-                        x => x.ExternalHostName,
-                        x => x.ToHostPlainConf()),
+                Relays = listenerElement.Relays
+                    .Cast<RelayElement>()
+                    .Select(ToRelayPlainConf)
+                    .ToList(),
             };
 
             return res;
@@ -62,48 +60,44 @@ namespace Keeker.Core
             return new ListenerPlainConf
             {
                 Id = conf.Id,
-                Address = conf.Address,
-                Port = conf.Port,
+                EndPoint = conf.EndPoint.CloneEndPoint(),
                 IsHttps = conf.IsHttps,
-                Hosts = conf.Hosts?
-                    .ToDictionary(x => x.Key, x => x.Value.Clone()),
+                Relays = conf.Relays
+                    .Select(Clone)
+                    .ToList(),
             };
         }
 
-        public static HostPlainConf ToHostPlainConf(this HostElement hostElement)
-        {
-            var res = new HostPlainConf
-            {
-                ExternalHostName = hostElement.ExternalHostName,
-                Relay = hostElement.Relay.ToRelayPlainConf(),
-                Certificate = hostElement.Certificate.ToCertificatePlainConf(),
-            };
+        //public static HostPlainConf ToHostPlainConf(this HostElement hostElement)
+        //{
+        //    var res = new HostPlainConf
+        //    {
+        //        ExternalHostName = hostElement.ExternalHostName,
+        //        Relay = hostElement.Relay.ToRelayPlainConf(),
+        //        Certificate = hostElement.Certificate.ToCertificatePlainConf(),
+        //    };
 
-            return res;
-        }
+        //    return res;
+        //}
 
-        public static HostPlainConf Clone(this HostPlainConf conf)
-        {
-            return new HostPlainConf
-            {
-                ExternalHostName = conf.ExternalHostName,
-                Relay = conf.Relay.Clone(),
-                Certificate = conf.Certificate.Clone(),
-            };
-        }
+        //public static HostPlainConf Clone(this HostPlainConf conf)
+        //{
+        //    return new HostPlainConf
+        //    {
+        //        ExternalHostName = conf.ExternalHostName,
+        //        Relay = conf.Relay.Clone(),
+        //        Certificate = conf.Certificate.Clone(),
+        //    };
+        //}
 
         public static RelayPlainConf ToRelayPlainConf(this RelayElement relayElement)
         {
-            if (relayElement == null || !relayElement.ElementInformation.IsPresent)
-            {
-                return null;
-            }
-
             var res = new RelayPlainConf
             {
+                ExternalHostName = relayElement.ExternalHostName,
                 DomesticHostName = relayElement.DomesticHostName,
-                Address = IPAddress.Parse(relayElement.Address),
-                Port = relayElement.Port,
+                EndPoint = relayElement.EndPoint.ToIPEndPoint(),
+                CertificateId = relayElement.CertificateId,
             };
 
             return res;
@@ -111,16 +105,12 @@ namespace Keeker.Core
 
         public static RelayPlainConf Clone(this RelayPlainConf conf)
         {
-            if (conf == null)
-            {
-                return null;
-            }
-
             return new RelayPlainConf
             {
+                ExternalHostName = conf.ExternalHostName,
                 DomesticHostName = conf.DomesticHostName,
-                Address = conf.Address,
-                Port = conf.Port,
+                EndPoint = conf.EndPoint.CloneEndPoint(),
+                CertificateId = conf.CertificateId,
             };
         }
 
@@ -154,15 +144,15 @@ namespace Keeker.Core
             };
         }
 
-        public static IPEndPoint GetEndPoint(this ListenerPlainConf conf)
-        {
-            return new IPEndPoint(conf.Address, conf.Port);
-        }
+        //public static IPEndPoint GetEndPoint(this ListenerPlainConf conf)
+        //{
+        //    return new IPEndPoint(conf.Address, conf.Port);
+        //}
 
-        public static IPEndPoint GetEndPoint(this RelayPlainConf conf)
-        {
-            return new IPEndPoint(conf.Address, conf.Port);
-        }
+        //public static IPEndPoint GetEndPoint(this RelayPlainConf conf)
+        //{
+        //    return new IPEndPoint(conf.Address, conf.Port);
+        //}
 
         public static IPEndPoint CloneEndPoint(this IPEndPoint endPoint)
         {
@@ -314,6 +304,14 @@ namespace Keeker.Core
         public static int ToInt32(this string s)
         {
             return int.Parse(s, CultureInfo.InvariantCulture);
+        }
+
+        public static IPEndPoint ToIPEndPoint(this string s)
+        {
+            var parts = s.Split(':');
+            var address = IPAddress.Parse(parts[0]);
+            var port = parts[1].ToInt32();
+            return new IPEndPoint(address, port);
         }
     }
 }

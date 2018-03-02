@@ -41,64 +41,47 @@ namespace Keeker.Core.Test
             // listener: sample
             var listenerConf = conf.Listeners["sample"];
             Assert.That(listenerConf.Id, Is.EqualTo("sample"));
-            Assert.That(listenerConf.GetEndPoint().ToString(), Is.EqualTo("192.168.0.12:81"));
+            Assert.That(listenerConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:80"));
             Assert.That(listenerConf.IsHttps, Is.False);
+            Assert.That(listenerConf.Relays, Is.Not.Null);
+            Assert.That(listenerConf.Relays, Has.Count.EqualTo(2));
 
-            Assert.That(listenerConf.Hosts, Is.Not.Null);
-            Assert.That(listenerConf.Hosts, Has.Count.EqualTo(2));
+            // relay: www.rho.me
+            var relayConf = listenerConf.Relays[0];
+            Assert.That(relayConf.ExternalHostName, Is.EqualTo("www.rho.me"));
+            Assert.That(relayConf.DomesticHostName, Is.EqualTo("localhost"));
+            Assert.That(relayConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:53808"));
+            Assert.That(string.IsNullOrEmpty(relayConf.CertificateId), Is.True);
 
-            // host: www.rho.me
-            var hostConf = listenerConf.Hosts["www.rho.me"];
-            Assert.That(hostConf.ExternalHostName, Is.EqualTo("www.rho.me"));
-            Assert.That(hostConf.HttpRedirect, Is.Not.Null);
-            Assert.That(hostConf.HttpRedirect.ToHostName, Is.EqualTo("rho.me"));
-            Assert.That(hostConf.Relay, Is.Null);
-            Assert.That(hostConf.Certificate, Is.Null);
-
-            // host: rho.me
-            hostConf = listenerConf.Hosts["rho.me"];
-            Assert.That(hostConf.ExternalHostName, Is.EqualTo("rho.me"));
-            Assert.That(hostConf.HttpRedirect, Is.Null);
-            var relay = hostConf.Relay;
-            Assert.That(relay, Is.Not.Null);
-            Assert.That(relay.DomesticHostName, Is.EqualTo("localhost"));
-            Assert.That(relay.GetEndPoint().ToString(), Is.EqualTo("127.0.0.1:53808"));
-            Assert.That(hostConf.Certificate, Is.Null);
+            // relay: rho.me
+            relayConf = listenerConf.Relays[1];
+            Assert.That(relayConf.ExternalHostName, Is.EqualTo("rho.me"));
+            Assert.That(relayConf.DomesticHostName, Is.EqualTo("localhost"));
+            Assert.That(relayConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:53808"));
+            Assert.That(string.IsNullOrEmpty(relayConf.CertificateId), Is.True);
 
             // listener: std-ssl
             listenerConf = conf.Listeners["std-ssl"];
             Assert.That(listenerConf.Id, Is.EqualTo("std-ssl"));
-            Assert.That(listenerConf.GetEndPoint().ToString(), Is.EqualTo("127.0.0.1:443"));
+            Assert.That(listenerConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:443"));
             Assert.That(listenerConf.IsHttps, Is.True);
 
-            Assert.That(listenerConf.Hosts, Is.Not.Null);
-            Assert.That(listenerConf.Hosts, Has.Count.EqualTo(2));
+            Assert.That(listenerConf.Relays, Is.Not.Null);
+            Assert.That(listenerConf.Relays, Has.Count.EqualTo(2));
 
-            // host: www.rho.me
-            hostConf = listenerConf.Hosts["www.rho.me"];
-            Assert.That(hostConf.ExternalHostName, Is.EqualTo("www.rho.me"));
-            Assert.That(hostConf.HttpRedirect, Is.Not.Null);
-            Assert.That(hostConf.HttpRedirect.ToHostName, Is.EqualTo("rho.me"));
-            Assert.That(hostConf.Relay, Is.Null);
+            // relay: www.rho.me
+            relayConf = listenerConf.Relays[0];
+            Assert.That(relayConf.ExternalHostName, Is.EqualTo("www.rho.me"));
+            Assert.That(relayConf.DomesticHostName, Is.EqualTo("www.rho.me"));
+            Assert.That(relayConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:80"));
+            Assert.That(relayConf.CertificateId, Is.EqualTo("rho"));
 
-            var cert = hostConf.Certificate;
-            Assert.That(cert, Is.Not.Null);
-            Assert.That(cert.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
-            Assert.That(cert.Password, Is.EqualTo(@"doresaq1488"));
-
-            // host: rho.me
-            hostConf = listenerConf.Hosts["rho.me"];
-            Assert.That(hostConf.ExternalHostName, Is.EqualTo("rho.me"));
-            Assert.That(hostConf.HttpRedirect, Is.Null);
-            relay = hostConf.Relay;
-            Assert.That(relay, Is.Not.Null);
-            Assert.That(relay.DomesticHostName, Is.EqualTo("localhost"));
-            Assert.That(relay.GetEndPoint().ToString(), Is.EqualTo("127.0.0.1:53808"));
-
-            cert = hostConf.Certificate;
-            Assert.That(cert, Is.Not.Null);
-            Assert.That(cert.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
-            Assert.That(cert.Password, Is.EqualTo(@"doresaq1488"));
+            // relay: rho.me
+            relayConf = listenerConf.Relays[1];
+            Assert.That(relayConf.ExternalHostName, Is.EqualTo("rho.me"));
+            Assert.That(relayConf.DomesticHostName, Is.EqualTo("rho.me"));
+            Assert.That(relayConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:80"));
+            Assert.That(relayConf.CertificateId, Is.EqualTo("rho"));
         }
 
         [Test]
@@ -119,64 +102,47 @@ namespace Keeker.Core.Test
             // listener: sample
             var listenerConf = conf.Listeners["sample"];
             Assert.That(listenerConf.Id, Is.EqualTo("sample"));
-            Assert.That(listenerConf.GetEndPoint().ToString(), Is.EqualTo("192.168.0.12:81"));
+            Assert.That(listenerConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:80"));
             Assert.That(listenerConf.IsHttps, Is.False);
+            Assert.That(listenerConf.Relays, Is.Not.Null);
+            Assert.That(listenerConf.Relays, Has.Count.EqualTo(2));
 
-            Assert.That(listenerConf.Hosts, Is.Not.Null);
-            Assert.That(listenerConf.Hosts, Has.Count.EqualTo(2));
+            // relay: www.rho.me
+            var relayConf = listenerConf.Relays[0];
+            Assert.That(relayConf.ExternalHostName, Is.EqualTo("www.rho.me"));
+            Assert.That(relayConf.DomesticHostName, Is.EqualTo("localhost"));
+            Assert.That(relayConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:53808"));
+            Assert.That(string.IsNullOrEmpty(relayConf.CertificateId), Is.True);
 
-            // host: www.rho.me
-            var hostConf = listenerConf.Hosts["www.rho.me"];
-            Assert.That(hostConf.ExternalHostName, Is.EqualTo("www.rho.me"));
-            Assert.That(hostConf.HttpRedirect, Is.Not.Null);
-            Assert.That(hostConf.HttpRedirect.ToHostName, Is.EqualTo("rho.me"));
-            Assert.That(hostConf.Relay, Is.Null);
-            Assert.That(hostConf.Certificate, Is.Null);
-
-            // host: rho.me
-            hostConf = listenerConf.Hosts["rho.me"];
-            Assert.That(hostConf.ExternalHostName, Is.EqualTo("rho.me"));
-            Assert.That(hostConf.HttpRedirect, Is.Null);
-            var relay = hostConf.Relay;
-            Assert.That(relay, Is.Not.Null);
-            Assert.That(relay.DomesticHostName, Is.EqualTo("localhost"));
-            Assert.That(relay.GetEndPoint().ToString(), Is.EqualTo("127.0.0.1:53808"));
-            Assert.That(hostConf.Certificate, Is.Null);
+            // relay: rho.me
+            relayConf = listenerConf.Relays[1];
+            Assert.That(relayConf.ExternalHostName, Is.EqualTo("rho.me"));
+            Assert.That(relayConf.DomesticHostName, Is.EqualTo("localhost"));
+            Assert.That(relayConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:53808"));
+            Assert.That(string.IsNullOrEmpty(relayConf.CertificateId), Is.True);
 
             // listener: std-ssl
             listenerConf = conf.Listeners["std-ssl"];
             Assert.That(listenerConf.Id, Is.EqualTo("std-ssl"));
-            Assert.That(listenerConf.GetEndPoint().ToString(), Is.EqualTo("127.0.0.1:443"));
+            Assert.That(listenerConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:443"));
             Assert.That(listenerConf.IsHttps, Is.True);
 
-            Assert.That(listenerConf.Hosts, Is.Not.Null);
-            Assert.That(listenerConf.Hosts, Has.Count.EqualTo(2));
+            Assert.That(listenerConf.Relays, Is.Not.Null);
+            Assert.That(listenerConf.Relays, Has.Count.EqualTo(2));
 
-            // host: www.rho.me
-            hostConf = listenerConf.Hosts["www.rho.me"];
-            Assert.That(hostConf.ExternalHostName, Is.EqualTo("www.rho.me"));
-            Assert.That(hostConf.HttpRedirect, Is.Not.Null);
-            Assert.That(hostConf.HttpRedirect.ToHostName, Is.EqualTo("rho.me"));
-            Assert.That(hostConf.Relay, Is.Null);
+            // relay: www.rho.me
+            relayConf = listenerConf.Relays[0];
+            Assert.That(relayConf.ExternalHostName, Is.EqualTo("www.rho.me"));
+            Assert.That(relayConf.DomesticHostName, Is.EqualTo("www.rho.me"));
+            Assert.That(relayConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:80"));
+            Assert.That(relayConf.CertificateId, Is.EqualTo("rho"));
 
-            var cert = hostConf.Certificate;
-            Assert.That(cert, Is.Not.Null);
-            Assert.That(cert.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
-            Assert.That(cert.Password, Is.EqualTo(@"doresaq1488"));
-
-            // host: rho.me
-            hostConf = listenerConf.Hosts["rho.me"];
-            Assert.That(hostConf.ExternalHostName, Is.EqualTo("rho.me"));
-            Assert.That(hostConf.HttpRedirect, Is.Null);
-            relay = hostConf.Relay;
-            Assert.That(relay, Is.Not.Null);
-            Assert.That(relay.DomesticHostName, Is.EqualTo("localhost"));
-            Assert.That(relay.GetEndPoint().ToString(), Is.EqualTo("127.0.0.1:53808"));
-
-            cert = hostConf.Certificate;
-            Assert.That(cert, Is.Not.Null);
-            Assert.That(cert.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
-            Assert.That(cert.Password, Is.EqualTo(@"doresaq1488"));
+            // relay: rho.me
+            relayConf = listenerConf.Relays[1];
+            Assert.That(relayConf.ExternalHostName, Is.EqualTo("rho.me"));
+            Assert.That(relayConf.DomesticHostName, Is.EqualTo("rho.me"));
+            Assert.That(relayConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:80"));
+            Assert.That(relayConf.CertificateId, Is.EqualTo("rho"));
         }
 
         private ProxySection GetProxySection()

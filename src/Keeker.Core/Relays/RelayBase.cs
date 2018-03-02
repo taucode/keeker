@@ -1,7 +1,6 @@
 ﻿using Keeker.Core.Conf;
 using System;
 using System.IO;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace Keeker.Core.Relays
@@ -31,12 +30,13 @@ namespace Keeker.Core.Relays
 
             _clientStream = new KeekStream(innerClientStream);
 
-            var tcpclient = new TcpClient();
-            tcpclient.Connect(_conf.GetEndPoint());
-            var serverNetworkStream = tcpclient.GetStream();
-            _serverStream = new KeekStream(serverNetworkStream);
+            throw new NotImplementedException();
+            //var tcpclient = new TcpClient();
+            //tcpclient.Connect(_conf.GetEndPoint());
+            //var serverNetworkStream = tcpclient.GetStream();
+            //_serverStream = new KeekStream(serverNetworkStream);
 
-            _redirectContentBuffer = new byte[REDIRECT_CONTENT_BUFFER_SIZE];
+            //_redirectContentBuffer = new byte[REDIRECT_CONTENT_BUFFER_SIZE];
         }
 
         public void Start()

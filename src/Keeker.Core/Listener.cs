@@ -1,14 +1,8 @@
 ﻿using Keeker.Core.Conf;
-using Keeker.Core.Relays;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Keeker.Core
@@ -28,7 +22,7 @@ namespace Keeker.Core
         private bool _isStarted;
         private readonly object _lock;
 
-        private readonly Dictionary<string, byte[]> _hostNameBytes;
+        //private readonly Dictionary<string, byte[]> _hostNameBytes;
         private Dictionary<string, X509Certificate> _certificates;
 
         #endregion
@@ -38,12 +32,13 @@ namespace Keeker.Core
         public Listener(ListenerPlainConf conf)
         {
             _conf = conf.Clone();
-            _hostNameBytes = _conf.Hosts.Values
-                .ToDictionary(
-                    x => x.ExternalHostName,
-                    x => x.ExternalHostName.ToAsciiBytes());
 
-            _tcpListener = new TcpListener(_conf.Address, _conf.Port);
+            //_hostNameBytes = _conf.Hosts.Values
+            //    .ToDictionary(
+            //        x => x.ExternalHostName,
+            //        x => x.ExternalHostName.ToAsciiBytes());
+
+            _tcpListener = new TcpListener(_conf.EndPoint);
             _lock = new object();
         }
 
@@ -92,20 +87,22 @@ namespace Keeker.Core
             {
                 var networkStream = client.GetStream();
                 var wrappingStream = new KeekStream(networkStream);
-                var hostConf = this.ResolveHost(wrappingStream);
 
-                if (hostConf == null)
-                {
-                    wrappingStream.Dispose(); // refuse the connection.
-                    return;
-                }
+                throw new NotImplementedException();
+                //var hostConf = this.ResolveHost(wrappingStream);
 
-                var clientStream = new SslStream(wrappingStream, false);
-                var certificate = _certificates[hostConf.ExternalHostName];
-                clientStream.AuthenticateAsServer(certificate, false, SslProtocols.Tls12, false);
+                //if (hostConf == null)
+                //{
+                //    wrappingStream.Dispose(); // refuse the connection.
+                //    return;
+                //}
 
-                var relay = new SecureRelay(clientStream, hostConf.Relay);
-                relay.Start();
+                //var clientStream = new SslStream(wrappingStream, false);
+                //var certificate = _certificates[hostConf.ExternalHostName];
+                //clientStream.AuthenticateAsServer(certificate, false, SslProtocols.Tls12, false);
+
+                //var relay = new SecureRelay(clientStream, hostConf.Relay);
+                //relay.Start();
             }
             else
             {
@@ -113,40 +110,40 @@ namespace Keeker.Core
             }
         }
 
-        private HostPlainConf ResolveHost(KeekStream keekStream)
-        {
-            const int TIMEOUT = 1; // we are waiting for incoming handshake for 1 second.
-            var timeout = TimeSpan.FromSeconds(TIMEOUT);
+        //private HostPlainConf ResolveHost(KeekStream keekStream)
+        //{
+        //    const int TIMEOUT = 1; // we are waiting for incoming handshake for 1 second.
+        //    var timeout = TimeSpan.FromSeconds(TIMEOUT);
 
-            var started = DateTime.UtcNow;
+        //    var started = DateTime.UtcNow;
 
-            var peekedBytes = new byte[HANDSHAKE_MESSAGE_MAX_LENGTH];
+        //    var peekedBytes = new byte[HANDSHAKE_MESSAGE_MAX_LENGTH];
 
-            while (true)
-            {
-                keekStream.ReadInnerStream(HANDSHAKE_MESSAGE_MAX_LENGTH);
-                var peekedBytesCount = keekStream.Peek(peekedBytes, 0, HANDSHAKE_MESSAGE_MAX_LENGTH);
+        //    while (true)
+        //    {
+        //        keekStream.ReadInnerStream(HANDSHAKE_MESSAGE_MAX_LENGTH);
+        //        var peekedBytesCount = keekStream.Peek(peekedBytes, 0, HANDSHAKE_MESSAGE_MAX_LENGTH);
 
-                foreach (var hostConf in _conf.Hosts.Values)
-                {
-                    var hostNameBytes = _hostNameBytes[hostConf.ExternalHostName];
-                    var pos = peekedBytes.IndexOfSubarray(hostNameBytes, 0, peekedBytesCount);
+        //        foreach (var hostConf in _conf.Hosts.Values)
+        //        {
+        //            var hostNameBytes = _hostNameBytes[hostConf.ExternalHostName];
+        //            var pos = peekedBytes.IndexOfSubarray(hostNameBytes, 0, peekedBytesCount);
 
-                    if (pos >= 0)
-                    {
-                        return hostConf;
-                    }
-                }
+        //            if (pos >= 0)
+        //            {
+        //                return hostConf;
+        //            }
+        //        }
 
-                Thread.Sleep(1); // wait for a while, maybe will get handshake eventually
-                var now = DateTime.UtcNow;
+        //        Thread.Sleep(1); // wait for a while, maybe will get handshake eventually
+        //        var now = DateTime.UtcNow;
 
-                if (now - started > timeout)
-                {
-                    return null;
-                }
-            }
-        }
+        //        if (now - started > timeout)
+        //        {
+        //            return null;
+        //        }
+        //    }
+        //}
 
         #endregion
 
@@ -156,20 +153,21 @@ namespace Keeker.Core
         {
             lock (_lock)
             {
-                if (_conf.IsHttps && _certificates == null)
-                {
-                    _certificates = _conf.Hosts
-                        .ToDictionary(
-                            x => x.Key,
-                            x => OpenCertificate(x.Value.Certificate));
-                }
+                throw new NotImplementedException();
+                //if (_conf.IsHttps && _certificates == null)
+                //{
+                //    _certificates = _conf.Hosts
+                //        .ToDictionary(
+                //            x => x.Key,
+                //            x => OpenCertificate(x.Value.Certificate));
+                //}
 
-                if (_isStarted)
-                {
-                    throw new InvalidOperationException("Listener already started");
-                }
+                //if (_isStarted)
+                //{
+                //    throw new InvalidOperationException("Listener already started");
+                //}
 
-                this.StartImpl();
+                //this.StartImpl();
             }
         }
 
@@ -189,16 +187,16 @@ namespace Keeker.Core
             throw new System.NotImplementedException();
         }
 
-        public IPEndPoint EndPoint
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    return _conf.GetEndPoint();
-                }
-            }
-        }
+        //public IPEndPoint EndPoint
+        //{
+        //    get
+        //    {
+        //        lock (_lock)
+        //        {
+        //            return _conf.GetEndPoint();
+        //        }
+        //    }
+        //}
 
         //public event EventHandler Started;
 

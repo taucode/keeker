@@ -15,46 +15,72 @@
   </connectionStrings>
 
   <proxy>
+    <certificates>
+      <add id="rho"
+           filePath="c:\certs\rho.me.pfx"
+           password="doresaq1488" />
+    </certificates>
+
     <listeners>
       <add id="sample"
-           address="192.168.0.12"
-           port="81"
+           endPoint="127.0.0.1:80"
            isHttps="false">
-        <hosts>
-          <add externalHostName="www.rho.me">
-            <httpRedirect toHostName="rho.me" />
-          </add>
 
-          <add externalHostName="rho.me">
-            <relay domesticHostName="localhost"
-                   address="127.0.0.1"
-                   port="53808" />
-          </add>
-        </hosts>
+        <relays>
+          <add externalHostName="www.rho.me"
+               domesticHostName="localhost"
+               endPoint="127.0.0.1:53808"/>
+
+          <add externalHostName="rho.me"
+               domesticHostName="localhost"
+               endPoint="127.0.0.1:53808"/>
+
+          <!-- prod -->
+          <!--
+          <add externalHostName="www.rho.me"
+               domesticHostName="www.rho.me"
+               endPoint="127.0.0.1:80"
+               certificateId="rho" />
+
+          <add externalHostName="rho.me"
+               domesticHostName="rho.me"
+               endPoint="127.0.0.1:80"
+               certificateId="rho" />
+               -->
+
+        </relays>
       </add>
 
       <add id="std-ssl"
-           address="127.0.0.1"
-           port="443"
+           endPoint="127.0.0.1:443"
            isHttps="true">
 
-        <hosts>
-          <add externalHostName="www.rho.me">
-            <httpRedirect toHostName="rho.me" />
+        <relays>
+          <!--
+          <add externalHostName="www.rho.me"
+               domesticHostName="localhost"
+               endPoint="127.0.0.1:53808"
+               certificateId="rho" />
 
-            <certificate filePath="c:\certs\rho.me.pfx"
-                         password="doresaq1488" />
-          </add>
+          <add externalHostName="rho.me"
+               domesticHostName="localhost"
+               endPoint="127.0.0.1:53808"
+               certificateId="rho" />
+               -->
 
-          <add externalHostName="rho.me">
-            <relay domesticHostName="localhost"
-                   address="127.0.0.1"
-                   port="53808" />
+          <!-- prod -->
+          <add externalHostName="www.rho.me"
+               domesticHostName="www.rho.me"
+               endPoint="127.0.0.1:80"
+               certificateId="rho" />
 
-            <certificate filePath="c:\certs\rho.me.pfx"
-                         password="doresaq1488" />
-          </add>
-        </hosts>
+          <add externalHostName="rho.me"
+               domesticHostName="rho.me"
+               endPoint="127.0.0.1:80"
+               certificateId="rho" />
+
+        </relays>
+
       </add>
     </listeners>
   </proxy>

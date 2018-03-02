@@ -11,7 +11,7 @@ namespace Keeker.Core
 
         void Stop();
 
-        IPEndPoint EndPoint { get; }
+        //IPEndPoint EndPoint { get; }
 
         //event EventHandler Started;
 

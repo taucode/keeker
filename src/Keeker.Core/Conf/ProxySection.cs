@@ -4,11 +4,56 @@ namespace Keeker.Core.Conf
 {
     public class ProxySection : ConfigurationSection
     {
+        [ConfigurationProperty("certificates", IsDefaultCollection = true)]
+        public CertificateElementCollection Certificates
+        {
+            get => this["certificates"] as CertificateElementCollection;
+            set => this["certificates"] = value;
+        }
+
         [ConfigurationProperty("listeners", IsDefaultCollection = true)]
         public ListenerElementCollection Listeners
         {
             get => this["listeners"] as ListenerElementCollection;
             set => this["listeners"] = value;
+        }
+    }
+
+    [ConfigurationCollection(typeof(CertificateElement))]
+    public class CertificateElementCollection : ConfigurationElementCollection
+    {
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new CertificateElement();
+        }
+
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((CertificateElement)element).Id;
+        }
+    }
+
+    public class CertificateElement : ConfigurationElement
+    {
+        [ConfigurationProperty("id", IsKey = true, IsRequired = true)]
+        public string Id
+        {
+            get => (string)this["id"];
+            set => this["id"] = value;
+        }
+
+        [ConfigurationProperty("filePath", IsRequired = true)]
+        public string FilePath
+        {
+            get => (string)this["filePath"];
+            set => this["filePath"] = value;
+        }
+
+        [ConfigurationProperty("password", IsRequired = true)]
+        public string Password
+        {
+            get => (string)this["password"];
+            set => this["password"] = value;
         }
     }
 
@@ -35,18 +80,11 @@ namespace Keeker.Core.Conf
             set => this["id"] = value;
         }
 
-        [ConfigurationProperty("address", IsRequired = true)]
-        public string Address
+        [ConfigurationProperty("endPoint", IsRequired = true)]
+        public string EndPoint
         {
-            get => (string)this["address"];
-            set => this["address"] = value;
-        }
-
-        [ConfigurationProperty("port", IsRequired = true)]
-        public int Port
-        {
-            get => (int)this["port"];
-            set => this["port"] = value;
+            get => (string)this["endPoint"];
+            set => this["endPoint"] = value;
         }
 
         [ConfigurationProperty("isHttps", IsRequired = true)]
@@ -56,29 +94,29 @@ namespace Keeker.Core.Conf
             set => this["isHttps"] = value;
         }
 
-        [ConfigurationProperty("hosts", IsDefaultCollection = true)]
-        public HostElementCollection Hosts
+        [ConfigurationProperty("relays", IsDefaultCollection = true)]
+        public RelayElementCollection Relays
         {
-            get => this["hosts"] as HostElementCollection;
-            set => this["hosts"] = value;
+            get => this["relays"] as RelayElementCollection;
+            set => this["relays"] = value;
         }
     }
 
-    [ConfigurationCollection(typeof(HostElement))]
-    public class HostElementCollection : ConfigurationElementCollection
+    [ConfigurationCollection(typeof(RelayElement))]
+    public class RelayElementCollection : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
         {
-            return new HostElement();
+            return new RelayElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((HostElement)element).ExternalHostName;
+            return ((RelayElement)element).ExternalHostName;
         }
     }
 
-    public class HostElement : ConfigurationElement
+    public class RelayElement : ConfigurationElement
     {
         [ConfigurationProperty("externalHostName", IsKey = true, IsRequired = true)]
         public string ExternalHostName
@@ -87,40 +125,6 @@ namespace Keeker.Core.Conf
             set => this["externalHostName"] = value;
         }
 
-        [ConfigurationProperty("httpRedirect", IsRequired = false, DefaultValue = null)]
-        public HttpRedirectElement HttpRedirect
-        {
-            get => (HttpRedirectElement)this["httpRedirect"];
-            set => this["httpRedirect"] = value;
-        }
-
-        [ConfigurationProperty("relay", IsRequired = false, DefaultValue = null)]
-        public RelayElement Relay
-        {
-            get => (RelayElement)this["relay"];
-            set => this["relay"] = value;
-        }
-
-        [ConfigurationProperty("certificate", IsRequired = false, DefaultValue = null)]
-        public CertificateElement Certificate
-        {
-            get => (CertificateElement)this["certificate"];
-            set => this["certificate"] = value;
-        }
-    }
-
-    public class HttpRedirectElement : ConfigurationElement
-    {
-        [ConfigurationProperty("toHostName", IsRequired = true)]
-        public string ToHostName
-        {
-            get => (string)this["toHostName"];
-            set => this["toHostName"] = value;
-        }
-    }
-
-    public class RelayElement : ConfigurationElement
-    {
         [ConfigurationProperty("domesticHostName", IsRequired = true)]
         public string DomesticHostName
         {
@@ -128,35 +132,18 @@ namespace Keeker.Core.Conf
             set => this["domesticHostName"] = value;
         }
 
-        [ConfigurationProperty("address", IsRequired = true)]
-        public string Address
+        [ConfigurationProperty("endPoint", IsRequired = true)]
+        public string EndPoint
         {
-            get => (string)this["address"];
-            set => this["address"] = value;
+            get => (string)this["endPoint"];
+            set => this["endPoint"] = value;
         }
 
-        [ConfigurationProperty("port", IsRequired = true)]
-        public int Port
+        [ConfigurationProperty("certificateId")]
+        public string CertificateId
         {
-            get => (int)this["port"];
-            set => this["port"] = value;
-        }
-    }
-
-    public class CertificateElement : ConfigurationElement
-    {
-        [ConfigurationProperty("filePath", IsRequired = true)]
-        public string FilePath
-        {
-            get => (string)this["filePath"];
-            set => this["filePath"] = value;
-        }
-
-        [ConfigurationProperty("password", IsRequired = true)]
-        public string Password
-        {
-            get => (string)this["password"];
-            set => this["password"] = value;
+            get => (string)this["certificateId"];
+            set => this["certificateId"] = value;
         }
     }
 }

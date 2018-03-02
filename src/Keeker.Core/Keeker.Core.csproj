@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ByteAccumulator.cs" />
+    <Compile Include="CertificateInfo.cs" />
     <Compile Include="ConnectionAcceptedEventArgs.cs" />
     <Compile Include="CoreHelper.cs" />
     <Compile Include="HttpHeader.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Conf\ProxySection.cs" />
     <Compile Include="Conf\ProxyPlainConf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Relays\AutoBuffer.cs" />
     <Compile Include="Relays\RelayBase.cs" />
     <Compile Include="Relays\SecureRelay.cs" />
     <Compile Include="WebConnection.cs" />

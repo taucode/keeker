@@ -1,6 +1,7 @@
 ﻿using Keeker.Core.Conf;
 using System;
 using System.IO;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace Keeker.Core.Relays
@@ -16,25 +17,35 @@ namespace Keeker.Core.Relays
             ReadingContent,
         }
 
-        private readonly KeekStream _clientStream;
-        private readonly KeekStream _serverStream;
+        private enum ServerFlowState
+        {
+            Unknown = 0,
+            ReadingHeader,
+            ReadingContent,
+        }
+
         private readonly RelayPlainConf _conf;
 
+        private readonly KeekStream _clientStream;
         private ClientFlowState _clientFlowState;
+        private readonly AutoBuffer _clientBuffer;
 
-        private readonly byte[] _redirectContentBuffer;
+        private readonly KeekStream _serverStream;
+        private ServerFlowState _serverFlowState;
+        private readonly AutoBuffer _serverBuffer;
 
         public RelayBase(Stream innerClientStream, RelayPlainConf conf)
         {
             _conf = (conf ?? throw new ArgumentNullException(nameof(conf))).Clone();
 
             _clientStream = new KeekStream(innerClientStream);
+            _clientBuffer = new AutoBuffer();
 
-            throw new NotImplementedException();
-            //var tcpclient = new TcpClient();
-            //tcpclient.Connect(_conf.GetEndPoint());
-            //var serverNetworkStream = tcpclient.GetStream();
-            //_serverStream = new KeekStream(serverNetworkStream);
+            var tcpclient = new TcpClient();
+            tcpclient.Connect(_conf.EndPoint);
+            var serverNetworkStream = tcpclient.GetStream();
+            _serverStream = new KeekStream(serverNetworkStream);
+            _serverBuffer = new AutoBuffer();
 
             //_redirectContentBuffer = new byte[REDIRECT_CONTENT_BUFFER_SIZE];
         }
@@ -56,15 +67,23 @@ namespace Keeker.Core.Relays
             {
                 if (_clientFlowState == ClientFlowState.ReadingHeader)
                 {
-                    _clientStream.ReadInnerStream(PORTION_SIZE);
+                    var bytesReadCount = _clientStream.ReadInnerStream(PORTION_SIZE);
+
+                    if (bytesReadCount == 0)
+                    {
+                        throw new NotImplementedException(); // socket has been shut down
+                    }
+
                     var index = _clientStream.PeekIndexOf(HttpHelper.CrLfCrLfBytes);
                     if (index >= 0)
                     {
                         var metadataLength = index + HttpHelper.CrLfCrLfBytes.Length;
-                        var buffer = new byte[metadataLength];
-                        _clientStream.Read(buffer, 0, metadataLength);
+                        //var buffer = new byte[metadataLength];
 
-                        var requestMetadata = HttpRequestMetadata.Parse(buffer, 0);
+                        _clientBuffer.Allocate(metadataLength);
+                        _clientStream.Read(_clientBuffer.Buffer, 0, metadataLength);
+
+                        var requestMetadata = HttpRequestMetadata.Parse(_clientBuffer.Buffer, 0);
                         var transformedRequestMetadata = this.TransformRequestMetadata(requestMetadata);
                         var transformedRequestMetadataBytes = transformedRequestMetadata.ToArray();
                         _serverStream.Write(transformedRequestMetadataBytes, 0, transformedRequestMetadataBytes.Length);
@@ -75,14 +94,10 @@ namespace Keeker.Core.Relays
                             contentBytesCount = transformedRequestMetadata.Headers.GetContentLength();
                         }
                     }
-                    else
-                    {
-                        // wat? todo0[ak]
-                    }
                 }
                 else if (_clientFlowState == ClientFlowState.ReadingContent)
                 {
-                    this.RedirectContent(contentBytesCount);
+                    this.RedirectClientContent(contentBytesCount);
                     contentBytesCount = 0;
                     _clientFlowState = ClientFlowState.ReadingHeader;
                 }
@@ -105,6 +120,12 @@ namespace Keeker.Core.Relays
                 try
                 {
                     var bytesCount = from.Read(buffer, 0, buffer.Length);
+
+                    if (bytesCount == 0)
+                    {
+                        throw new NotImplementedException();
+                    }
+
                     to.Write(buffer, 0, bytesCount);
                 }
                 catch
@@ -142,10 +163,10 @@ namespace Keeker.Core.Relays
             return transformedRequestMetadata;
         }
 
-        private void RedirectContent(int contentBytesCount)
+        private void RedirectClientContent(int contentBytesCount)
         {
             var remaining = contentBytesCount;
-            var buffer = _redirectContentBuffer; // lazy for typing :)
+            var buffer = _clientBuffer.Buffer; // lazy for typing :)
 
             while (true)
             {

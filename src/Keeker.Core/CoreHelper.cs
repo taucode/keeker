@@ -15,6 +15,12 @@ namespace Keeker.Core
         {
             var plainKeekerSection = new ProxyPlainConf
             {
+                Certificates = proxySection.Certificates?
+                    .Cast<CertificateElement>()
+                    .ToDictionary(
+                        x => x.Id,
+                        x => x.ToCertificatePlainConf()),
+
                 Listeners = proxySection.Listeners?
                     .Cast<ListenerElement>()
                     .ToDictionary(
@@ -31,6 +37,9 @@ namespace Keeker.Core
         {
             var clone = new ProxyPlainConf
             {
+                Certificates = conf.Certificates?
+                    .ToDictionary(x => x.Key, x => x.Value.Clone()),
+
                 Listeners = conf.Listeners?
                     .ToDictionary(x => x.Key, x => x.Value.Clone()),
             };
@@ -116,15 +125,15 @@ namespace Keeker.Core
 
         public static CertificatePlainConf ToCertificatePlainConf(this CertificateElement certificateElement)
         {
-            if (certificateElement == null || !certificateElement.ElementInformation.IsPresent)
-            {
-                return null;
-            }
-
             var res = new CertificatePlainConf
             {
+                Id = certificateElement.Id,
                 FilePath = certificateElement.FilePath,
                 Password = certificateElement.Password,
+                Domains = certificateElement.Domains
+                    .Cast<DomainElement>()
+                    .Select(x => x.Name)
+                    .ToHashSet(),
             };
 
             return res;
@@ -132,15 +141,12 @@ namespace Keeker.Core
 
         public static CertificatePlainConf Clone(this CertificatePlainConf conf)
         {
-            if (conf == null)
-            {
-                return null;
-            }
-
             return new CertificatePlainConf
             {
+                Id = conf.Id,
                 FilePath = conf.FilePath,
                 Password = conf.Password,
+                Domains = conf.Domains.ToHashSet(),
             };
         }
 
@@ -312,6 +318,24 @@ namespace Keeker.Core
             var address = IPAddress.Parse(parts[0]);
             var port = parts[1].ToInt32();
             return new IPEndPoint(address, port);
+        }
+
+        public static HashSet<T> ToHashSet<T>(this IEnumerable<T> collection, bool checkUniqueness = true)
+        {
+            var hashSet = checkUniqueness
+                ? new HashSet<T>(collection.ToDictionary(x => x, x => (byte)0).Keys)
+                : new HashSet<T>(collection);
+
+            return hashSet;
+        }
+
+        public static string[] GetUserCertificateIds(this ListenerPlainConf conf)
+        {
+            return conf.Relays?
+                .Select(x => x.CertificateId)
+                .Where(x => !string.IsNullOrEmpty(x))
+                .Distinct()
+                .ToArray();
         }
     }
 }

@@ -27,6 +27,7 @@ namespace Keeker.Core.Conf
         public string Id { get; set; }
         public string FilePath { get; set; }
         public string Password { get; set; }
+        public HashSet<string> Domains { get; set; }
     }
 
     public class ListenerPlainConf

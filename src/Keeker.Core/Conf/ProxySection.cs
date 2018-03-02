@@ -4,14 +4,14 @@ namespace Keeker.Core.Conf
 {
     public class ProxySection : ConfigurationSection
     {
-        [ConfigurationProperty("certificates", IsDefaultCollection = true)]
+        [ConfigurationProperty("certificates")]
         public CertificateElementCollection Certificates
         {
             get => this["certificates"] as CertificateElementCollection;
             set => this["certificates"] = value;
         }
 
-        [ConfigurationProperty("listeners", IsDefaultCollection = true)]
+        [ConfigurationProperty("listeners")]
         public ListenerElementCollection Listeners
         {
             get => this["listeners"] as ListenerElementCollection;
@@ -55,6 +55,37 @@ namespace Keeker.Core.Conf
             get => (string)this["password"];
             set => this["password"] = value;
         }
+
+        [ConfigurationProperty("domains")]
+        public DomainElementCollection Domains
+        {
+            get => this["domains"] as DomainElementCollection;
+            set => this["domains"] = value;
+        }
+    }
+
+    [ConfigurationCollection(typeof(DomainElement))]
+    public class DomainElementCollection : ConfigurationElementCollection
+    {
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new DomainElement();
+        }
+
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((DomainElement)element).Name;
+        }
+    }
+
+    public class DomainElement : ConfigurationElement
+    {
+        [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
+        public string Name
+        {
+            get => (string)this["name"];
+            set => this["name"] = value;
+        }
     }
 
     [ConfigurationCollection(typeof(ListenerElement))]
@@ -94,7 +125,7 @@ namespace Keeker.Core.Conf
             set => this["isHttps"] = value;
         }
 
-        [ConfigurationProperty("relays", IsDefaultCollection = true)]
+        [ConfigurationProperty("relays")]
         public RelayElementCollection Relays
         {
             get => this["relays"] as RelayElementCollection;

@@ -18,14 +18,17 @@
     <certificates>
       <add id="rho"
            filePath="c:\certs\rho.me.pfx"
-           password="doresaq1488" />
+           password="doresaq1488" >
+        <domains>
+          <add name="rho.me" />
+        </domains>
+      </add>
     </certificates>
 
     <listeners>
       <add id="sample"
-           endPoint="127.0.0.1:80"
+           endPoint="127.0.0.1:81"
            isHttps="false">
-
         <relays>
           <add externalHostName="www.rho.me"
                domesticHostName="localhost"
@@ -66,8 +69,8 @@
                domesticHostName="localhost"
                endPoint="127.0.0.1:53808"
                certificateId="rho" />
-               -->
-
+          -->
+          
           <!-- prod -->
           <add externalHostName="www.rho.me"
                domesticHostName="www.rho.me"

@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Text;
 using TauCode.Utils.Extensions;
 
@@ -35,13 +36,24 @@ namespace Keeker.Core.Test
 
             // Assert
             Assert.That(conf, Is.Not.Null);
+
+            var certificates = conf.Certificates;
+            Assert.That(certificates, Is.Not.Null);
+            Assert.That(certificates, Has.Count.EqualTo(1));
+
+            var certificate = certificates["rho"];
+            Assert.That(certificate.Id, Is.EqualTo("rho"));
+            Assert.That(certificate.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
+            Assert.That(certificate.Password, Is.EqualTo("doresaq1488"));
+            CollectionAssert.AreEquivalent(new[] { "rho.me", }, certificate.Domains.ToArray());
+
             Assert.That(conf.Listeners, Is.Not.Null);
             Assert.That(conf.Listeners, Has.Count.EqualTo(2));
 
             // listener: sample
             var listenerConf = conf.Listeners["sample"];
             Assert.That(listenerConf.Id, Is.EqualTo("sample"));
-            Assert.That(listenerConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:80"));
+            Assert.That(listenerConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:81"));
             Assert.That(listenerConf.IsHttps, Is.False);
             Assert.That(listenerConf.Relays, Is.Not.Null);
             Assert.That(listenerConf.Relays, Has.Count.EqualTo(2));
@@ -85,7 +97,7 @@ namespace Keeker.Core.Test
         }
 
         [Test]
-        public void CloneConfiguration_ValidOriginalConfiguration_ClonsesCorrectly()
+        public void CloneConfiguration_ValidOriginalConfiguration_ClonesCorrectly()
         {
             // Arrange
             var proxySection = this.GetProxySection();
@@ -96,13 +108,24 @@ namespace Keeker.Core.Test
 
             // Assert
             Assert.That(conf, Is.Not.Null);
+
+            var certificates = conf.Certificates;
+            Assert.That(certificates, Is.Not.Null);
+            Assert.That(certificates, Has.Count.EqualTo(1));
+
+            var certificate = certificates["rho"];
+            Assert.That(certificate.Id, Is.EqualTo("rho"));
+            Assert.That(certificate.FilePath, Is.EqualTo(@"c:\certs\rho.me.pfx"));
+            Assert.That(certificate.Password, Is.EqualTo("doresaq1488"));
+            CollectionAssert.AreEquivalent(new[] { "rho.me", }, certificate.Domains.ToArray());
+
             Assert.That(conf.Listeners, Is.Not.Null);
             Assert.That(conf.Listeners, Has.Count.EqualTo(2));
 
             // listener: sample
             var listenerConf = conf.Listeners["sample"];
             Assert.That(listenerConf.Id, Is.EqualTo("sample"));
-            Assert.That(listenerConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:80"));
+            Assert.That(listenerConf.EndPoint.ToString(), Is.EqualTo("127.0.0.1:81"));
             Assert.That(listenerConf.IsHttps, Is.False);
             Assert.That(listenerConf.Relays, Is.Not.Null);
             Assert.That(listenerConf.Relays, Has.Count.EqualTo(2));

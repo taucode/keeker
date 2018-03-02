@@ -1,5 +1,7 @@
 ﻿using Keeker.Core.Conf;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Keeker.Core
 {
@@ -8,10 +10,10 @@ namespace Keeker.Core
         #region Fields
 
         private readonly ProxyPlainConf _conf;
-        //private readonly IListener _listener;
+        private readonly Dictionary<string, CertificateInfo> _certificates;
         private readonly List<IListener> _listeners;
 
-        
+
         #endregion
 
         #region Constructor
@@ -19,20 +21,23 @@ namespace Keeker.Core
         public Proxy(ProxyPlainConf conf)
         {
             _conf = conf.Clone();
-            _listeners = new List<IListener>();
 
-            foreach (var listenerConf in conf.Listeners.Values)
-            {
-                var listener = new Listener(listenerConf);
-                _listeners.Add(listener);
-            }
+            _certificates = conf.Certificates
+                .ToDictionary(
+                    x => x.Key,
+                    x => new CertificateInfo(
+                            x.Value.Domains.ToArray(),
+                            new X509Certificate(
+                                x.Value.FilePath,
+                                x.Value.Password)));
 
-            //_listener = new Listener(new IPEndPoint(_conf.Address, _conf.Port));
-
-            //_listener.Started += listener_Started;
-            //_listener.Stopped += listener_Stopped;
-            //_listener.ConnectionAccepted += listener_ConnectionAccepted;
-            //_targets = this.BuildTargets();
+            _listeners = conf.Listeners.Values
+                .Select(x => (IListener)new Listener(
+                    x,
+                    x.GetUserCertificateIds()
+                        .Select(y => _certificates[y])
+                        .ToArray()))
+                .ToList();
         }
 
         #endregion
@@ -59,7 +64,7 @@ namespace Keeker.Core
 
         #region Private
 
-        
+
 
 
         #endregion

@@ -30,11 +30,6 @@ namespace Keeker.Core
             return contains;
         }
 
-        public int GetContentLength()
-        {
-            return _headers.Single(x => x.Name == "Content-Length").Value.ToInt32();
-        }
-
         public byte[] ToArray()
         {
             using (var stream = new MemoryStream())
@@ -58,20 +53,20 @@ namespace Keeker.Core
             return GetEnumerator();
         }
 
-        public static HttpHeaderCollection Parse(byte[] buffer, int offset)
+        public static HttpHeaderCollection Parse(byte[] buffer, int start)
         {
             var headers = new HttpHeaderCollection();
 
             while (true)
             {
-                var header = HttpHeader.Parse(buffer, offset);
+                var header = HttpHeader.Parse(buffer, start);
                 if (header == null)
                 {
                     break;
                 }
 
                 headers.Add(header);
-                offset += header.ByteCount;
+                start += header.ByteCount;
             }
 
             return headers;

@@ -337,5 +337,10 @@ namespace Keeker.Core
                 .Distinct()
                 .ToArray();
         }
+
+        public static TEnum ToEnum<TEnum>(this string s)
+        {
+            return (TEnum)Enum.Parse(typeof(TEnum), s, true);
+        }
     }
 }

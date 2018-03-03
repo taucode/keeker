@@ -2,26 +2,28 @@
 using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Keeker.Core.Relays
 {
     public class RelayBase
     {
-        private const int REDIRECT_CONTENT_BUFFER_SIZE = 1000;
-
         private enum ClientFlowState
         {
             Unknown = 0,
-            ReadingHeader,
-            ReadingContent,
+            Idle,
+            ReadingMetadata,
+            RedirectingFixedSizeContent,
         }
 
         private enum ServerFlowState
         {
             Unknown = 0,
-            ReadingHeader,
-            ReadingContent,
+            Idle,
+            ReadingMetadata,
+            RedirectingFixedSizeContent,
+            RedirectingChunkedContent,
         }
 
         private readonly RelayPlainConf _conf;
@@ -29,10 +31,12 @@ namespace Keeker.Core.Relays
         private readonly KeekStream _clientStream;
         private ClientFlowState _clientFlowState;
         private readonly AutoBuffer _clientBuffer;
+        private readonly FixedSizeContentRedirector _clientRedirector;
 
         private readonly KeekStream _serverStream;
         private ServerFlowState _serverFlowState;
         private readonly AutoBuffer _serverBuffer;
+        private readonly FixedSizeContentRedirector _serverRedirector;
 
         public RelayBase(Stream innerClientStream, RelayPlainConf conf)
         {
@@ -40,14 +44,15 @@ namespace Keeker.Core.Relays
 
             _clientStream = new KeekStream(innerClientStream);
             _clientBuffer = new AutoBuffer();
+            _clientRedirector = new FixedSizeContentRedirector(_clientStream, _serverStream, _clientBuffer);
 
             var tcpclient = new TcpClient();
             tcpclient.Connect(_conf.EndPoint);
             var serverNetworkStream = tcpclient.GetStream();
+
             _serverStream = new KeekStream(serverNetworkStream);
             _serverBuffer = new AutoBuffer();
-
-            //_redirectContentBuffer = new byte[REDIRECT_CONTENT_BUFFER_SIZE];
+            _serverRedirector = new FixedSizeContentRedirector(_serverStream, _clientStream, _serverBuffer);
         }
 
         public void Start()
@@ -58,27 +63,52 @@ namespace Keeker.Core.Relays
 
         private void ClientRoutine()
         {
+            const int IDLE_TIMEOUT = 1;
+            var idleTimeout = TimeSpan.FromMilliseconds(IDLE_TIMEOUT);
             const int PORTION_SIZE = 1000;
 
-            _clientFlowState = ClientFlowState.ReadingHeader;;
+            _clientFlowState = ClientFlowState.Idle;;
             var contentBytesCount = 0;
 
             while (true)
             {
-                if (_clientFlowState == ClientFlowState.ReadingHeader)
+                if (_clientFlowState == ClientFlowState.Idle)
                 {
+                    if (_clientStream.AccumulatedBytesCount > 0)
+                    {
+                        _clientFlowState = ClientFlowState.ReadingMetadata;
+                        continue;
+                    }
+
                     var bytesReadCount = _clientStream.ReadInnerStream(PORTION_SIZE);
 
                     if (bytesReadCount == 0)
                     {
-                        throw new NotImplementedException(); // socket has been shut down
+                        Thread.Sleep(idleTimeout);
+                    }
+                    else
+                    {
+                        _clientFlowState = ClientFlowState.ReadingMetadata;
+                    }
+                }
+                else if (_clientFlowState == ClientFlowState.ReadingMetadata)
+                {
+                    if (_clientStream.AccumulatedBytesCount == 0)
+                    {
+                        // let's accumulate some data
+                        var bytesReadCount = _clientStream.ReadInnerStream(PORTION_SIZE);
+
+                        if (bytesReadCount == 0)
+                        {
+                            _clientFlowState = ClientFlowState.Idle;
+                            continue;
+                        }
                     }
 
                     var index = _clientStream.PeekIndexOf(HttpHelper.CrLfCrLfBytes);
                     if (index >= 0)
                     {
                         var metadataLength = index + HttpHelper.CrLfCrLfBytes.Length;
-                        //var buffer = new byte[metadataLength];
 
                         _clientBuffer.Allocate(metadataLength);
                         _clientStream.Read(_clientBuffer.Buffer, 0, metadataLength);
@@ -90,16 +120,17 @@ namespace Keeker.Core.Relays
 
                         if (transformedRequestMetadata.Headers.ContainsName("Content-Length"))
                         {
-                            _clientFlowState = ClientFlowState.ReadingContent;
+                            _clientFlowState = ClientFlowState.RedirectingFixedSizeContent;
                             contentBytesCount = transformedRequestMetadata.Headers.GetContentLength();
                         }
                     }
                 }
-                else if (_clientFlowState == ClientFlowState.ReadingContent)
+                else if (_clientFlowState == ClientFlowState.RedirectingFixedSizeContent)
                 {
-                    this.RedirectClientContent(contentBytesCount);
+                    //this.RedirectClientContent(contentBytesCount);
+                    _clientRedirector.Redirect(contentBytesCount);
                     contentBytesCount = 0;
-                    _clientFlowState = ClientFlowState.ReadingHeader;
+                    _clientFlowState = ClientFlowState.Idle;
                 }
                 else
                 {
@@ -110,48 +141,141 @@ namespace Keeker.Core.Relays
 
         private void ServerRoutine()
         {
-            var from = _serverStream;
-            var to = _clientStream;
+            const int IDLE_TIMEOUT = 1;
+            var idleTimeout = TimeSpan.FromMilliseconds(IDLE_TIMEOUT);
+            const int PORTION_SIZE = 1000;
 
-            var buffer = new byte[65536];
+            _serverFlowState = ServerFlowState.Idle;
+            var contentBytesCount = 0;
 
             while (true)
             {
-                try
+                if (_serverFlowState == ServerFlowState.Idle)
                 {
-                    var bytesCount = from.Read(buffer, 0, buffer.Length);
-
-                    if (bytesCount == 0)
+                    if (_serverStream.AccumulatedBytesCount > 0)
                     {
-                        throw new NotImplementedException();
+                        _serverFlowState = ServerFlowState.ReadingMetadata;
+                        continue;
                     }
 
-                    to.Write(buffer, 0, bytesCount);
+                    var bytesReadCount = _serverStream.ReadInnerStream(PORTION_SIZE);
+
+                    if (bytesReadCount == 0)
+                    {
+                        Thread.Sleep(idleTimeout);
+                    }
+                    else
+                    {
+                        _serverFlowState = ServerFlowState.ReadingMetadata;
+                    }
                 }
-                catch
+                else if (_serverFlowState == ServerFlowState.ReadingMetadata)
                 {
-                    try
+                    if (_serverStream.AccumulatedBytesCount == 0)
                     {
-                        from.Close();
-                    }
-                    catch
-                    {
-                        // don't care; dismiss
+                        // let's accumulate some data
+                        var bytesReadCount = _serverStream.ReadInnerStream(PORTION_SIZE);
+
+                        if (bytesReadCount == 0)
+                        {
+                            _serverFlowState = ServerFlowState.Idle;
+                            continue;
+                        }
                     }
 
-                    try
+                    var index = _serverStream.PeekIndexOf(HttpHelper.CrLfCrLfBytes);
+                    if (index > 0)
                     {
-                        to.Close();
-                    }
-                    catch
-                    {
-                        // don't care; dismiss
-                    }
+                        var metadataLength = index + HttpHelper.CrLfCrLfBytes.Length;
+                        _serverBuffer.Allocate(metadataLength);
 
-                    // don't care, just exit.
-                    break;
+                        _serverStream.Read(_serverBuffer.Buffer, 0, metadataLength);
+
+                        var responseMetadata = HttpResponseMetadata.Parse(_serverBuffer.Buffer, 0);
+
+                        var transformedResponseMetadata = this.TransformResponseMetadata(responseMetadata);
+                        var transformedResponseMetadataBytes = transformedResponseMetadata.ToArray();
+                        _clientStream.Write(transformedResponseMetadataBytes, 0, transformedResponseMetadataBytes.Length);
+
+                        if (transformedResponseMetadata.Headers.ContainsName("Content-Length"))
+                        {
+                            _serverFlowState = ServerFlowState.RedirectingFixedSizeContent;
+                            contentBytesCount = transformedResponseMetadata.Headers.GetContentLength();
+                        }
+                        else if (transformedResponseMetadata.Headers.ContainsName("Transfer-Encoding"))
+                        {
+                            var transferEncoding = transformedResponseMetadata.Headers.GetTransferEncoding();
+                            if (transferEncoding == HttpTransferEncoding.Chunked)
+                            {
+                                _serverFlowState = ServerFlowState.RedirectingChunkedContent;
+                            }
+                            else
+                            {
+                                throw new NotImplementedException();
+                            }
+                        }
+                    }
+                }
+                else if (_serverFlowState == ServerFlowState.RedirectingFixedSizeContent)
+                {
+                    //this.RedirectServerContent(contentBytesCount);
+                    _serverRedirector.Redirect(contentBytesCount);
+                    contentBytesCount = 0;
+                    _serverFlowState = ServerFlowState.Idle;
+
+                }
+                else if (_serverFlowState == ServerFlowState.RedirectingChunkedContent)
+                {
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    throw new NotImplementedException();
                 }
             }
+
+            //var from = _serverStream;
+            //var to = _clientStream;
+
+            //var buffer = new byte[65536];
+
+            //while (true)
+            //{
+            //    try
+            //    {
+            //        var bytesCount = from.Read(buffer, 0, buffer.Length);
+
+            //        if (bytesCount == 0)
+            //        {
+            //            throw new NotImplementedException();
+            //        }
+
+            //        to.Write(buffer, 0, bytesCount);
+            //    }
+            //    catch
+            //    {
+            //        try
+            //        {
+            //            from.Close();
+            //        }
+            //        catch
+            //        {
+            //            // don't care; dismiss
+            //        }
+
+            //        try
+            //        {
+            //            to.Close();
+            //        }
+            //        catch
+            //        {
+            //            // don't care; dismiss
+            //        }
+
+            //        // don't care, just exit.
+            //        break;
+            //    }
+            //}
         }
 
         private HttpRequestMetadata TransformRequestMetadata(HttpRequestMetadata requestMetadata)
@@ -163,24 +287,55 @@ namespace Keeker.Core.Relays
             return transformedRequestMetadata;
         }
 
-        private void RedirectClientContent(int contentBytesCount)
+        //private void RedirectClientContent(int contentBytesCount)
+        //{
+        //    const int CONTENT_TRANSFER_PORTION_SIZE = 10000;
+
+        //    var remaining = contentBytesCount;
+        //    _clientBuffer.Allocate(CONTENT_TRANSFER_PORTION_SIZE);
+        //    var buffer = _clientBuffer.Buffer; // lazy for typing :)
+
+        //    while (true)
+        //    {
+        //        if (remaining == 0)
+        //        {
+        //            break;
+        //        }
+
+        //        var portionSize = Math.Min(remaining, buffer.Length);
+        //        var bytesReadCount = _clientStream.Read(buffer, 0, portionSize);
+        //        _serverStream.Write(buffer, 0, bytesReadCount);
+
+        //        remaining -= bytesReadCount;
+        //    }
+        //}
+
+        private HttpResponseMetadata TransformResponseMetadata(HttpResponseMetadata responseMetadata)
         {
-            var remaining = contentBytesCount;
-            var buffer = _clientBuffer.Buffer; // lazy for typing :)
-
-            while (true)
-            {
-                if (remaining == 0)
-                {
-                    break;
-                }
-
-                var portionSize = Math.Min(remaining, buffer.Length);
-                var bytesReadCount = _clientStream.Read(buffer, 0, portionSize);
-                _serverStream.Write(buffer, 0, bytesReadCount);
-
-                remaining -= bytesReadCount;
-            }
+            return responseMetadata; // todo0[ak] temp
         }
+
+        //private void RedirectServerContent(int contentBytesCount)
+        //{
+        //    const int CONTENT_TRANSFER_PORTION_SIZE = 10000;
+
+        //    var remaining = contentBytesCount;
+        //    _serverBuffer.Allocate(CONTENT_TRANSFER_PORTION_SIZE);
+        //    var buffer = _serverBuffer.Buffer;
+
+        //    while (true)
+        //    {
+        //        if (remaining == 0)
+        //        {
+        //            break;
+        //        }
+
+        //        var portionSize = Math.Min(remaining, buffer.Length);
+        //        var bytesReadCount = _serverStream.Read(buffer, 0, portionSize);
+        //        _clientStream.Write(buffer, 0, bytesReadCount);
+
+        //        remaining -= bytesReadCount;
+        //    }
+        //}
     }
 }

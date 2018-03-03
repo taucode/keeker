@@ -36,39 +36,39 @@ namespace Keeker.Core
 
         public int ByteCount { get; }
 
-        public static HttpRequestLine Parse(byte[] buffer, int offset)
+        public static HttpRequestLine Parse(byte[] buffer, int start)
         {
-            var crLfIndex = buffer.IndexOfSubarray(HttpHelper.CrLfBytes, offset, -1);
+            var crLfIndex = buffer.IndexOfSubarray(HttpHelper.CrLfBytes, start, -1);
             if (crLfIndex == -1)
             {
                 throw new ApplicationException(); // todo1[ak]
             }
 
             // method
-            var indexOfSpaceAfterMethod = buffer.IndexOf(SPACE_BYTE, offset);
+            var indexOfSpaceAfterMethod = buffer.IndexOf(SPACE_BYTE, start);
             if (indexOfSpaceAfterMethod == -1)
             {
                 throw new ApplicationException(); // todo1[ak]
             }
 
-            var length = indexOfSpaceAfterMethod - offset;
-            var method = buffer.GetAsciiSubstring(offset, length);
+            var length = indexOfSpaceAfterMethod - start;
+            var method = buffer.GetAsciiSubstring(start, length);
 
             // advance
-            offset = indexOfSpaceAfterMethod + 1; // skip ' '
+            start = indexOfSpaceAfterMethod + 1; // skip ' '
 
             // uri
-            var indexOfSpaceAfterUri = buffer.IndexOf(SPACE_BYTE, offset);
+            var indexOfSpaceAfterUri = buffer.IndexOf(SPACE_BYTE, start);
 
-            length = indexOfSpaceAfterUri - offset;
-            var uri = buffer.GetAsciiSubstring(offset, length);
+            length = indexOfSpaceAfterUri - start;
+            var uri = buffer.GetAsciiSubstring(start, length);
 
             // advance
-            offset = indexOfSpaceAfterUri + 1; // skip ' '
+            start = indexOfSpaceAfterUri + 1; // skip ' '
 
             // http version
-            length = crLfIndex - offset;
-            var version = buffer.GetAsciiSubstring(offset, length);
+            length = crLfIndex - start;
+            var version = buffer.GetAsciiSubstring(start, length);
 
             var line = new HttpRequestLine(new HttpMethod(method), uri, version);
             return line;

@@ -2,15 +2,15 @@
 
 namespace Keeker.Core
 {
-    public class HttpRequestMetadata
+    public class HttpResponseMetadata
     {
-        public HttpRequestMetadata(HttpRequestLine line, HttpHeaderCollection headers)
+        public HttpResponseMetadata(HttpStatusLine line, HttpHeaderCollection headers)
         {
             this.Line = line;
             this.Headers = headers;
         }
 
-        public HttpRequestLine Line { get; }
+        public HttpStatusLine Line { get; }
 
         public HttpHeaderCollection Headers { get; }
 
@@ -27,16 +27,16 @@ namespace Keeker.Core
             }
         }
 
-        public static HttpRequestMetadata Parse(byte[] buffer, int start)
+        public static HttpResponseMetadata Parse(byte[] buffer, int start)
         {
-            // parse line
-            var line = HttpRequestLine.Parse(buffer, 0);
+            // parse status line
+            var line = HttpStatusLine.Parse(buffer, 0);
             start += line.ByteCount;
 
             // parse headers
             var headers = HttpHeaderCollection.Parse(buffer, start);
 
-            var metadata = new HttpRequestMetadata(line, headers);
+            var metadata = new HttpResponseMetadata(line, headers);
 
             return metadata;
         }

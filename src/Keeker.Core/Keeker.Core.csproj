@@ -54,6 +54,9 @@
     <Compile Include="HttpRequestLineBuilder.cs" />
     <Compile Include="HttpRequestMetadata.cs" />
     <Compile Include="HttpRequestMetadataBuilder.cs" />
+    <Compile Include="HttpResponseMetadata.cs" />
+    <Compile Include="HttpStatusLine.cs" />
+    <Compile Include="HttpTransferEncoding.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="IProxy.cs" />
     <Compile Include="Listener.cs" />
@@ -63,6 +66,8 @@
     <Compile Include="Conf\ProxyPlainConf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Relays\AutoBuffer.cs" />
+    <Compile Include="Relays\ChunkedContentRedirector.cs" />
+    <Compile Include="Relays\FixedSizeContentRedirector.cs" />
     <Compile Include="Relays\RelayBase.cs" />
     <Compile Include="Relays\SecureRelay.cs" />
     <Compile Include="WebConnection.cs" />

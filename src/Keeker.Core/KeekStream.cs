@@ -161,6 +161,11 @@ namespace Keeker.Core
             }
         }
 
+        public int AccumulatedBytesCount
+        {
+            get { return _accumulator.Count; }
+        }
+
         #endregion
     }
 }

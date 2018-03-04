@@ -19,5 +19,9 @@ namespace Keeker.Core
             return httpHeaders.Single(x => x.Name == "Content-Length").Value.ToInt32();
         }
 
+        public static string GetLocation(this HttpHeaderCollection httpHeaders)
+        {
+            return httpHeaders.Single(x => x.Name == "Location").Value;
+        }
     }
 }

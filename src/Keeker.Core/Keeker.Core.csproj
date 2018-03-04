@@ -55,7 +55,9 @@
     <Compile Include="HttpRequestMetadata.cs" />
     <Compile Include="HttpRequestMetadataBuilder.cs" />
     <Compile Include="HttpResponseMetadata.cs" />
+    <Compile Include="HttpResponseMetadataBuilder.cs" />
     <Compile Include="HttpStatusLine.cs" />
+    <Compile Include="HttpStatusLineBuilder.cs" />
     <Compile Include="HttpTransferEncoding.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="IProxy.cs" />

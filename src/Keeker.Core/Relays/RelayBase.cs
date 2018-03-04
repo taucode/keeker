@@ -1,6 +1,7 @@
 ﻿using Keeker.Core.Conf;
 using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,6 +45,10 @@ namespace Keeker.Core.Relays
 
         private HttpResponseMetadata _lastResponseMetadata;
 
+        private readonly string _protocol;
+        private readonly string _domesticAuthority;
+        private readonly string _domesticAuthorityWithPort;
+
         public RelayBase(Stream innerClientStream, RelayPlainConf conf)
         {
             _conf = (conf ?? throw new ArgumentNullException(nameof(conf))).Clone();
@@ -61,6 +66,23 @@ namespace Keeker.Core.Relays
             _serverBuffer = new AutoBuffer();
             _serverFixedSizeContentRedirector = new FixedSizeContentRedirector(_serverStream, _clientStream, _serverBuffer);
             _serverChunkedContentRedirector = new ChunkedContentRedirector(_serverStream, _clientStream, _serverBuffer);
+
+            _protocol = this.IsSecure ? "https" : "http";
+            var hostName = _conf.DomesticHostName;
+            var defaultPort = this.IsSecure ? 443 : 80;
+            string colonWithPortIfNeeded;
+            var port = _conf.EndPoint.Port;
+            if (defaultPort == port)
+            {
+                colonWithPortIfNeeded = "";
+            }
+            else
+            {
+                colonWithPortIfNeeded = $":{_conf.EndPoint.Port}";
+            }
+
+            _domesticAuthority = $"{hostName}{colonWithPortIfNeeded}";
+            _domesticAuthorityWithPort = $"{hostName}:{port}";
         }
 
         public void Start()
@@ -288,6 +310,8 @@ namespace Keeker.Core.Relays
             //}
         }
 
+        private bool IsSecure => _conf.CertificateId != null;
+
         private HttpRequestMetadata TransformRequestMetadata(HttpRequestMetadata requestMetadata)
         {
             var requestMetadataBuilder = new HttpRequestMetadataBuilder(requestMetadata);
@@ -299,7 +323,31 @@ namespace Keeker.Core.Relays
 
         private HttpResponseMetadata TransformResponseMetadata(HttpResponseMetadata responseMetadata)
         {
+            if (responseMetadata.Line.Code == HttpStatusCode.Found)
+            {
+                var location = responseMetadata.Headers.GetLocation();
+
+                var uri = new Uri(location);
+
+                if (
+                    uri.Authority == _domesticAuthority ||
+                    uri.Authority == _domesticAuthorityWithPort)
+                {
+                    var changedLocation = this.BuildExternalUrl(uri.PathAndQuery);
+
+                    var responseMetadataBuilder = new HttpResponseMetadataBuilder(responseMetadata);
+                    responseMetadataBuilder.Headers.Replace("Location", changedLocation);
+
+                    responseMetadata = responseMetadataBuilder.Build();
+                }
+            }
+
             return responseMetadata; // todo0[ak] temp
+        }
+
+        private string BuildExternalUrl(string pathAndQuery)
+        {
+            return $"{_protocol}://{_conf.ExternalHostName}{pathAndQuery}";
         }
     }
 }

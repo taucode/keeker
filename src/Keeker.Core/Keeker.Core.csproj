@@ -70,8 +70,6 @@
     <Compile Include="Relays\FixedSizeContentRedirector.cs" />
     <Compile Include="Relays\RelayBase.cs" />
     <Compile Include="Relays\SecureRelay.cs" />
-    <Compile Include="WebConnection.cs" />
-    <Compile Include="WebRequestRelay.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

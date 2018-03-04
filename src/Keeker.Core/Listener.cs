@@ -27,7 +27,7 @@ namespace Keeker.Core
         private bool _isStarted;
         private readonly object _lock;
 
-        private readonly Dictionary<string, X509Certificate> _certificates;
+        private readonly Dictionary<string, X509Certificate2> _certificates;
         private readonly Dictionary<string, byte[]> _binaryDomainNames;
 
         #endregion
@@ -37,7 +37,7 @@ namespace Keeker.Core
         public Listener(ListenerPlainConf conf, CertificateInfo[] certificates)
         {
             _conf = conf.Clone();
-            _certificates = new Dictionary<string, X509Certificate>();
+            _certificates = new Dictionary<string, X509Certificate2>();
 
             foreach (var certificateInfo in certificates)
             {
@@ -60,9 +60,9 @@ namespace Keeker.Core
 
         #region Private
 
-        private static X509Certificate OpenCertificate(CertificatePlainConf certificateConf)
+        private static X509Certificate2 OpenCertificate(CertificatePlainConf certificateConf)
         {
-            var cert = new X509Certificate(certificateConf.FilePath, certificateConf.Password);
+            var cert = new X509Certificate2(certificateConf.FilePath, certificateConf.Password);
             return cert;
         }
 

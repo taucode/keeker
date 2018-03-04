@@ -14,7 +14,17 @@ namespace Keeker.Gui
         {
             InitializeComponent();
 
-            ConsoleHelper.Initialize();
+            //using (System.IO.StreamWriter sw = new System.IO.StreamWriter(@"C:\work\tau\rho\src\Rho.WebMvc\App_Data\mp-2.txt"))
+            //{
+            //    for (int i = 0; i < 10000; i++)
+            //    {
+            //        sw.Write('a');
+            //    }                
+            //}
+
+            //throw new NotImplementedException();
+
+            //ConsoleHelper.Initialize();
 
             var conf = ProxyPlainConf.LoadFromAppConfig("proxy");
             _proxy = new Proxy(conf);

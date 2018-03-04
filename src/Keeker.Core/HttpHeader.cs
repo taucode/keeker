@@ -39,7 +39,7 @@ namespace Keeker.Core
                 return null;
             }
             var count = crlfIndex - start;
-            var line = buffer.GetAsciiSubstring(start, count);
+            var line = buffer.ToAsciiString(start, count);
 
             var colonPos = line.IndexOf(':');
             if (colonPos == -1)

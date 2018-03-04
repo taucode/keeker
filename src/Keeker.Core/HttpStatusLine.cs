@@ -54,7 +54,7 @@ namespace Keeker.Core
             }
 
             var length = indexOfSpaceAfterVersion - start;
-            var version = buffer.GetAsciiSubstring(start, length);
+            var version = buffer.ToAsciiString(start, length);
 
             // advance
             start = indexOfSpaceAfterVersion + 1; // skip ' '
@@ -63,7 +63,7 @@ namespace Keeker.Core
             var indexOfSpaceAfterCode = buffer.IndexOf(SPACE_BYTE, start);
 
             length = indexOfSpaceAfterCode - start;
-            var codeNumber = buffer.GetAsciiSubstring(start, length).ToInt32();
+            var codeNumber = buffer.ToAsciiString(start, length).ToInt32();
             var code = (HttpStatusCode)codeNumber;
 
             // advance
@@ -71,7 +71,7 @@ namespace Keeker.Core
 
             // http version
             length = crLfIndex - start;
-            var reason = buffer.GetAsciiSubstring(start, length);
+            var reason = buffer.ToAsciiString(start, length);
 
             var line = new HttpStatusLine(version, code, reason);
             return line;

@@ -4,7 +4,7 @@ namespace Keeker.Core
 {
     public class CertificateInfo
     {
-        public CertificateInfo(string[] domainNames, X509Certificate certificate)
+        public CertificateInfo(string[] domainNames, X509Certificate2 certificate)
         {
             this.DomainNames = domainNames;
             this.Certificate = certificate;
@@ -12,6 +12,6 @@ namespace Keeker.Core
 
         public string[] DomainNames { get; }
 
-        public X509Certificate Certificate { get; }
+        public X509Certificate2 Certificate { get; }
     }
 }

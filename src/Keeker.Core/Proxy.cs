@@ -27,7 +27,7 @@ namespace Keeker.Core
                     x => x.Key,
                     x => new CertificateInfo(
                             x.Value.Domains.ToArray(),
-                            new X509Certificate(
+                            new X509Certificate2(
                                 x.Value.FilePath,
                                 x.Value.Password)));
 

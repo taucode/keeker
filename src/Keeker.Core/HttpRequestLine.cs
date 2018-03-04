@@ -52,7 +52,7 @@ namespace Keeker.Core
             }
 
             var length = indexOfSpaceAfterMethod - start;
-            var method = buffer.GetAsciiSubstring(start, length);
+            var method = buffer.ToAsciiString(start, length);
 
             // advance
             start = indexOfSpaceAfterMethod + 1; // skip ' '
@@ -61,14 +61,14 @@ namespace Keeker.Core
             var indexOfSpaceAfterUri = buffer.IndexOf(SPACE_BYTE, start);
 
             length = indexOfSpaceAfterUri - start;
-            var uri = buffer.GetAsciiSubstring(start, length);
+            var uri = buffer.ToAsciiString(start, length);
 
             // advance
             start = indexOfSpaceAfterUri + 1; // skip ' '
 
             // http version
             length = crLfIndex - start;
-            var version = buffer.GetAsciiSubstring(start, length);
+            var version = buffer.ToAsciiString(start, length);
 
             var line = new HttpRequestLine(new HttpMethod(method), uri, version);
             return line;

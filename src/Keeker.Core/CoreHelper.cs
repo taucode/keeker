@@ -77,28 +77,42 @@ namespace Keeker.Core
             };
         }
 
-        //public static HostPlainConf ToHostPlainConf(this HostElement hostElement)
-        //{
-        //    var res = new HostPlainConf
-        //    {
-        //        ExternalHostName = hostElement.ExternalHostName,
-        //        Relay = hostElement.Relay.ToRelayPlainConf(),
-        //        Certificate = hostElement.Certificate.ToCertificatePlainConf(),
-        //    };
+        public static bool ByteArraysEquivalent(
+            byte[] array1, 
+            int start1,
+            byte[] array2,
+            int start2,
+            int length)
+        {
+            // todo1[ak] checks
 
-        //    return res;
-        //}
+            for (int i = 0; i < length; i++)
+            {
+                var index1 = start1 + i;
+                if (index1 >= array1.Length)
+                {
+                    return false;
+                }
 
-        //public static HostPlainConf Clone(this HostPlainConf conf)
-        //{
-        //    return new HostPlainConf
-        //    {
-        //        ExternalHostName = conf.ExternalHostName,
-        //        Relay = conf.Relay.Clone(),
-        //        Certificate = conf.Certificate.Clone(),
-        //    };
-        //}
+                var index2 = start2 + i;
+                if (index2 >= array2.Length)
+                {
+                    return false;
+                }
 
+                var b1 = array1[index1];
+                var b2 = array2[index2];
+
+                if (b1 != b2)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+
+        }
+                
         public static RelayPlainConf ToRelayPlainConf(this RelayElement relayElement)
         {
             var res = new RelayPlainConf
@@ -173,6 +187,12 @@ namespace Keeker.Core
         public static string ToAsciiString(this byte[] bytes)
         {
             return Encoding.ASCII.GetString(bytes);
+        }
+
+        public static string ToAsciiString(this byte[] bytes, int start, int count)
+        {
+            var s = Encoding.ASCII.GetString(bytes, start, count);
+            return s;
         }
 
         public static int IndexOfSubarray<T>(this T[] array, T[] subarray, int start, int length = -1)
@@ -296,12 +316,6 @@ namespace Keeker.Core
             return items.FindIndex(i => EqualityComparer<T>.Default.Equals(item, i), length);
         }
 
-        public static string GetAsciiSubstring(this byte[] bytes, int index, int count)
-        {
-            var s = Encoding.ASCII.GetString(bytes, index, count);
-            return s;
-        }
-
         public static void WriteAll(this Stream stream, byte[] buffer)
         {
             stream.Write(buffer, 0, buffer.Length);
@@ -310,6 +324,12 @@ namespace Keeker.Core
         public static int ToInt32(this string s)
         {
             return int.Parse(s, CultureInfo.InvariantCulture);
+        }
+
+        public static int ToIn32FromHex(this string s)
+        {
+            var n = Int32.Parse(s, System.Globalization.NumberStyles.HexNumber);
+            return n;
         }
 
         public static IPEndPoint ToIPEndPoint(this string s)

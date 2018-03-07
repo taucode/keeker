@@ -2,7 +2,7 @@
 using Keeker.Core.Conf;
 using System;
 using System.Windows.Forms;
-using TauCode.Utils.Win32;
+using Keeker.Core.EventData;
 
 namespace Keeker.Gui
 {
@@ -14,24 +14,20 @@ namespace Keeker.Gui
         {
             InitializeComponent();
 
-            //using (System.IO.StreamWriter sw = new System.IO.StreamWriter(@"C:\work\tau\rho\src\Rho.WebMvc\App_Data\mp-2.txt"))
-            //{
-            //    for (int i = 0; i < 10000; i++)
-            //    {
-            //        sw.Write('a');
-            //    }                
-            //}
-
-            //throw new NotImplementedException();
-
-            //ConsoleHelper.Initialize();
-
             var conf = ProxyPlainConf.LoadFromAppConfig("proxy");
             _proxy = new Proxy(conf);
+
+            _proxy.ListenerConnectionAccepted += proxy_ListenerConnectionAccepted;
+            
 
             //_proxy.Started += proxy_Started;
             //_proxy.Stopped += proxy_Stopped;
             //_proxy.ConnectionAccepted += proxy_ConnectionAccepted;
+        }
+
+        private void proxy_ListenerConnectionAccepted(object sender, ConnectionAcceptedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         //private void proxy_Started(object sender, EventArgs e)

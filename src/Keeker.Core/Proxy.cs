@@ -1,4 +1,6 @@
 ﻿using Keeker.Core.Conf;
+using Keeker.Core.EventData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -12,7 +14,6 @@ namespace Keeker.Core
         private readonly ProxyPlainConf _conf;
         private readonly Dictionary<string, CertificateInfo> _certificates;
         private readonly List<IListener> _listeners;
-
 
         #endregion
 
@@ -38,27 +39,21 @@ namespace Keeker.Core
                         .Select(y => _certificates[y])
                         .ToArray()))
                 .ToList();
+
+            foreach (var listener in _listeners)
+            {
+                listener.ConnectionAccepted += listener_ConnectionAccepted;
+            }
         }
 
         #endregion
 
         #region Event Handlers
 
-        //private void listener_Started(object sender, EventArgs e)
-        //{
-        //    this.Started?.Invoke(this, e);
-        //}
-
-        //private void listener_Stopped(object sender, EventArgs e)
-        //{
-        //    this.Stopped?.Invoke(this, e);
-        //}
-
-        //private void listener_ConnectionAccepted(object sender, ConnectionAcceptedEventArgs e)
-        //{
-        //    this.ConnectionAccepted?.Invoke(this, e);
-        //    this.EstablishConnection(e.TcpClient);
-        //}
+        private void listener_ConnectionAccepted(object sender, ConnectionAcceptedEventArgs e)
+        {
+            this.ListenerConnectionAccepted?.Invoke(sender, e);
+        }
 
         #endregion
 
@@ -88,6 +83,8 @@ namespace Keeker.Core
                 listener.Stop();
             }
         }
+
+        public event EventHandler<ConnectionAcceptedEventArgs> ListenerConnectionAccepted;
 
         //public event EventHandler Started;
 

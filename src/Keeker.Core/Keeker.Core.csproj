@@ -43,8 +43,9 @@
   <ItemGroup>
     <Compile Include="ByteAccumulator.cs" />
     <Compile Include="CertificateInfo.cs" />
-    <Compile Include="ConnectionAcceptedEventArgs.cs" />
+    <Compile Include="EventData\ConnectionAcceptedEventArgs.cs" />
     <Compile Include="CoreHelper.cs" />
+    <Compile Include="EventData\RelayEventArgs.cs" />
     <Compile Include="HttpHeader.cs" />
     <Compile Include="HttpHeaderBuilder.cs" />
     <Compile Include="HttpHeaderCollection.cs" />

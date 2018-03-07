@@ -1,4 +1,5 @@
 ﻿using Keeker.Core.Conf;
+using Keeker.Core.EventData;
 using Keeker.Core.Relays;
 using System;
 using System.Collections.Generic;
@@ -86,7 +87,7 @@ namespace Keeker.Core
 
                     this.EstablishConnection(client);
 
-                    //this.ConnectionAccepted?.Invoke(this, new ConnectionAcceptedEventArgs(client));
+                    this.ConnectionAccepted?.Invoke(this, new ConnectionAcceptedEventArgs(client));
                 }
             }
             catch (Exception e)
@@ -115,6 +116,7 @@ namespace Keeker.Core
                 clientStream.AuthenticateAsServer(certificate, false, SslProtocols.Tls12, false);
 
                 var relay = new SecureRelay(clientStream, relayConf);
+                this.RelayCreated?.Invoke(this, new RelayEventArgs(relay));
                 relay.Start();
             }
             else
@@ -190,6 +192,10 @@ namespace Keeker.Core
         {
             throw new System.NotImplementedException();
         }
+
+        public event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
+
+        public event EventHandler<RelayEventArgs> RelayCreated;
 
         //public IPEndPoint EndPoint
         //{

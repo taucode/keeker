@@ -1,5 +1,5 @@
-﻿using System;
-using System.Net;
+﻿using Keeker.Core.EventData;
+using System;
 
 namespace Keeker.Core
 {
@@ -17,6 +17,8 @@ namespace Keeker.Core
 
         //event EventHandler Stopped;
         
-        //event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
+        event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
+
+        event EventHandler<RelayEventArgs> RelayCreated;
     }
 }

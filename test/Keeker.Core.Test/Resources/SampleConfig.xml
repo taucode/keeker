@@ -29,7 +29,7 @@
       <add id="sample"
            endPoint="127.0.0.1:81"
            isHttps="false">
-        <relays>
+        <hosts>
           <add externalHostName="www.rho.me"
                domesticHostName="localhost"
                endPoint="127.0.0.1:53808"/>
@@ -51,14 +51,14 @@
                certificateId="rho" />
                -->
 
-        </relays>
+        </hosts>
       </add>
 
       <add id="std-ssl"
            endPoint="127.0.0.1:443"
            isHttps="true">
 
-        <relays>
+        <hosts>
           <!--
           <add externalHostName="www.rho.me"
                domesticHostName="localhost"
@@ -82,7 +82,7 @@
                endPoint="127.0.0.1:80"
                certificateId="rho" />
 
-        </relays>
+        </hosts>
 
       </add>
     </listeners>

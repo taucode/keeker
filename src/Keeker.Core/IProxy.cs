@@ -12,10 +12,8 @@ namespace Keeker.Core
 
         void Stop();
 
-        //event EventHandler Started;
-
-        //event EventHandler Stopped;
-
         event EventHandler<ConnectionAcceptedEventArgs> ListenerConnectionAccepted;
+
+        event EventHandler<TheDeviceEventArgs> ListenerTheDeviceCreated;
     }
 }

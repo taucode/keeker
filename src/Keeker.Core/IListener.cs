@@ -5,20 +5,16 @@ namespace Keeker.Core
 {
     public interface IListener : IDisposable
     {
+        string Id { get; }
+
         void Start();
 
         bool IsStarted { get; }
 
         void Stop();
 
-        //IPEndPoint EndPoint { get; }
-
-        //event EventHandler Started;
-
-        //event EventHandler Stopped;
-        
         event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
 
-        event EventHandler<RelayEventArgs> RelayCreated;
+        event EventHandler<TheDeviceEventArgs> TheDeviceCreated;
     }
 }

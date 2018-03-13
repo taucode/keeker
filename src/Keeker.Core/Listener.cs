@@ -1,6 +1,6 @@
 ﻿using Keeker.Core.Conf;
 using Keeker.Core.EventData;
-using Keeker.Core.Relays;
+using Keeker.Core.TheDevices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +28,9 @@ namespace Keeker.Core
         private bool _isStarted;
         private readonly object _lock;
 
+        private int _nextTheDeviceId;
+        private readonly object _nextTheDeviceIdLock;
+
         private readonly Dictionary<string, X509Certificate2> _certificates;
         private readonly Dictionary<string, byte[]> _binaryDomainNames;
 
@@ -37,6 +40,9 @@ namespace Keeker.Core
 
         public Listener(ListenerPlainConf conf, CertificateInfo[] certificates)
         {
+            this.Id = conf.Id;
+            _nextTheDeviceIdLock = new object();
+
             _conf = conf.Clone();
             _certificates = new Dictionary<string, X509Certificate2>();
 
@@ -48,7 +54,7 @@ namespace Keeker.Core
                 }
             }
 
-            _binaryDomainNames = _conf.Relays
+            _binaryDomainNames = _conf.Hosts.Values
                 .ToDictionary(
                     x => x.ExternalHostName,
                     x => x.ExternalHostName.ToAsciiBytes());
@@ -103,21 +109,23 @@ namespace Keeker.Core
                 var networkStream = client.GetStream();
                 var wrappingStream = new KeekStream(networkStream);
 
-                var relayConf = this.ResolveRelay(wrappingStream);
+                var hostConf = this.ResolveHostConf(wrappingStream);
 
-                if (relayConf == null)
+                if (hostConf == null)
                 {
                     wrappingStream.Dispose(); // refuse the connection.
                     return;
                 }
 
                 var clientStream = new SslStream(wrappingStream, false);
-                var certificate = _certificates[relayConf.ExternalHostName];
+                var certificate = _certificates[hostConf.ExternalHostName];
                 clientStream.AuthenticateAsServer(certificate, false, SslProtocols.Tls12, false);
 
-                var relay = new SecureRelay(clientStream, relayConf);
-                this.RelayCreated?.Invoke(this, new RelayEventArgs(relay));
-                relay.Start();
+                var theDeviceId = this.GetNextTheDeviceId();
+
+                var theDevice = new TheDevice(clientStream, _conf.Id, theDeviceId, hostConf);
+                this.TheDeviceCreated?.Invoke(this, new TheDeviceEventArgs(theDevice));
+                theDevice.Start();
             }
             else
             {
@@ -125,7 +133,16 @@ namespace Keeker.Core
             }
         }
 
-        private RelayPlainConf ResolveRelay(KeekStream keekStream)
+        private string GetNextTheDeviceId()
+        {
+            lock (_nextTheDeviceIdLock)
+            {
+                _nextTheDeviceId++;
+                return $"{this.Id}.{_nextTheDeviceId}";
+            }
+        }
+
+        private HostPlainConf ResolveHostConf(KeekStream keekStream)
         {
             const int TIMEOUT = 1; // we are waiting for incoming handshake for 1 second.
             var timeout = TimeSpan.FromSeconds(TIMEOUT);
@@ -139,14 +156,14 @@ namespace Keeker.Core
                 keekStream.ReadInnerStream(HANDSHAKE_MESSAGE_MAX_LENGTH);
                 var peekedBytesCount = keekStream.Peek(peekedBytes, 0, HANDSHAKE_MESSAGE_MAX_LENGTH);
 
-                foreach (var relayConf in _conf.Relays)
+                foreach (var hostConf in _conf.Hosts.Values)
                 {
-                    var binaryDomainName = _binaryDomainNames[relayConf.ExternalHostName];
+                    var binaryDomainName = _binaryDomainNames[hostConf.ExternalHostName];
                     var pos = peekedBytes.IndexOfSubarray(binaryDomainName, 0, peekedBytesCount);
 
                     if (pos >= 0)
                     {
-                        return relayConf;
+                        return hostConf;
                     }
                 }
 
@@ -163,6 +180,8 @@ namespace Keeker.Core
         #endregion
 
         #region IListener Members
+
+        public string Id { get; }
 
         public void Start()
         {
@@ -195,7 +214,7 @@ namespace Keeker.Core
 
         public event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
 
-        public event EventHandler<RelayEventArgs> RelayCreated;
+        public event EventHandler<TheDeviceEventArgs> TheDeviceCreated;
 
         //public IPEndPoint EndPoint
         //{

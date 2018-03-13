@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Keeker.Core.Relays
+namespace Keeker.Core.TheDevices
 {
     public class FixedSizeContentRedirector
     {
@@ -14,9 +14,9 @@ namespace Keeker.Core.Relays
             Stream destinationStream,
             AutoBuffer buffer)
         {
-            _sourceStream = sourceStream;
-            _destinationStream = destinationStream;
-            _readBuffer = buffer;
+            _sourceStream = sourceStream ?? throw new ArgumentNullException(nameof(sourceStream));
+            _destinationStream = destinationStream ?? throw new ArgumentNullException(nameof(destinationStream));
+            _readBuffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
         }
 
         public void Redirect(int length)

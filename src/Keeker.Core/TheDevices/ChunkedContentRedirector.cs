@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Keeker.Core.Relays
+namespace Keeker.Core.TheDevices
 {
     public class ChunkedContentRedirector
     {

@@ -43,6 +43,7 @@ namespace Keeker.Core
             foreach (var listener in _listeners)
             {
                 listener.ConnectionAccepted += listener_ConnectionAccepted;
+                listener.TheDeviceCreated += listener_TheDeviceCreated;
             }
         }
 
@@ -55,12 +56,10 @@ namespace Keeker.Core
             this.ListenerConnectionAccepted?.Invoke(sender, e);
         }
 
-        #endregion
-
-        #region Private
-
-
-
+        private void listener_TheDeviceCreated(object sender, TheDeviceEventArgs e)
+        {
+            this.ListenerTheDeviceCreated?.Invoke(sender, e);
+        }
 
         #endregion
 
@@ -86,11 +85,7 @@ namespace Keeker.Core
 
         public event EventHandler<ConnectionAcceptedEventArgs> ListenerConnectionAccepted;
 
-        //public event EventHandler Started;
-
-        //public event EventHandler Stopped;
-
-        //public event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
+        public event EventHandler<TheDeviceEventArgs> ListenerTheDeviceCreated;
 
         #endregion
     }

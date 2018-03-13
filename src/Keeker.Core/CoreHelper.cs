@@ -55,10 +55,10 @@ namespace Keeker.Core
                 Id = listenerElement.Id,
                 EndPoint = listenerElement.EndPoint.ToIPEndPoint(),
                 IsHttps = listenerElement.IsHttps,
-                Relays = listenerElement.Relays
-                    .Cast<RelayElement>()
-                    .Select(ToRelayPlainConf)
-                    .ToList(),
+                Hosts = listenerElement.Hosts
+                    .Cast<HostElement>()
+                    .Select(ToHostPlainConf)
+                    .ToDictionary(x => x.ExternalHostName, x => x),
             };
 
             return res;
@@ -71,9 +71,9 @@ namespace Keeker.Core
                 Id = conf.Id,
                 EndPoint = conf.EndPoint.CloneEndPoint(),
                 IsHttps = conf.IsHttps,
-                Relays = conf.Relays
+                Hosts = conf.Hosts.Values
                     .Select(Clone)
-                    .ToList(),
+                    .ToDictionary(x => x.ExternalHostName, x => x),
             };
         }
 
@@ -113,22 +113,22 @@ namespace Keeker.Core
 
         }
                 
-        public static RelayPlainConf ToRelayPlainConf(this RelayElement relayElement)
+        public static HostPlainConf ToHostPlainConf(this HostElement hostElement)
         {
-            var res = new RelayPlainConf
+            var res = new HostPlainConf
             {
-                ExternalHostName = relayElement.ExternalHostName,
-                DomesticHostName = relayElement.DomesticHostName,
-                EndPoint = relayElement.EndPoint.ToIPEndPoint(),
-                CertificateId = relayElement.CertificateId,
+                ExternalHostName = hostElement.ExternalHostName,
+                DomesticHostName = hostElement.DomesticHostName,
+                EndPoint = hostElement.EndPoint.ToIPEndPoint(),
+                CertificateId = hostElement.CertificateId,
             };
 
             return res;
         }
 
-        public static RelayPlainConf Clone(this RelayPlainConf conf)
+        public static HostPlainConf Clone(this HostPlainConf conf)
         {
-            return new RelayPlainConf
+            return new HostPlainConf
             {
                 ExternalHostName = conf.ExternalHostName,
                 DomesticHostName = conf.DomesticHostName,
@@ -163,17 +163,7 @@ namespace Keeker.Core
                 Domains = conf.Domains.ToHashSet(),
             };
         }
-
-        //public static IPEndPoint GetEndPoint(this ListenerPlainConf conf)
-        //{
-        //    return new IPEndPoint(conf.Address, conf.Port);
-        //}
-
-        //public static IPEndPoint GetEndPoint(this RelayPlainConf conf)
-        //{
-        //    return new IPEndPoint(conf.Address, conf.Port);
-        //}
-
+        
         public static IPEndPoint CloneEndPoint(this IPEndPoint endPoint)
         {
             return new IPEndPoint(endPoint.Address, endPoint.Port);
@@ -351,8 +341,8 @@ namespace Keeker.Core
 
         public static string[] GetUserCertificateIds(this ListenerPlainConf conf)
         {
-            return conf.Relays?
-                .Select(x => x.CertificateId)
+            return conf.Hosts?
+                .Select(x => x.Value.CertificateId)
                 .Where(x => !string.IsNullOrEmpty(x))
                 .Distinct()
                 .ToArray();

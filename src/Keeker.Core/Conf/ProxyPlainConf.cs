@@ -35,10 +35,10 @@ namespace Keeker.Core.Conf
         public string Id { get; set; }
         public IPEndPoint EndPoint { get; set; }
         public bool IsHttps { get; set; }
-        public List<RelayPlainConf> Relays { get; set; }
+        public Dictionary<string, HostPlainConf> Hosts { get; set; }
     }
 
-    public class RelayPlainConf
+    public class HostPlainConf
     {
         public string ExternalHostName { get; set; }
         public string DomesticHostName { get; set; }

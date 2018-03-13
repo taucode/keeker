@@ -125,29 +125,29 @@ namespace Keeker.Core.Conf
             set => this["isHttps"] = value;
         }
 
-        [ConfigurationProperty("relays")]
-        public RelayElementCollection Relays
+        [ConfigurationProperty("hosts")]
+        public HostElementCollection Hosts
         {
-            get => this["relays"] as RelayElementCollection;
-            set => this["relays"] = value;
+            get => this["hosts"] as HostElementCollection;
+            set => this["hosts"] = value;
         }
     }
 
-    [ConfigurationCollection(typeof(RelayElement))]
-    public class RelayElementCollection : ConfigurationElementCollection
+    [ConfigurationCollection(typeof(HostElement))]
+    public class HostElementCollection : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
         {
-            return new RelayElement();
+            return new HostElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((RelayElement)element).ExternalHostName;
+            return ((HostElement)element).ExternalHostName;
         }
     }
 
-    public class RelayElement : ConfigurationElement
+    public class HostElement : ConfigurationElement
     {
         [ConfigurationProperty("externalHostName", IsKey = true, IsRequired = true)]
         public string ExternalHostName

@@ -6,9 +6,9 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Keeker.Core.Relays
+namespace Keeker.Core.TheDevices
 {
-    public class RelayBase
+    public class TheDevice
     {
         private enum ClientFlowState
         {
@@ -27,7 +27,7 @@ namespace Keeker.Core.Relays
             RedirectingChunkedContent,
         }
 
-        private readonly RelayPlainConf _conf;
+        private readonly HostPlainConf _conf;
 
         private readonly KeekStream _clientStream;
         private ClientFlowState _clientFlowState;
@@ -49,14 +49,15 @@ namespace Keeker.Core.Relays
         private readonly string _domesticAuthority;
         private readonly string _domesticAuthorityWithPort;
 
-        public RelayBase(Stream innerClientStream, RelayPlainConf conf)
+        public TheDevice(Stream innerClientStream, string listenerId, string id, HostPlainConf conf)
         {
+            this.ListenerId = listenerId;
+            this.Id = id;
             _conf = (conf ?? throw new ArgumentNullException(nameof(conf))).Clone();
 
+            // streams
             _clientStream = new KeekStream(innerClientStream);
             _clientBuffer = new AutoBuffer();
-            _clientFixedSizeContentRedirector = new FixedSizeContentRedirector(_clientStream, _serverStream, _clientBuffer);
-            _clientChunkedContentRedirector = new ChunkedContentRedirector(_clientStream, _serverStream, _clientBuffer);
 
             var tcpclient = new TcpClient();
             tcpclient.Connect(_conf.EndPoint);
@@ -64,6 +65,11 @@ namespace Keeker.Core.Relays
 
             _serverStream = new KeekStream(serverNetworkStream);
             _serverBuffer = new AutoBuffer();
+
+            // redirectors
+            _clientFixedSizeContentRedirector = new FixedSizeContentRedirector(_clientStream, _serverStream, _clientBuffer);
+            _clientChunkedContentRedirector = new ChunkedContentRedirector(_clientStream, _serverStream, _clientBuffer);
+
             _serverFixedSizeContentRedirector = new FixedSizeContentRedirector(_serverStream, _clientStream, _serverBuffer);
             _serverChunkedContentRedirector = new ChunkedContentRedirector(_serverStream, _clientStream, _serverBuffer);
 
@@ -84,6 +90,10 @@ namespace Keeker.Core.Relays
             _domesticAuthority = $"{hostName}{colonWithPortIfNeeded}";
             _domesticAuthorityWithPort = $"{hostName}:{port}";
         }
+
+        public string ListenerId { get; }
+
+        public string Id { get; }
 
         public void Start()
         {
@@ -154,6 +164,11 @@ namespace Keeker.Core.Relays
                             _clientFlowState = ClientFlowState.RedirectingFixedSizeContent;
                             contentBytesCount = transformedRequestMetadata.Headers.GetContentLength();
                         }
+                    }
+                    else
+                    {
+                        // accumulated data doesn't contain \r\n, read more.
+                        _clientStream.ReadInnerStream(PORTION_SIZE);
                     }
                 }
                 else if (_clientFlowState == ClientFlowState.RedirectingFixedSizeContent)
@@ -265,49 +280,6 @@ namespace Keeker.Core.Relays
                     throw new NotImplementedException();
                 }
             }
-
-            //var from = _serverStream;
-            //var to = _clientStream;
-
-            //var buffer = new byte[65536];
-
-            //while (true)
-            //{
-            //    try
-            //    {
-            //        var bytesCount = from.Read(buffer, 0, buffer.Length);
-
-            //        if (bytesCount == 0)
-            //        {
-            //            throw new NotImplementedException();
-            //        }
-
-            //        to.Write(buffer, 0, bytesCount);
-            //    }
-            //    catch
-            //    {
-            //        try
-            //        {
-            //            from.Close();
-            //        }
-            //        catch
-            //        {
-            //            // don't care; dismiss
-            //        }
-
-            //        try
-            //        {
-            //            to.Close();
-            //        }
-            //        catch
-            //        {
-            //            // don't care; dismiss
-            //        }
-
-            //        // don't care, just exit.
-            //        break;
-            //    }
-            //}
         }
 
         private bool IsSecure => _conf.CertificateId != null;
@@ -327,18 +299,22 @@ namespace Keeker.Core.Relays
             {
                 var location = responseMetadata.Headers.GetLocation();
 
-                var uri = new Uri(location);
-
-                if (
-                    uri.Authority == _domesticAuthority ||
-                    uri.Authority == _domesticAuthorityWithPort)
+                var locationIsAbsolute = location.StartsWith("http://") || location.StartsWith("https://");
+                if (locationIsAbsolute)
                 {
-                    var changedLocation = this.BuildExternalUrl(uri.PathAndQuery);
+                    var uri = new Uri(location);
 
-                    var responseMetadataBuilder = new HttpResponseMetadataBuilder(responseMetadata);
-                    responseMetadataBuilder.Headers.Replace("Location", changedLocation);
+                    if (
+                        uri.Authority == _domesticAuthority ||
+                        uri.Authority == _domesticAuthorityWithPort)
+                    {
+                        var changedLocation = this.BuildExternalUrl(uri.PathAndQuery);
 
-                    responseMetadata = responseMetadataBuilder.Build();
+                        var responseMetadataBuilder = new HttpResponseMetadataBuilder(responseMetadata);
+                        responseMetadataBuilder.Headers.Replace("Location", changedLocation);
+
+                        responseMetadata = responseMetadataBuilder.Build();
+                    }
                 }
             }
 

@@ -14,6 +14,6 @@ namespace Keeker.Core
 
         event EventHandler<ConnectionAcceptedEventArgs> ListenerConnectionAccepted;
 
-        event EventHandler<TheDeviceEventArgs> ListenerTheDeviceCreated;
+        event EventHandler<RelayEventArgs> ListenerRelayCreated;
     }
 }

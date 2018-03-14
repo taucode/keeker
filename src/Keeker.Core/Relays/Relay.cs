@@ -6,9 +6,9 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Keeker.Core.TheDevices
+namespace Keeker.Core.Relays
 {
-    public class TheDevice
+    public class Relay
     {
         private enum ClientFlowState
         {
@@ -49,7 +49,7 @@ namespace Keeker.Core.TheDevices
         private readonly string _domesticAuthority;
         private readonly string _domesticAuthorityWithPort;
 
-        public TheDevice(Stream innerClientStream, string listenerId, string id, HostPlainConf conf)
+        public Relay(Stream innerClientStream, string listenerId, string id, HostPlainConf conf)
         {
             this.ListenerId = listenerId;
             this.Id = id;

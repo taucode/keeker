@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Keeker.Core.TheDevices
+namespace Keeker.Core.Relays
 {
     public class AutoBuffer
     {

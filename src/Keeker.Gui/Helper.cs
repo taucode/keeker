@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using Keeker.Core.Conf;
+using Keeker.Gui.Data;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Keeker.Gui
@@ -18,5 +20,27 @@ namespace Keeker.Gui
 
             return listView.Items[indexes.First()];
         }
-    }
+
+        internal static ListenerConfDto ToListenerConfDto(this ListenerPlainConf conf)
+        {
+            return new ListenerConfDto
+            {
+                Id = conf.Id,
+                EndPoint = conf.EndPoint.ToString(),
+                IsHttps = conf.IsHttps,
+                Hosts = conf.Hosts.ToDictionary(x => x.Key, x => x.Value.ToHostConfDto()),
+            };
+        }
+
+        internal static HostConfDto ToHostConfDto(this HostPlainConf conf)
+        {
+            return new HostConfDto
+            {
+                ExternalHostName = conf.ExternalHostName,
+                DomesticHostName = conf.DomesticHostName,
+                EndPoint = conf.EndPoint.ToString(),
+                CertificateId = conf.CertificateId,
+            };
+        }
+}
 }

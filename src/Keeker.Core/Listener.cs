@@ -1,6 +1,6 @@
 ﻿using Keeker.Core.Conf;
 using Keeker.Core.EventData;
-using Keeker.Core.TheDevices;
+using Keeker.Core.Relays;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +28,8 @@ namespace Keeker.Core
         private bool _isStarted;
         private readonly object _lock;
 
-        private int _nextTheDeviceId;
-        private readonly object _nextTheDeviceIdLock;
+        private int _nextRelayId;
+        private readonly object _nextRelayIdLock;
 
         private readonly Dictionary<string, X509Certificate2> _certificates;
         private readonly Dictionary<string, byte[]> _binaryDomainNames;
@@ -41,7 +41,7 @@ namespace Keeker.Core
         public Listener(ListenerPlainConf conf, CertificateInfo[] certificates)
         {
             this.Id = conf.Id;
-            _nextTheDeviceIdLock = new object();
+            _nextRelayIdLock = new object();
 
             _conf = conf.Clone();
             _certificates = new Dictionary<string, X509Certificate2>();
@@ -121,11 +121,11 @@ namespace Keeker.Core
                 var certificate = _certificates[hostConf.ExternalHostName];
                 clientStream.AuthenticateAsServer(certificate, false, SslProtocols.Tls12, false);
 
-                var theDeviceId = this.GetNextTheDeviceId();
+                var relayId = this.GetNextRelayId();
 
-                var theDevice = new TheDevice(clientStream, _conf.Id, theDeviceId, hostConf);
-                this.TheDeviceCreated?.Invoke(this, new TheDeviceEventArgs(theDevice));
-                theDevice.Start();
+                var relay = new Relay(clientStream, _conf.Id, relayId, hostConf);
+                this.RelayCreated?.Invoke(this, new RelayEventArgs(relay));
+                relay.Start();
             }
             else
             {
@@ -133,12 +133,12 @@ namespace Keeker.Core
             }
         }
 
-        private string GetNextTheDeviceId()
+        private string GetNextRelayId()
         {
-            lock (_nextTheDeviceIdLock)
+            lock (_nextRelayIdLock)
             {
-                _nextTheDeviceId++;
-                return $"{this.Id}.{_nextTheDeviceId}";
+                _nextRelayId++;
+                return $"{this.Id}.{_nextRelayId}";
             }
         }
 
@@ -214,7 +214,7 @@ namespace Keeker.Core
 
         public event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
 
-        public event EventHandler<TheDeviceEventArgs> TheDeviceCreated;
+        public event EventHandler<RelayEventArgs> RelayCreated;
 
         //public IPEndPoint EndPoint
         //{

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Keeker.Core
+namespace Keeker.Core.Data
 {
     public class HttpHeader
     {

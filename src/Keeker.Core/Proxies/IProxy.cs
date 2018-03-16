@@ -1,8 +1,8 @@
 ﻿using Keeker.Core.Conf;
-using Keeker.Core.EventData;
+using Keeker.Core.Events;
 using System;
 
-namespace Keeker.Core
+namespace Keeker.Core.Proxies
 {
     public interface IProxy
     {

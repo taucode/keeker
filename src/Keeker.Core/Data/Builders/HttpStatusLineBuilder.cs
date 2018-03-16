@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Keeker.Core
+namespace Keeker.Core.Data.Builders
 {
     public class HttpStatusLineBuilder
     {

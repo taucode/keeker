@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Keeker.Core
+namespace Keeker.Core.Data.Builders
 {
     public class HttpHeaderCollectionBuilder
     {

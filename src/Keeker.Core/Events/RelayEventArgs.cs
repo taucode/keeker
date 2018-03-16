@@ -1,7 +1,7 @@
 ﻿using Keeker.Core.Relays;
 using System;
 
-namespace Keeker.Core.EventData
+namespace Keeker.Core.Events
 {
     public class RelayEventArgs : EventArgs
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Keeker.Core
+namespace Keeker.Core.Streams
 {
     public class ByteAccumulator
     {

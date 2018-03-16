@@ -51,8 +51,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\RaceChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\RaceChart.Designer.cs">
+      <DependentUpon>RaceChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RaceChartEntry.cs" />
+    <Compile Include="Controls\RaceChartParticipant.cs" />
+    <Compile Include="Controls\RaceChartParticipantCollection.cs" />
     <Compile Include="Data\HostConfDto.cs" />
     <Compile Include="Data\ListenerConfDto.cs" />
+    <Compile Include="FooData.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -72,8 +82,23 @@
     <Compile Include="Panes\JsonPropertiesPane.Designer.cs">
       <DependentUpon>JsonPropertiesPane.cs</DependentUpon>
     </Compile>
+    <Compile Include="Panes\RelayPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Panes\RelayPane.Designer.cs">
+      <DependentUpon>RelayPane.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RaceChartForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RaceChartForm.Designer.cs">
+      <DependentUpon>RaceChartForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Controls\RaceChart.resx">
+      <DependentUpon>RaceChart.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -82,6 +107,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Panes\JsonPropertiesPane.resx">
       <DependentUpon>JsonPropertiesPane.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Panes\RelayPane.resx">
+      <DependentUpon>RelayPane.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -92,6 +120,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="RaceChartForm.resx">
+      <DependentUpon>RaceChartForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

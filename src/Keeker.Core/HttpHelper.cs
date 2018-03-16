@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Keeker.Core.Data;
+using System.Linq;
 
 namespace Keeker.Core
 {
@@ -12,6 +13,11 @@ namespace Keeker.Core
         public static HttpTransferEncoding GetTransferEncoding(this HttpHeaderCollection httpHeaders)
         {
             return httpHeaders.Single(x => x.Name == "Transfer-Encoding").Value.ToEnum<HttpTransferEncoding>();
+        }
+
+        public static string GetHost(this HttpHeaderCollection httpHeaders)
+        {
+            return httpHeaders.Single(x => x.Name == "Host").Value;
         }
 
         public static int GetContentLength(this HttpHeaderCollection httpHeaders)

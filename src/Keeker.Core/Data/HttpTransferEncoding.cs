@@ -1,4 +1,4 @@
-﻿namespace Keeker.Core
+﻿namespace Keeker.Core.Data
 {
     public enum HttpTransferEncoding
     {

@@ -1,4 +1,7 @@
 ﻿using Keeker.Core.Conf;
+using Keeker.Core.Data;
+using Keeker.Core.Data.Builders;
+using Keeker.Core.Streams;
 using System;
 using System.IO;
 using System.Net;
@@ -49,10 +52,16 @@ namespace Keeker.Core.Relays
         private readonly string _domesticAuthority;
         private readonly string _domesticAuthorityWithPort;
 
-        public Relay(Stream innerClientStream, string listenerId, string id, HostPlainConf conf)
+        public Relay(
+            Stream innerClientStream,
+            string listenerId,
+            string externalHostName,
+            string id,
+            HostPlainConf conf)
         {
             this.ListenerId = listenerId;
             this.Id = id;
+            this.ExternalHostName = externalHostName;
             _conf = (conf ?? throw new ArgumentNullException(nameof(conf))).Clone();
 
             // streams
@@ -94,6 +103,8 @@ namespace Keeker.Core.Relays
         public string ListenerId { get; }
 
         public string Id { get; }
+
+        public string ExternalHostName { get; }
 
         public void Start()
         {
@@ -154,6 +165,12 @@ namespace Keeker.Core.Relays
                         _clientStream.Read(_clientBuffer.Buffer, 0, metadataLength);
 
                         var requestMetadata = HttpRequestMetadata.Parse(_clientBuffer.Buffer, 0);
+
+                        if (requestMetadata.Headers.GetHost() != this.ExternalHostName)
+                        {
+                            throw new NotImplementedException();
+                        }
+
                         _lastRequestMetadata = requestMetadata;
                         var transformedRequestMetadata = this.TransformRequestMetadata(requestMetadata);
                         var transformedRequestMetadataBytes = transformedRequestMetadata.ToArray();

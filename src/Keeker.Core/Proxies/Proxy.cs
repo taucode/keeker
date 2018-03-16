@@ -1,11 +1,12 @@
 ﻿using Keeker.Core.Conf;
-using Keeker.Core.EventData;
+using Keeker.Core.Events;
+using Keeker.Core.Listeners;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Keeker.Core
+namespace Keeker.Core.Proxies
 {
     public class Proxy : IProxy
     {

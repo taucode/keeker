@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 
-namespace Keeker.Core.EventData
+namespace Keeker.Core.Events
 {
     public class ConnectionAcceptedEventArgs : EventArgs
     {

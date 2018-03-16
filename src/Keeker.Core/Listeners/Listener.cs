@@ -1,6 +1,7 @@
 ﻿using Keeker.Core.Conf;
-using Keeker.Core.EventData;
+using Keeker.Core.Events;
 using Keeker.Core.Relays;
+using Keeker.Core.Streams;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Keeker.Core
+namespace Keeker.Core.Listeners
 {
     public class Listener : IListener
     {
@@ -90,10 +91,9 @@ namespace Keeker.Core
                 while (true)
                 {
                     var client = _tcpListener.AcceptTcpClient();
+                    this.ConnectionAccepted?.Invoke(this, new ConnectionAcceptedEventArgs(client));
 
                     this.EstablishConnection(client);
-
-                    this.ConnectionAccepted?.Invoke(this, new ConnectionAcceptedEventArgs(client));
                 }
             }
             catch (Exception e)
@@ -121,9 +121,15 @@ namespace Keeker.Core
                 var certificate = _certificates[hostConf.ExternalHostName];
                 clientStream.AuthenticateAsServer(certificate, false, SslProtocols.Tls12, false);
 
-                var relayId = this.GetNextRelayId();
+                var relayId = this.GetNextRelayId(hostConf.ExternalHostName);
 
-                var relay = new Relay(clientStream, _conf.Id, relayId, hostConf);
+                var relay = new Relay(
+                    clientStream,
+                    _conf.Id,
+                    hostConf.ExternalHostName,
+                    relayId,
+                    hostConf);
+
                 this.RelayCreated?.Invoke(this, new RelayEventArgs(relay));
                 relay.Start();
             }
@@ -133,12 +139,12 @@ namespace Keeker.Core
             }
         }
 
-        private string GetNextRelayId()
+        private string GetNextRelayId(string externalHostName)
         {
             lock (_nextRelayIdLock)
             {
                 _nextRelayId++;
-                return $"{this.Id}.{_nextRelayId}";
+                return $"{this.Id};{externalHostName};{_nextRelayId}";
             }
         }
 

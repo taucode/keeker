@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Keeker.Core
+namespace Keeker.Core.Streams
 {
     public class KeekStream : Stream
     {

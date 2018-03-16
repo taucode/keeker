@@ -2,7 +2,7 @@
 using System.Net;
 using System.Text;
 
-namespace Keeker.Core
+namespace Keeker.Core.Data
 {
     public class HttpStatusLine
     {

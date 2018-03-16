@@ -1,7 +1,7 @@
-﻿using Keeker.Core.EventData;
+﻿using Keeker.Core.Events;
 using System;
 
-namespace Keeker.Core
+namespace Keeker.Core.Listeners
 {
     public interface IListener : IDisposable
     {

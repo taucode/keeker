@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Keeker.Core
+namespace Keeker.Core.Data
 {
     public class HttpRequestMetadata
     {

@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Keeker.Gui.Controls
 {
     public partial class RaceChart : UserControl
     {
+        #region WIN API Constants
+
         private const int SB_LINEUP = 0;
         private const int SB_LINEDOWN = 1;
         private const int SB_PAGEUP = 2;
@@ -16,10 +20,41 @@ namespace Keeker.Gui.Controls
         private const int SB_BOTTOM = 7;
         private const int SB_ENDSCROLL = 8;
 
-        private const int WHEEL_DELTA = 120;
+        const int WM_HSCROLL = 0x114;
+        const int WM_VSCROLL = 0x115;
+
+        #endregion
+
+        #region Drawing Constants
+
+        const int ENTRY_WIDTH = 60;
+        const int ENTRY_HEIGHT = 20;
+
+        const int VERT_MARGIN = 2;
+        const int HORZ_MARGIN = 2;
+
+        const int VERT_SPACING = 2;
+        const int HORZ_SPACING = 8;
+
+        #endregion
+
+        private List<List<RaceChartEntry>> _entryCollections;
+        private List<RaceChartEntry> _allEntries;
+
+        private int _base;
+
+        private readonly int _step;
+        private readonly int _h0;
 
         public RaceChart()
         {
+            this.SetStyle(
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.UserPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.ResizeRedraw,
+                true);
+
             InitializeComponent();
 
             this.VScroll = true;
@@ -27,11 +62,34 @@ namespace Keeker.Gui.Controls
 
             this.MouseWheel += RaceChart_MouseWheel;
 
-            this.Participants = new RaceChartParticipantCollection();
+            _h0 = this.GetItemHeightWithSpacing();
+            _step = _h0;
+        }
+
+        public void InitParticipants(int participantCount)
+        {
+            if (_entryCollections != null)
+            {
+                throw new ApplicationException(); // todo1[ak]
+            }
+
+            // todo1[ak] checks
+            _entryCollections = new List<List<RaceChartEntry>>();
+
+            for (var i = 0; i < participantCount; i++)
+            {
+                var entries = new List<RaceChartEntry>();
+                _entryCollections.Add(entries);
+            }
         }
 
         private void RaceChart_MouseWheel(object sender, MouseEventArgs e)
         {
+            if (!this.VerticalScroll.Visible)
+            {
+                return;
+            }
+
             var scrollEventType = e.Delta < 0 ? ScrollEventType.SmallIncrement : ScrollEventType.SmallDecrement;
 
             var args = this.BuildScrollEventArgs(
@@ -48,25 +106,146 @@ namespace Keeker.Gui.Controls
         }
 
         [Browsable(false)]
-        public Func<RaceChartEntry, RaceChartEntry, bool> EntryComparer;
+        public Comparison<RaceChartEntry> EntryComparer;
+
+        public void AddEntry(RaceChartEntry entry, int participantIndex)
+        {
+            var entries = _entryCollections[participantIndex];
+            entries.Add(entry);
+            entry.ParticipantIndex = participantIndex;
+
+            _allEntries = this.BuildAllEntries();
+
+            this.Invalidate();
+        }
+
+        private List<RaceChartEntry> BuildAllEntries()
+        {
+            var list = new List<RaceChartEntry>();
+            foreach (var entryCollection in _entryCollections)
+            {
+                list.AddRange(entryCollection);
+            }
+
+            list.Sort(this.EntryComparer);
+            return list;
+        }
 
         [Browsable(false)]
-        public RaceChartParticipantCollection Participants { get; }
+        public int ParticipantCount => _entryCollections.Count;
+
+        private void DoPainting(PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            var list = _allEntries;
+
+            var clientPen = new Pen(Color.Green);
+            var itemPen = new Pen(Color.Black);
+
+            g.DrawRectangle(clientPen, 0, 0, this.ClientSize.Width - 2, this.ClientSize.Height - 2);
+
+            if (list == null)
+            {
+                _base = 0;
+                this.VerticalScroll.Value = 0;
+                this.VerticalScroll.Visible = false;
+            }
+            else
+            {
+                for (var i = 0; i < list.Count; i++)
+                {
+                    var entry = list[i];
+
+                    var idx = entry.ParticipantIndex;
+                    var x = HORZ_MARGIN + idx * (ENTRY_WIDTH + HORZ_SPACING);
+                    var y = VERT_MARGIN + i * (ENTRY_HEIGHT + VERT_SPACING);
+
+                    y -= _base;
+
+                    g.DrawRectangle(itemPen, x, y, ENTRY_WIDTH, ENTRY_HEIGHT);
+                }
+
+                var clientHeight = this.ClientSize.Height;
+                var p = this.GetPictureHeight();
+
+                if (p > clientHeight && clientHeight > 0)
+                {
+                    var defect = p - clientHeight;
+                    var n = defect / _step + 1;
+                    var max = n + 9;
+                    if (max < 10)
+                    {
+                        max = 10;
+                    }
+
+                    this.VerticalScroll.Maximum = max;
+                    this.VerticalScroll.Visible = true;
+                }
+                else
+                {
+                    _base = 0;
+                    this.VerticalScroll.Value = 0;
+                    this.VerticalScroll.Visible = false;
+                }
+
+                //if (pictureHeight > this.ClientSize.Height)
+                //{
+                //    var min = 0;
+                //    var max = pictureHeight - this.ClientSize.Height;
+                //    max = Math.Max(max, 10);
+
+                //    this.VerticalScroll.Minimum = min;
+                //    this.VerticalScroll.Maximum = max;
+                //    this.VerticalScroll.Visible = true;
+                //}
+                //else
+                //{
+                //    this.VerticalScroll.Visible = false;
+                //}
+            }
+
+            itemPen.Dispose();
+            clientPen.Dispose();
+        }
+
+        protected override void OnScroll(ScrollEventArgs se)
+        {
+            base.OnScroll(se);
+
+            if (se.ScrollOrientation == ScrollOrientation.VerticalScroll)
+            {
+                _base = this.VerticalScroll.Value * _step;
+                this.Invalidate();
+            }
+        }
 
         protected override void OnLoad(EventArgs e)
         {
-            this.VerticalScroll.Visible = true;
-            this.HorizontalScroll.Visible = true;
+            //this.VerticalScroll.SmallChange = this.GetItemHeightWithSpacing() / 2;
 
             base.OnLoad(e);
         }
 
+        private int GetItemHeightWithSpacing()
+        {
+            return ENTRY_HEIGHT + VERT_SPACING;
+        }
+
+        private int GetPictureHeight()
+        {
+            var list = _allEntries;
+            var count = list?.Count ?? 0;
+
+
+            var pictureHeight =
+                VERT_MARGIN +
+                count * this.GetItemHeightWithSpacing();
+
+            return pictureHeight;
+        }
+
         protected override void WndProc(ref Message m)
         {
-            const int WM_HSCROLL = 0x114;
-            const int WM_VSCROLL = 0x115;
-            const int WM_MOUSEWHEEL = 0x020A;
-
             if (m.HWnd == this.Handle)
             {
                 switch (m.Msg)
@@ -111,6 +290,17 @@ namespace Keeker.Gui.Controls
             }
 
             base.WndProc(ref m);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            if (this.DesignMode)
+            {
+                return;
+            }
+
+            this.DoPainting(e);
+            base.OnPaint(e);
         }
 
         private ScrollEventArgs BuildScrollEventArgs(
@@ -191,8 +381,13 @@ namespace Keeker.Gui.Controls
             }
             else
             {
+                if (newPos > scrollProperties.Maximum - 9)
+                {
+                    newPos = scrollProperties.Maximum - 9;
+                }
+
                 scrollProperties.Value = newPos;
-                var args = new ScrollEventArgs(scrollEventType, newPos, oldPos, scrollOrientation);
+                var args = new ScrollEventArgs(scrollEventType, oldPos, newPos, scrollOrientation);
                 return args;
             }
         }
@@ -236,7 +431,7 @@ namespace Keeker.Gui.Controls
             return result;
         }
 
-        static int HiWord(int number)
+        private static int HiWord(int number)
         {
             if ((number & 0x80000000) == 0x80000000)
                 return (number >> 16);
@@ -244,7 +439,7 @@ namespace Keeker.Gui.Controls
                 return (number >> 16) & 0xffff;
         }
 
-        static int LoWord(int number)
+        private static int LoWord(int number)
         {
             return number & 0xffff;
         }

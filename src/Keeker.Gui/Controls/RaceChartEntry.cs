@@ -12,5 +12,7 @@
         }
 
         public object Data { get; set; }
+
+        internal int ParticipantIndex { get; set; }
     }
 }

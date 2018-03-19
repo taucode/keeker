@@ -1,120 +1,132 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿//using System;
+//using System.Collections;
+//using System.Collections.Generic;
 
-namespace Keeker.Gui.Controls
-{
-    public class RaceChartParticipant : IList<RaceChartEntry>
-    {
-        #region Fields
+//namespace Keeker.Gui.Controls
+//{
+//    public class RaceChartParticipant : IList<RaceChartEntry>
+//    {
+//        #region Fields
 
-        private readonly List<RaceChartEntry> _entries;
+//        private readonly List<RaceChartEntry> _entries;
 
-        #endregion
+//        #endregion
 
-        #region Constructor
+//        #region Constructor
 
-        public RaceChartParticipant()
-        {
-            _entries = new List<RaceChartEntry>();
-        }
+//        public RaceChartParticipant()
+//        {
+//            _entries = new List<RaceChartEntry>();
+//        }
 
-        #endregion
+//        #endregion
 
-        #region IList<RaceChartEntry> Members
+//        #region Public
 
-        public RaceChartEntry this[int index]
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
 
-        public int IndexOf(RaceChartEntry item)
-        {
-            throw new NotImplementedException();
-        }
+//        #endregion
 
-        public void Insert(int index, RaceChartEntry item)
-        {
-            throw new NotImplementedException();
-        }
+//        #region Internal
 
-        public void RemoveAt(int index)
-        {
-            throw new NotImplementedException();
-        }
+//        internal event EventHandler ItemAdded;
 
-        #endregion
+//        #endregion
 
-        #region ICollection<RaceChartEntry> Members
+//        #region IList<RaceChartEntry> Members
 
-        public int Count
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+//        public RaceChartEntry this[int index]
+//        {
+//            get
+//            {
+//                throw new NotImplementedException();
+//            }
+//            set
+//            {
+//                throw new NotImplementedException();
+//            }
+//        }
 
-        public bool IsReadOnly
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+//        public int IndexOf(RaceChartEntry item)
+//        {
+//            throw new NotImplementedException();
+//        }
 
-        public void Add(RaceChartEntry item)
-        {
-            _entries.Add(item);
-        }
+//        public void Insert(int index, RaceChartEntry item)
+//        {
+//            throw new NotImplementedException();
+//        }
 
-        public void AddData(object data)
-        {
-            this.Add(new RaceChartEntry(data));
-        }
+//        public void RemoveAt(int index)
+//        {
+//            throw new NotImplementedException();
+//        }
 
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
+//        #endregion
 
-        public bool Contains(RaceChartEntry item)
-        {
-            throw new NotImplementedException();
-        }
+//        #region ICollection<RaceChartEntry> Members
 
-        public void CopyTo(RaceChartEntry[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
+//        public int Count
+//        {
+//            get
+//            {
+//                throw new NotImplementedException();
+//            }
+//        }
 
-        public bool Remove(RaceChartEntry item)
-        {
-            throw new NotImplementedException();
-        }
+//        public bool IsReadOnly
+//        {
+//            get
+//            {
+//                throw new NotImplementedException();
+//            }
+//        }
 
-        #endregion
+//        public void Add(RaceChartEntry item)
+//        {
+//            _entries.Add(item);
+//            this.ItemAdded?.Invoke(this, EventArgs.Empty);
+//        }
 
-        #region IEnumerable<RaceChartEntry> Members
+//        public void AddData(object data)
+//        {
+//            this.Add(new RaceChartEntry(data));
+//        }
 
-        public IEnumerator<RaceChartEntry> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+//        public void Clear()
+//        {
+//            throw new NotImplementedException();
+//        }
 
-        #endregion
+//        public bool Contains(RaceChartEntry item)
+//        {
+//            throw new NotImplementedException();
+//        }
 
-        #region IEnumerable Members
+//        public void CopyTo(RaceChartEntry[] array, int arrayIndex)
+//        {
+//            throw new NotImplementedException();
+//        }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+//        public bool Remove(RaceChartEntry item)
+//        {
+//            throw new NotImplementedException();
+//        }
 
-        #endregion
-    }
-}
+//        #endregion
+
+//        #region IEnumerable<RaceChartEntry> Members
+
+//        public IEnumerator<RaceChartEntry> GetEnumerator()
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        #endregion
+
+//        #region IEnumerable Members
+
+//        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+//        #endregion
+//    }
+//}

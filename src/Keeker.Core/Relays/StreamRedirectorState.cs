@@ -1,6 +1,6 @@
-﻿namespace Keeker.Core.Redirectors
+﻿namespace Keeker.Core.Relays
 {
-    public enum RedirectorState
+    public enum StreamRedirectorState
     {
         NotStarted = 0,
         Idle,

@@ -42,13 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\IHttpMetadata.cs" />
-    <Compile Include="Redirectors\DataRedirector.cs" />
-    <Compile Include="Redirectors\DataRedirectors\ChunkedDataRedirector.cs" />
-    <Compile Include="Redirectors\DataRedirectors\FixedSizeDataRedirector.cs" />
-    <Compile Include="Redirectors\Impl\ClientRedirector.cs" />
-    <Compile Include="Redirectors\Impl\ServerRedirector.cs" />
-    <Compile Include="Redirectors\Redirector.cs" />
-    <Compile Include="Redirectors\RedirectorState.cs" />
+    <Compile Include="Relays\ContentRedirector.cs" />
+    <Compile Include="Relays\ContentRedirectors\ChunkedContentRedirector.cs" />
+    <Compile Include="Relays\ContentRedirectors\FixedSizeContentRedirector.cs" />
+    <Compile Include="Relays\StreamRedirectors\ClientStreamRedirector.cs" />
+    <Compile Include="Relays\StreamRedirectors\ServerStreamRedirector.cs" />
+    <Compile Include="Relays\StreamRedirector.cs" />
+    <Compile Include="Relays\StreamRedirectorState.cs" />
     <Compile Include="Relays\Relay.cs" />
     <Compile Include="Streams\ByteAccumulator.cs" />
     <Compile Include="CertificateInfo.cs" />

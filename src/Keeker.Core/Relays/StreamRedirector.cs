@@ -1,24 +1,23 @@
 ﻿using Keeker.Core.Data;
-using Keeker.Core.Relays;
 using Keeker.Core.Streams;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Keeker.Core.Redirectors
+namespace Keeker.Core.Relays
 {
-    public abstract class Redirector<TMetadata> where TMetadata : IHttpMetadata
+    public abstract class StreamRedirector<TMetadata> where TMetadata : IHttpMetadata
     {
         private const int PORTION_SIZE = 65530;
         private const int IDLE_TIMEOUT_MILLISECONDS = 1;
 
-        private RedirectorState _state;
+        private StreamRedirectorState _state;
 
         private readonly TimeSpan _idleTimeout;
         private TMetadata _lastMetadata;
         
-        protected Redirector(KeekStream sourceStream, Stream destinationStream)
+        protected StreamRedirector(KeekStream sourceStream, Stream destinationStream)
         {
             _idleTimeout = TimeSpan.FromMilliseconds(IDLE_TIMEOUT_MILLISECONDS);
 
@@ -35,13 +34,13 @@ namespace Keeker.Core.Redirectors
         protected abstract TMetadata ParseMetadata(byte[] buffer, int start);
         protected abstract void CheckMetadata(TMetadata metadata);
         protected abstract TMetadata TransformMetadata(TMetadata metadata);
-        protected abstract DataRedirector ResolveDataRedirector(TMetadata metadata);
+        protected abstract ContentRedirector ResolveDataRedirector(TMetadata metadata);
 
         private void DoIdle()
         {
             if (this.SourceStream.AccumulatedBytesCount > 0)
             {
-                _state = RedirectorState.Metadata;
+                _state = StreamRedirectorState.Metadata;
                 return;
             }
 
@@ -53,7 +52,7 @@ namespace Keeker.Core.Redirectors
             }
             else
             {
-                _state = RedirectorState.Metadata;
+                _state = StreamRedirectorState.Metadata;
             }
         }
 
@@ -78,7 +77,7 @@ namespace Keeker.Core.Redirectors
 
                 if (bytesReadCount == 0)
                 {
-                    _state = RedirectorState.Idle;
+                    _state = StreamRedirectorState.Idle;
                     return;
                 }
             }
@@ -97,7 +96,7 @@ namespace Keeker.Core.Redirectors
                 this.DestinationStream.Write(transformedMetadataBytes, 0, transformedMetadataBytes.Length);
 
                 _lastMetadata = transformedMetadata;
-                _state = RedirectorState.Data;
+                _state = StreamRedirectorState.Data;
             }
             else
             {
@@ -111,26 +110,26 @@ namespace Keeker.Core.Redirectors
             var dataRedirector = this.ResolveDataRedirector(_lastMetadata);
             dataRedirector?.Redirect();
 
-            _state = RedirectorState.Idle;
+            _state = StreamRedirectorState.Idle;
         }
 
         private void Routine()
         {
-            _state = RedirectorState.Idle;
+            _state = StreamRedirectorState.Idle;
 
             while (true)
             {
                 switch (_state)
                 {
-                    case RedirectorState.Idle:
+                    case StreamRedirectorState.Idle:
                         this.DoIdle();
                         break;
 
-                    case RedirectorState.Metadata:
+                    case StreamRedirectorState.Metadata:
                         this.DoMetadata();
                         break;
 
-                    case RedirectorState.Data:
+                    case StreamRedirectorState.Data:
                         this.DoData();
                         break;
 

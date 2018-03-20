@@ -1,18 +1,18 @@
 ﻿using Keeker.Core.Data;
 using Keeker.Core.Data.Builders;
-using Keeker.Core.Redirectors.DataRedirectors;
+using Keeker.Core.Relays.ContentRedirectors;
 using Keeker.Core.Streams;
 using System;
 using System.IO;
 
-namespace Keeker.Core.Redirectors.Impl
+namespace Keeker.Core.Relays.StreamRedirectors
 {
-    public class ClientRedirector : Redirector<HttpRequestMetadata>
+    public class ClientStreamRedirector : StreamRedirector<HttpRequestMetadata>
     {
         private readonly string _host;
         private readonly string _targetHost;
 
-        public ClientRedirector(
+        public ClientStreamRedirector(
             KeekStream sourceStream,
             Stream destinationStream,
             string host,
@@ -45,13 +45,13 @@ namespace Keeker.Core.Redirectors.Impl
             return transformedRequestMetadata;
         }
 
-        protected override DataRedirector ResolveDataRedirector(HttpRequestMetadata metadata)
+        protected override ContentRedirector ResolveDataRedirector(HttpRequestMetadata metadata)
         {
-            DataRedirector dataRedirector = null;
+            ContentRedirector dataRedirector = null;
             if (metadata.Headers.ContainsName("Content-Length"))
             {
                 var length = metadata.Headers.GetContentLength();
-                dataRedirector = new FixedSizeDataRedirector(
+                dataRedirector = new FixedSizeContentRedirector(
                     this.SourceStream,
                     this.SourceBuffer,
                     this.DestinationStream,

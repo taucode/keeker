@@ -1,9 +1,8 @@
-﻿using Keeker.Core.Relays;
-using System.IO;
+﻿using System.IO;
 
-namespace Keeker.Core.Redirectors.DataRedirectors
+namespace Keeker.Core.Relays.ContentRedirectors
 {
-    public class FixedSizeDataRedirector : DataRedirector
+    public class FixedSizeContentRedirector : ContentRedirector
     {
         private const int CONTENT_TRANSFER_PORTION_SIZE = 10000;
 
@@ -12,7 +11,7 @@ namespace Keeker.Core.Redirectors.DataRedirectors
         private readonly Stream _destinationStream;
         private readonly int _length;
 
-        public FixedSizeDataRedirector(
+        public FixedSizeContentRedirector(
             Stream sourceStream,
             AutoBuffer sourceBuffer,
             Stream destinationStream,
@@ -26,24 +25,9 @@ namespace Keeker.Core.Redirectors.DataRedirectors
 
         public override void Redirect()
         {
-            //var remaining = _length;
             _sourceBuffer.Allocate(CONTENT_TRANSFER_PORTION_SIZE);
 
             CoreHelper.RedirectStream(_sourceStream, _destinationStream, _sourceBuffer.Raw, _length);
-
-            //while (true)
-            //{
-            //    if (remaining == 0)
-            //    {
-            //        break;
-            //    }
-
-            //    var portionSize = Math.Min(remaining, _sourceBuffer.Buffer.Length);
-            //    var bytesReadCount = _sourceStream.Read(_sourceBuffer.Buffer, 0, portionSize);
-            //    _destinationStream.Write(_sourceBuffer.Buffer, 0, bytesReadCount);
-
-            //    remaining -= bytesReadCount;
-            //}
         }
     }
 }

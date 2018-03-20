@@ -1,21 +1,21 @@
 ﻿using Keeker.Core.Data;
 using Keeker.Core.Data.Builders;
-using Keeker.Core.Redirectors.DataRedirectors;
+using Keeker.Core.Relays.ContentRedirectors;
 using Keeker.Core.Streams;
 using System;
 using System.IO;
 using System.Net;
 
-namespace Keeker.Core.Redirectors.Impl
+namespace Keeker.Core.Relays.StreamRedirectors
 {
-    public class ServerRedirector : Redirector<HttpResponseMetadata>
+    public class ServerStreamRedirector : StreamRedirector<HttpResponseMetadata>
     {
         private readonly string _protocol;
         private readonly string _externalHostName;
         private readonly string _domesticAuthority;
         private readonly string _domesticAuthorityWithPort;
 
-        public ServerRedirector(
+        public ServerStreamRedirector(
             KeekStream sourceStream,
             Stream destinationStream,
             string protocol,
@@ -68,13 +68,13 @@ namespace Keeker.Core.Redirectors.Impl
             return metadata;
         }
 
-        protected override DataRedirector ResolveDataRedirector(HttpResponseMetadata metadata)
+        protected override ContentRedirector ResolveDataRedirector(HttpResponseMetadata metadata)
         {
-            DataRedirector dataRedirector = null;
+            ContentRedirector dataRedirector = null;
             if (metadata.Headers.ContainsName("Content-Length"))
             {
                 var length = metadata.Headers.GetContentLength();
-                dataRedirector = new FixedSizeDataRedirector(
+                dataRedirector = new FixedSizeContentRedirector(
                     this.SourceStream,
                     this.SourceBuffer,
                     this.DestinationStream,
@@ -85,7 +85,7 @@ namespace Keeker.Core.Redirectors.Impl
                 var transferEncoding = metadata.Headers.GetTransferEncoding();
                 if (transferEncoding == HttpTransferEncoding.Chunked)
                 {
-                    dataRedirector = new ChunkedDataRedirector(
+                    dataRedirector = new ChunkedContentRedirector(
                         this.SourceStream,
                         this.SourceBuffer,
                         this.DestinationStream);

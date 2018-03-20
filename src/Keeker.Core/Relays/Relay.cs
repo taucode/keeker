@@ -1,5 +1,5 @@
 ﻿using Keeker.Core.Conf;
-using Keeker.Core.Redirectors.Impl;
+using Keeker.Core.Relays.StreamRedirectors;
 using Keeker.Core.Streams;
 using System;
 using System.IO;
@@ -19,8 +19,6 @@ namespace Keeker.Core.Relays
 
         private readonly KeekStream _clientStream;
         private readonly KeekStream _serverStream;
-
-        //private readonly string _targetHost;
 
         private readonly string _domesticAuthority;
         private readonly string _domesticAuthorityWithPort;
@@ -42,7 +40,6 @@ namespace Keeker.Core.Relays
             _isHttps = isHttps;
 
             this.ExternalHostName = conf.ExternalHostName;
-            //_targetHost = this.BuildTargetHost(isHttps, conf);
 
             _clientStream = new KeekStream(innerClientStream);
 
@@ -65,26 +62,7 @@ namespace Keeker.Core.Relays
             _domesticAuthority = $"{conf.DomesticHostName}{colonWithPortIfNeeded}";
             _domesticAuthorityWithPort = $"{conf.DomesticHostName}:{conf.EndPoint.Port}";
         }
-
-        //private string BuildTargetHost(bool isHttps, HostPlainConf conf)
-        //{
-        //    var sb = new StringBuilder();
-        //    sb.Append(conf.DomesticHostName);
-
-        //    var defaultPort = GetDefaultPort(isHttps);
-        //    if (conf.EndPoint.Port != defaultPort)
-        //    {
-        //        sb.Append($":{conf.EndPoint.Port}");
-        //    }
-
-        //    return sb.ToString();
-        //}
-
-        private static int GetDefaultPort(bool isHttps)
-        {
-            return isHttps ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT;
-        }
-
+        
         public string ExternalHostName { get; }
 
         public void Start()
@@ -97,13 +75,13 @@ namespace Keeker.Core.Relays
                 }
             }
 
-            var clientRedirector = new ClientRedirector(
+            var clientRedirector = new ClientStreamRedirector(
                 _clientStream,
                 _serverStream,
                 this.ExternalHostName,
                 _domesticAuthority);
 
-            var serverRedirector = new ServerRedirector(
+            var serverRedirector = new ServerStreamRedirector(
                 _serverStream,
                 _clientStream,
                 this.GetProtocol(),

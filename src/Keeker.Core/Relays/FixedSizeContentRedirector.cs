@@ -33,9 +33,9 @@ namespace Keeker.Core.Relays
                     break;
                 }
 
-                var portionSize = Math.Min(remaining, _readBuffer.Buffer.Length);
-                var bytesReadCount = _sourceStream.Read(_readBuffer.Buffer, 0, portionSize);
-                _destinationStream.Write(_readBuffer.Buffer, 0, bytesReadCount);
+                var portionSize = Math.Min(remaining, _readBuffer.Raw.Length);
+                var bytesReadCount = _sourceStream.Read(_readBuffer.Raw, 0, portionSize);
+                _destinationStream.Write(_readBuffer.Raw, 0, bytesReadCount);
 
                 remaining -= bytesReadCount;
             }

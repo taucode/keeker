@@ -44,7 +44,7 @@ namespace Keeker.Core.Proxies
             foreach (var listener in _listeners)
             {
                 listener.ConnectionAccepted += listener_ConnectionAccepted;
-                listener.RelayCreated += listener_RelayCreated;
+                //listener.RelayCreated += listener_RelayCreated;
             }
         }
 
@@ -57,10 +57,10 @@ namespace Keeker.Core.Proxies
             this.ListenerConnectionAccepted?.Invoke(sender, e);
         }
 
-        private void listener_RelayCreated(object sender, RelayEventArgs e)
-        {
-            this.ListenerRelayCreated?.Invoke(sender, e);
-        }
+        //private void listener_RelayCreated(object sender, RelayEventArgs e)
+        //{
+        //    this.ListenerRelayCreated?.Invoke(sender, e);
+        //}
 
         #endregion
 
@@ -86,7 +86,7 @@ namespace Keeker.Core.Proxies
 
         public event EventHandler<ConnectionAcceptedEventArgs> ListenerConnectionAccepted;
 
-        public event EventHandler<RelayEventArgs> ListenerRelayCreated;
+        //public event EventHandler<RelayEventArgs> ListenerRelayCreated;
 
         #endregion
     }

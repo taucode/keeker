@@ -1,346 +1,152 @@
 ﻿using Keeker.Core.Conf;
-using Keeker.Core.Data;
-using Keeker.Core.Data.Builders;
+using Keeker.Core.Redirectors.Impl;
 using Keeker.Core.Streams;
 using System;
 using System.IO;
-using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Keeker.Core.Relays
 {
     public class Relay
     {
-        private enum ClientFlowState
-        {
-            Unknown = 0,
-            Idle,
-            ReadingMetadata,
-            RedirectingFixedSizeContent,
-        }
+        private const int DEFAULT_HTTPS_PORT = 443;
+        private const int DEFAULT_HTTP_PORT = 80;
 
-        private enum ServerFlowState
-        {
-            Unknown = 0,
-            Idle,
-            ReadingMetadata,
-            RedirectingFixedSizeContent,
-            RedirectingChunkedContent,
-        }
+        private bool _isStarted;
+        private readonly object _lock;
 
-        private readonly HostPlainConf _conf;
+        private readonly bool _isHttps;
 
         private readonly KeekStream _clientStream;
-        private ClientFlowState _clientFlowState;
-        private readonly AutoBuffer _clientBuffer;
-        private readonly FixedSizeContentRedirector _clientFixedSizeContentRedirector;
-        private readonly ChunkedContentRedirector _clientChunkedContentRedirector;
-
-        private HttpRequestMetadata _lastRequestMetadata;
-
         private readonly KeekStream _serverStream;
-        private ServerFlowState _serverFlowState;
-        private readonly AutoBuffer _serverBuffer;
-        private readonly FixedSizeContentRedirector _serverFixedSizeContentRedirector;
-        private readonly ChunkedContentRedirector _serverChunkedContentRedirector;
 
-        private HttpResponseMetadata _lastResponseMetadata;
+        //private readonly string _targetHost;
 
-        private readonly string _protocol;
         private readonly string _domesticAuthority;
         private readonly string _domesticAuthorityWithPort;
 
         public Relay(
+            bool isHttps,
             Stream innerClientStream,
             string listenerId,
-            string externalHostName,
             string id,
             HostPlainConf conf)
         {
-            this.ListenerId = listenerId;
-            this.Id = id;
-            this.ExternalHostName = externalHostName;
-            _conf = (conf ?? throw new ArgumentNullException(nameof(conf))).Clone();
+            if (conf.EndPoint.Port == DEFAULT_HTTPS_PORT)
+            {
+                throw new ApplicationException(); // todo2[ak] suspicious: why domestic has port equal to SSL? we do not authorize as client
+            }
 
-            // streams
+            _lock = new object();
+
+            _isHttps = isHttps;
+
+            this.ExternalHostName = conf.ExternalHostName;
+            //_targetHost = this.BuildTargetHost(isHttps, conf);
+
             _clientStream = new KeekStream(innerClientStream);
-            _clientBuffer = new AutoBuffer();
 
             var tcpclient = new TcpClient();
-            tcpclient.Connect(_conf.EndPoint);
+            tcpclient.Connect(conf.EndPoint);
             var serverNetworkStream = tcpclient.GetStream();
 
             _serverStream = new KeekStream(serverNetworkStream);
-            _serverBuffer = new AutoBuffer();
 
-            // redirectors
-            _clientFixedSizeContentRedirector = new FixedSizeContentRedirector(_clientStream, _serverStream, _clientBuffer);
-            _clientChunkedContentRedirector = new ChunkedContentRedirector(_clientStream, _serverStream, _clientBuffer);
-
-            _serverFixedSizeContentRedirector = new FixedSizeContentRedirector(_serverStream, _clientStream, _serverBuffer);
-            _serverChunkedContentRedirector = new ChunkedContentRedirector(_serverStream, _clientStream, _serverBuffer);
-
-            _protocol = this.IsSecure ? "https" : "http";
-            var hostName = _conf.DomesticHostName;
-            var defaultPort = this.IsSecure ? 443 : 80;
             string colonWithPortIfNeeded;
-            var port = _conf.EndPoint.Port;
-            if (defaultPort == port)
+            if (conf.EndPoint.Port == DEFAULT_HTTP_PORT)
             {
                 colonWithPortIfNeeded = "";
             }
             else
             {
-                colonWithPortIfNeeded = $":{_conf.EndPoint.Port}";
+                colonWithPortIfNeeded = $":{conf.EndPoint.Port}";
             }
 
-            _domesticAuthority = $"{hostName}{colonWithPortIfNeeded}";
-            _domesticAuthorityWithPort = $"{hostName}:{port}";
+            _domesticAuthority = $"{conf.DomesticHostName}{colonWithPortIfNeeded}";
+            _domesticAuthorityWithPort = $"{conf.DomesticHostName}:{conf.EndPoint.Port}";
         }
 
-        public string ListenerId { get; }
+        //private string BuildTargetHost(bool isHttps, HostPlainConf conf)
+        //{
+        //    var sb = new StringBuilder();
+        //    sb.Append(conf.DomesticHostName);
 
-        public string Id { get; }
+        //    var defaultPort = GetDefaultPort(isHttps);
+        //    if (conf.EndPoint.Port != defaultPort)
+        //    {
+        //        sb.Append($":{conf.EndPoint.Port}");
+        //    }
+
+        //    return sb.ToString();
+        //}
+
+        private static int GetDefaultPort(bool isHttps)
+        {
+            return isHttps ? DEFAULT_HTTPS_PORT : DEFAULT_HTTP_PORT;
+        }
 
         public string ExternalHostName { get; }
 
         public void Start()
         {
-            new Task(this.ClientRoutine).Start();
-            new Task(this.ServerRoutine).Start();
-        }
-
-        private void ClientRoutine()
-        {
-            const int IDLE_TIMEOUT = 1;
-            var idleTimeout = TimeSpan.FromMilliseconds(IDLE_TIMEOUT);
-            const int PORTION_SIZE = 1000;
-
-            _clientFlowState = ClientFlowState.Idle;;
-            var contentBytesCount = 0;
-
-            while (true)
+            lock (_lock)
             {
-                if (_clientFlowState == ClientFlowState.Idle)
+                if (_isStarted)
                 {
-                    if (_clientStream.AccumulatedBytesCount > 0)
-                    {
-                        _clientFlowState = ClientFlowState.ReadingMetadata;
-                        continue;
-                    }
-
-                    var bytesReadCount = _clientStream.ReadInnerStream(PORTION_SIZE);
-
-                    if (bytesReadCount == 0)
-                    {
-                        Thread.Sleep(idleTimeout);
-                    }
-                    else
-                    {
-                        _clientFlowState = ClientFlowState.ReadingMetadata;
-                    }
-                }
-                else if (_clientFlowState == ClientFlowState.ReadingMetadata)
-                {
-                    if (_clientStream.AccumulatedBytesCount == 0)
-                    {
-                        // let's accumulate some data
-                        var bytesReadCount = _clientStream.ReadInnerStream(PORTION_SIZE);
-
-                        if (bytesReadCount == 0)
-                        {
-                            _clientFlowState = ClientFlowState.Idle;
-                            continue;
-                        }
-                    }
-
-                    var index = _clientStream.PeekIndexOf(HttpHelper.CrLfCrLfBytes);
-                    if (index >= 0)
-                    {
-                        var metadataLength = index + HttpHelper.CrLfCrLfBytes.Length;
-
-                        _clientBuffer.Allocate(metadataLength);
-                        _clientStream.Read(_clientBuffer.Buffer, 0, metadataLength);
-
-                        var requestMetadata = HttpRequestMetadata.Parse(_clientBuffer.Buffer, 0);
-
-                        if (requestMetadata.Headers.GetHost() != this.ExternalHostName)
-                        {
-                            throw new NotImplementedException();
-                        }
-
-                        _lastRequestMetadata = requestMetadata;
-                        var transformedRequestMetadata = this.TransformRequestMetadata(requestMetadata);
-                        var transformedRequestMetadataBytes = transformedRequestMetadata.ToArray();
-                        _serverStream.Write(transformedRequestMetadataBytes, 0, transformedRequestMetadataBytes.Length);
-
-                        if (transformedRequestMetadata.Headers.ContainsName("Content-Length"))
-                        {
-                            _clientFlowState = ClientFlowState.RedirectingFixedSizeContent;
-                            contentBytesCount = transformedRequestMetadata.Headers.GetContentLength();
-                        }
-                    }
-                    else
-                    {
-                        // accumulated data doesn't contain \r\n, read more.
-                        _clientStream.ReadInnerStream(PORTION_SIZE);
-                    }
-                }
-                else if (_clientFlowState == ClientFlowState.RedirectingFixedSizeContent)
-                {
-                    //this.RedirectClientContent(contentBytesCount);
-                    _clientFixedSizeContentRedirector.Redirect(contentBytesCount);
-                    contentBytesCount = 0;
-                    _clientFlowState = ClientFlowState.Idle;
-                }
-                else
-                {
-                    throw new ApplicationException(); // todo2[ak] wtf
-                }
-            }
-        }
-
-        private void ServerRoutine()
-        {
-            const int IDLE_TIMEOUT = 1;
-            var idleTimeout = TimeSpan.FromMilliseconds(IDLE_TIMEOUT);
-            const int PORTION_SIZE = 1000;
-
-            _serverFlowState = ServerFlowState.Idle;
-            var contentBytesCount = 0;
-
-            while (true)
-            {
-                if (_serverFlowState == ServerFlowState.Idle)
-                {
-                    if (_serverStream.AccumulatedBytesCount > 0)
-                    {
-                        _serverFlowState = ServerFlowState.ReadingMetadata;
-                        continue;
-                    }
-
-                    var bytesReadCount = _serverStream.ReadInnerStream(PORTION_SIZE);
-
-                    if (bytesReadCount == 0)
-                    {
-                        Thread.Sleep(idleTimeout);
-                    }
-                    else
-                    {
-                        _serverFlowState = ServerFlowState.ReadingMetadata;
-                    }
-                }
-                else if (_serverFlowState == ServerFlowState.ReadingMetadata)
-                {
-                    if (_serverStream.AccumulatedBytesCount == 0)
-                    {
-                        // let's accumulate some data
-                        var bytesReadCount = _serverStream.ReadInnerStream(PORTION_SIZE);
-
-                        if (bytesReadCount == 0)
-                        {
-                            _serverFlowState = ServerFlowState.Idle;
-                            continue;
-                        }
-                    }
-
-                    var index = _serverStream.PeekIndexOf(HttpHelper.CrLfCrLfBytes);
-                    if (index > 0)
-                    {
-                        var metadataLength = index + HttpHelper.CrLfCrLfBytes.Length;
-                        _serverBuffer.Allocate(metadataLength);
-
-                        _serverStream.Read(_serverBuffer.Buffer, 0, metadataLength);
-
-                        var responseMetadata = HttpResponseMetadata.Parse(_serverBuffer.Buffer, 0);
-                        _lastResponseMetadata = responseMetadata;
-
-                        var transformedResponseMetadata = this.TransformResponseMetadata(responseMetadata);
-                        var transformedResponseMetadataBytes = transformedResponseMetadata.ToArray();
-                        _clientStream.Write(transformedResponseMetadataBytes, 0, transformedResponseMetadataBytes.Length);
-
-                        if (transformedResponseMetadata.Headers.ContainsName("Content-Length"))
-                        {
-                            _serverFlowState = ServerFlowState.RedirectingFixedSizeContent;
-                            contentBytesCount = transformedResponseMetadata.Headers.GetContentLength();
-                        }
-                        else if (transformedResponseMetadata.Headers.ContainsName("Transfer-Encoding"))
-                        {
-                            var transferEncoding = transformedResponseMetadata.Headers.GetTransferEncoding();
-                            if (transferEncoding == HttpTransferEncoding.Chunked)
-                            {
-                                _serverFlowState = ServerFlowState.RedirectingChunkedContent;
-                            }
-                            else
-                            {
-                                throw new NotImplementedException();
-                            }
-                        }
-                    }
-                }
-                else if (_serverFlowState == ServerFlowState.RedirectingFixedSizeContent)
-                {
-                    _serverFixedSizeContentRedirector.Redirect(contentBytesCount);
-                    contentBytesCount = 0;
-                    _serverFlowState = ServerFlowState.Idle;
-
-                }
-                else if (_serverFlowState == ServerFlowState.RedirectingChunkedContent)
-                {
-                    _serverChunkedContentRedirector.Redirect();
-                    _serverFlowState = ServerFlowState.Idle;
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-            }
-        }
-
-        private bool IsSecure => _conf.CertificateId != null;
-
-        private HttpRequestMetadata TransformRequestMetadata(HttpRequestMetadata requestMetadata)
-        {
-            var requestMetadataBuilder = new HttpRequestMetadataBuilder(requestMetadata);
-            requestMetadataBuilder.Headers.Replace("Host", "localhost:53808"); // todo00000000[ak]
-            var transformedRequestMetadata = requestMetadataBuilder.Build();
-
-            return transformedRequestMetadata;
-        }
-
-        private HttpResponseMetadata TransformResponseMetadata(HttpResponseMetadata responseMetadata)
-        {
-            if (responseMetadata.Line.Code == HttpStatusCode.Found)
-            {
-                var location = responseMetadata.Headers.GetLocation();
-
-                var locationIsAbsolute = location.StartsWith("http://") || location.StartsWith("https://");
-                if (locationIsAbsolute)
-                {
-                    var uri = new Uri(location);
-
-                    if (
-                        uri.Authority == _domesticAuthority ||
-                        uri.Authority == _domesticAuthorityWithPort)
-                    {
-                        var changedLocation = this.BuildExternalUrl(uri.PathAndQuery);
-
-                        var responseMetadataBuilder = new HttpResponseMetadataBuilder(responseMetadata);
-                        responseMetadataBuilder.Headers.Replace("Location", changedLocation);
-
-                        responseMetadata = responseMetadataBuilder.Build();
-                    }
+                    throw new ApplicationException(); // todo2[ak]
                 }
             }
 
-            return responseMetadata; // todo0[ak] temp
+            var clientRedirector = new ClientRedirector(
+                _clientStream,
+                _serverStream,
+                this.ExternalHostName,
+                _domesticAuthority);
+
+            var serverRedirector = new ServerRedirector(
+                _serverStream,
+                _clientStream,
+                this.GetProtocol(),
+                this.ExternalHostName,
+                _domesticAuthority,
+                _domesticAuthorityWithPort);
+
+            clientRedirector.Start();
+            serverRedirector.Start();
+
+            lock (_lock)
+            {
+                _isStarted = true;
+            }
         }
 
-        private string BuildExternalUrl(string pathAndQuery)
+        private string GetProtocol()
         {
-            return $"{_protocol}://{_conf.ExternalHostName}{pathAndQuery}";
+            return _isHttps ? "https" : "http";
+        }
+
+        public void Stop()
+        {
+            lock (_lock)
+            {
+                if (!_isStarted)
+                {
+                    throw new ApplicationException(); // todo2[ak]
+                }
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public bool IsStarted
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _isStarted;
+                }
+            }
         }
     }
 }

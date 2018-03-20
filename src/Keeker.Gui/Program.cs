@@ -13,8 +13,8 @@ namespace Keeker.Gui
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new MainForm());
-            Application.Run(new RaceChartForm());
+            Application.Run(new MainForm());
+            //Application.Run(new RaceChartForm());
         }
     }
 }

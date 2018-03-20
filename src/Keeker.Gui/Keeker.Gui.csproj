@@ -58,8 +58,6 @@
       <DependentUpon>RaceChart.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\RaceChartEntry.cs" />
-    <Compile Include="Controls\RaceChartParticipant.cs" />
-    <Compile Include="Controls\RaceChartParticipantCollection.cs" />
     <Compile Include="Data\HostConfDto.cs" />
     <Compile Include="Data\ListenerConfDto.cs" />
     <Compile Include="FooData.cs" />

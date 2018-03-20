@@ -353,5 +353,24 @@ namespace Keeker.Core
         {
             return (TEnum)Enum.Parse(typeof(TEnum), s, true);
         }
+
+        public static void RedirectStream(Stream source, Stream destination, byte[] buffer, int length)
+        {
+            var remaining = length;
+
+            while (true)
+            {
+                if (remaining == 0)
+                {
+                    break;
+                }
+
+                var portionSize = Math.Min(remaining, buffer.Length);
+                var bytesReadCount = source.Read(buffer, 0, portionSize);
+                destination.Write(buffer, 0, bytesReadCount);
+
+                remaining -= bytesReadCount;
+            }
+        }
     }
 }

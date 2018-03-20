@@ -124,14 +124,23 @@ namespace Keeker.Core.Listeners
                 var relayId = this.GetNextRelayId(hostConf.ExternalHostName);
 
                 var relay = new Relay(
+                    _conf.IsHttps,
                     clientStream,
                     _conf.Id,
-                    hostConf.ExternalHostName,
                     relayId,
                     hostConf);
 
-                this.RelayCreated?.Invoke(this, new RelayEventArgs(relay));
                 relay.Start();
+
+                //var relay = new Relay(
+                //    clientStream,
+                //    _conf.Id,
+                //    hostConf.ExternalHostName,
+                //    relayId,
+                //    hostConf);
+
+                //this.RelayCreated?.Invoke(this, new RelayEventArgs(relay));
+                //relay.Start();
             }
             else
             {
@@ -220,7 +229,7 @@ namespace Keeker.Core.Listeners
 
         public event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
 
-        public event EventHandler<RelayEventArgs> RelayCreated;
+        //public event EventHandler<RelayEventArgs> RelayCreated;
 
         //public IPEndPoint EndPoint
         //{

@@ -15,7 +15,7 @@ namespace Keeker.Gui
     {
         private readonly IProxy _proxy;
         private readonly ProxyPlainConf _conf;
-        private readonly Dictionary<string, Dictionary<string, Relay>> _relayCollectionsByListenerId;
+        //private readonly Dictionary<string, Dictionary<string, Relay>> _relayCollectionsByListenerId;
         private readonly object _lock;
         private Pane _currentPane;
 
@@ -24,53 +24,53 @@ namespace Keeker.Gui
             InitializeComponent();
 
             _lock = new object();
-            _relayCollectionsByListenerId = new Dictionary<string, Dictionary<string, Relay>>();
+            //_relayCollectionsByListenerId = new Dictionary<string, Dictionary<string, Relay>>();
 
             _conf = ProxyPlainConf.LoadFromAppConfig("proxy");
             _proxy = new Proxy(_conf);
 
             _proxy.ListenerConnectionAccepted += proxy_ListenerConnectionAccepted;
-            _proxy.ListenerRelayCreated += proxy_ListenerRelayCreated;
+            //_proxy.ListenerRelayCreated += proxy_ListenerRelayCreated;
         }
 
-        private void proxy_ListenerRelayCreated(object sender, RelayEventArgs e)
-        {
-            this.ReflectCreatedRelay(e.Relay);
-        }
+        //private void proxy_ListenerRelayCreated(object sender, RelayEventArgs e)
+        //{
+        //    this.ReflectCreatedRelay(e.Relay);
+        //}
 
-        private void ReflectCreatedRelay(Relay relay)
-        {
-            lock (_lock)
-            {
-                this.Invoke(new Action<Relay>(
-                    r =>
-                    {
-                        var listenerNode = this.GetListenerNode(r.ListenerId);
-                        var hostNode = this.GetHostNode(listenerNode, r.ExternalHostName);
+        //private void ReflectCreatedRelay(Relay relay)
+        //{
+        //    lock (_lock)
+        //    {
+        //        this.Invoke(new Action<Relay>(
+        //            r =>
+        //            {
+        //                var listenerNode = this.GetListenerNode(r.ListenerId);
+        //                var hostNode = this.GetHostNode(listenerNode, r.ExternalHostName);
 
-                        var node = new TreeNode(relay.Id)
-                        {
-                            ImageIndex = 2,
-                            SelectedImageIndex = 2,
-                            Tag = relay,
-                        };
+        //                var node = new TreeNode(relay.Id)
+        //                {
+        //                    ImageIndex = 2,
+        //                    SelectedImageIndex = 2,
+        //                    Tag = relay,
+        //                };
 
-                        hostNode.Nodes.Add(node);
-                    }),
-                    relay);
+        //                hostNode.Nodes.Add(node);
+        //            }),
+        //            relay);
 
-                //var containsListener = _relayCollectionsByListenerId.TryGetValue(relay.ListenerId, out var relays);
-                //if (!containsListener)
-                //{
-                //    relays = new Dictionary<string, Relay>();
-                //}
+        //        //var containsListener = _relayCollectionsByListenerId.TryGetValue(relay.ListenerId, out var relays);
+        //        //if (!containsListener)
+        //        //{
+        //        //    relays = new Dictionary<string, Relay>();
+        //        //}
 
-                //if (containsListener)
-                //{
-                //    relays.Add(relay.Id, relay);
-                //}
-            }
-        }
+        //        //if (containsListener)
+        //        //{
+        //        //    relays.Add(relay.Id, relay);
+        //        //}
+        //    }
+        //}
 
         private TreeNode GetHostNode(TreeNode listenerNode, string host)
         {
@@ -167,11 +167,11 @@ namespace Keeker.Gui
                 var conf = (HostConfDto)node.Tag;
                 this.SetPane(new JsonPropertiesPane(conf));
             }
-            else if (node.Tag is Relay)
-            {
-                var relay = (Relay)node.Tag;
-                this.SetPane(new RelayPane(relay));
-            }
+            //else if (node.Tag is Relay)
+            //{
+            //    var relay = (Relay)node.Tag;
+            //    this.SetPane(new RelayPane(relay));
+            //}
             else
             {
                 throw new NotImplementedException();

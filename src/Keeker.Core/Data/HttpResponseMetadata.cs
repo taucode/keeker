@@ -2,7 +2,7 @@
 
 namespace Keeker.Core.Data
 {
-    public class HttpResponseMetadata
+    public class HttpResponseMetadata : IHttpMetadata
     {
         public HttpResponseMetadata(HttpStatusLine line, HttpHeaderCollection headers)
         {
@@ -14,7 +14,7 @@ namespace Keeker.Core.Data
 
         public HttpHeaderCollection Headers { get; }
 
-        public byte[] ToArray()
+        public byte[] Serialize()
         {
             using (var stream = new MemoryStream())
             {

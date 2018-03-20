@@ -3,13 +3,13 @@ using System;
 
 namespace Keeker.Core.Events
 {
-    public class RelayEventArgs : EventArgs
-    {
-        public RelayEventArgs(Relay relay)
-        {
-            this.Relay = relay;
-        }
+    //public class RelayEventArgs : EventArgs
+    //{
+    //    public RelayEventArgs(Relay relay)
+    //    {
+    //        this.Relay = relay;
+    //    }
 
-        public Relay Relay { get; }
-    }
+    //    public Relay Relay { get; }
+    //}
 }

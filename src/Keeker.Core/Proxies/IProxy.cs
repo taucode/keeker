@@ -14,6 +14,6 @@ namespace Keeker.Core.Proxies
 
         event EventHandler<ConnectionAcceptedEventArgs> ListenerConnectionAccepted;
 
-        event EventHandler<RelayEventArgs> ListenerRelayCreated;
+        //event EventHandler<RelayEventArgs> ListenerRelayCreated;
     }
 }

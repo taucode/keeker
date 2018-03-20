@@ -41,6 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\IHttpMetadata.cs" />
+    <Compile Include="Redirectors\DataRedirector.cs" />
+    <Compile Include="Redirectors\DataRedirectors\ChunkedDataRedirector.cs" />
+    <Compile Include="Redirectors\DataRedirectors\FixedSizeDataRedirector.cs" />
+    <Compile Include="Redirectors\Impl\ClientRedirector.cs" />
+    <Compile Include="Redirectors\Impl\ServerRedirector.cs" />
+    <Compile Include="Redirectors\Redirector.cs" />
+    <Compile Include="Redirectors\RedirectorState.cs" />
+    <Compile Include="Relays\Relay.cs" />
     <Compile Include="Streams\ByteAccumulator.cs" />
     <Compile Include="CertificateInfo.cs" />
     <Compile Include="Events\ConnectionAcceptedEventArgs.cs" />
@@ -71,8 +80,7 @@
     <Compile Include="Relays\AutoBuffer.cs" />
     <Compile Include="Relays\ChunkedContentRedirector.cs" />
     <Compile Include="Relays\FixedSizeContentRedirector.cs" />
-    <Compile Include="Relays\IRelay.cs" />
-    <Compile Include="Relays\Relay.cs" />
+    <Compile Include="Relays\OldRelay.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

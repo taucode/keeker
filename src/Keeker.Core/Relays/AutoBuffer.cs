@@ -4,11 +4,11 @@ namespace Keeker.Core.Relays
 {
     public class AutoBuffer
     {
-        private byte[] _buffer;
+        private byte[] _raw;
 
         public AutoBuffer()
         {
-            _buffer = new byte[0];
+            _raw = new byte[0];
         }
 
         public void Allocate(int count)
@@ -18,12 +18,12 @@ namespace Keeker.Core.Relays
                 throw new ArgumentOutOfRangeException(nameof(count));
             }
 
-            if (count > _buffer.Length)
+            if (count > _raw.Length)
             {
-                _buffer = new byte[count];
+                _raw = new byte[count];
             }
         }
 
-        public byte[] Buffer => _buffer;
+        public byte[] Raw => _raw;
     }
 }

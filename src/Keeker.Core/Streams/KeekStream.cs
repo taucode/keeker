@@ -27,7 +27,7 @@ namespace Keeker.Core.Streams
 
         #endregion
 
-        #region Overridden from  Stream
+        #region Overridden from Stream
 
         public override void Flush()
         {
@@ -51,8 +51,8 @@ namespace Keeker.Core.Streams
                 if (_accumulator.IsEmpty)
                 {
                     // read all from inner stream
-                    var readFromInnerStremBytesCount = _innerStream.Read(buffer, offset, count);
-                    return readFromInnerStremBytesCount;
+                    var readFromInnerStreamBytesCount = _innerStream.Read(buffer, offset, count);
+                    return readFromInnerStreamBytesCount;
                 }
                 else
                 {
@@ -120,7 +120,7 @@ namespace Keeker.Core.Streams
 
         #region Public
 
-        public int ReadInnerStream(int maxCount)
+        public int ReadInnerStream(int maxCount, Action<byte[], int> callback = null)
         {
             if (maxCount < 1)
             {
@@ -131,6 +131,9 @@ namespace Keeker.Core.Streams
             {
                 var buffer = new byte[maxCount];
                 var bytesRead = _innerStream.Read(buffer, 0, maxCount);
+
+                callback?.Invoke(buffer, bytesRead);
+
                 if (bytesRead == 0)
                 {
                     return 0; // we haven't read anything from the inner stream

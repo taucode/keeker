@@ -38,13 +38,21 @@ namespace Keeker.Gui.Controls
 
         #endregion
 
+        #region Fields
+
         private List<List<RaceChartEntry>> _entryCollections;
         private List<RaceChartEntry> _allEntries;
 
         private int _base;
 
-        private readonly int _step;
-        private readonly int _h0;
+
+        private readonly int _itemHeightWithSpacing;
+        private readonly int _scrollStep;
+        private int _pictureHeight;
+
+        #endregion
+
+        #region Constructor
 
         public RaceChart()
         {
@@ -60,30 +68,92 @@ namespace Keeker.Gui.Controls
             this.VScroll = true;
             this.HScroll = true;
 
-            this.MouseWheel += RaceChart_MouseWheel;
-
-            _h0 = this.GetItemHeightWithSpacing();
-            _step = _h0;
+            _itemHeightWithSpacing = ENTRY_HEIGHT + VERT_SPACING;
+            _scrollStep = _itemHeightWithSpacing;
         }
 
-        public void InitParticipants(int participantCount)
+        #endregion
+
+        #region Overridden
+
+        protected override void OnScroll(ScrollEventArgs se)
         {
-            if (_entryCollections != null)
-            {
-                throw new ApplicationException(); // todo1[ak]
-            }
+            base.OnScroll(se);
 
-            // todo1[ak] checks
-            _entryCollections = new List<List<RaceChartEntry>>();
-
-            for (var i = 0; i < participantCount; i++)
+            if (se.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                var entries = new List<RaceChartEntry>();
-                _entryCollections.Add(entries);
+                _base = this.VerticalScroll.Value * _scrollStep;
+                this.Invalidate();
             }
         }
 
-        private void RaceChart_MouseWheel(object sender, MouseEventArgs e)
+        protected override void OnLoad(EventArgs e)
+        {
+            //this.VerticalScroll.SmallChange = this.GetItemHeightWithSpacing() / 2;
+
+            base.OnLoad(e);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.HWnd == this.Handle)
+            {
+                switch (m.Msg)
+                {
+                    case WM_VSCROLL:
+                    {
+                        if (m.LParam != IntPtr.Zero)
+                        {
+                            break; //do the base.WndProc
+                        }
+
+                        var type = GetScrollEventType(m.WParam);
+                        var args = this.BuildScrollEventArgs(this.VerticalScroll, type, m.WParam, ScrollOrientation.VerticalScroll);
+                        if (args != null)
+                        {
+                            this.OnScroll(args);
+                            this.Invalidate();
+                        }
+
+                        return;
+                    }
+
+
+                    case WM_HSCROLL:
+                    {
+                        if (m.LParam != IntPtr.Zero)
+                        {
+                            break; //do the base.WndProc
+                        }
+
+                        var type = GetScrollEventType(m.WParam);
+                        var args = this.BuildScrollEventArgs(this.HorizontalScroll, type, m.WParam, ScrollOrientation.HorizontalScroll);
+                        if (args != null)
+                        {
+                            this.OnScroll(args);
+                            this.Invalidate();
+                        }
+
+                        return;
+                    }
+                }
+            }
+
+            base.WndProc(ref m);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            if (this.DesignMode)
+            {
+                return;
+            }
+
+            this.DoPainting(e);
+            base.OnPaint(e);
+        }
+
+        protected override void OnMouseWheel(MouseEventArgs e)
         {
             if (!this.VerticalScroll.Visible)
             {
@@ -103,6 +173,37 @@ namespace Keeker.Gui.Controls
                 this.OnScroll(args);
                 this.Invalidate();
             }
+
+            base.OnMouseWheel(e);
+        }
+
+        protected override void OnClientSizeChanged(EventArgs e)
+        {
+            this.RecalculateSizes();
+            this.RefreshScrollBars();
+
+            base.OnClientSizeChanged(e);
+        }
+
+        #endregion
+
+        #region Public
+
+        public void InitParticipants(int participantCount)
+        {
+            if (_entryCollections != null)
+            {
+                throw new ApplicationException(); // todo1[ak]
+            }
+
+            // todo1[ak] checks
+            _entryCollections = new List<List<RaceChartEntry>>();
+
+            for (var i = 0; i < participantCount; i++)
+            {
+                var entries = new List<RaceChartEntry>();
+                _entryCollections.Add(entries);
+            }
         }
 
         [Browsable(false)]
@@ -116,7 +217,52 @@ namespace Keeker.Gui.Controls
 
             _allEntries = this.BuildAllEntries();
 
+            this.RecalculateSizes();
+            this.RefreshScrollBars();
             this.Invalidate();
+        }
+
+
+        [Browsable(false)]
+        public int ParticipantCount => _entryCollections.Count;
+
+        #endregion
+
+        #region Private
+
+        private void RecalculateSizes()
+        {
+            var list = _allEntries;
+            var count = list?.Count ?? 0;
+
+            _pictureHeight =
+                VERT_MARGIN +
+                count * _itemHeightWithSpacing;
+        }
+
+        private void RefreshScrollBars()
+        {
+            var clientHeight = this.ClientSize.Height;
+
+            if (_pictureHeight > clientHeight && clientHeight > 0)
+            {
+                var defect = _pictureHeight - clientHeight;
+                var n = defect / _scrollStep + 1;
+                var max = n + 9;
+                if (max < 10)
+                {
+                    max = 10;
+                }
+
+                this.VerticalScroll.Maximum = max;
+                this.VerticalScroll.Visible = true;
+            }
+            else
+            {
+                _base = 0;
+                this.VerticalScroll.Value = 0;
+                this.VerticalScroll.Visible = false;
+            }
         }
 
         private List<RaceChartEntry> BuildAllEntries()
@@ -130,9 +276,6 @@ namespace Keeker.Gui.Controls
             list.Sort(this.EntryComparer);
             return list;
         }
-
-        [Browsable(false)]
-        public int ParticipantCount => _entryCollections.Count;
 
         private void DoPainting(PaintEventArgs e)
         {
@@ -165,41 +308,26 @@ namespace Keeker.Gui.Controls
                     g.DrawRectangle(itemPen, x, y, ENTRY_WIDTH, ENTRY_HEIGHT);
                 }
 
-                var clientHeight = this.ClientSize.Height;
-                var p = this.GetPictureHeight();
+                //var clientHeight = this.ClientSize.Height;
+                //var p = this.GetPictureHeight();
 
-                if (p > clientHeight && clientHeight > 0)
-                {
-                    var defect = p - clientHeight;
-                    var n = defect / _step + 1;
-                    var max = n + 9;
-                    if (max < 10)
-                    {
-                        max = 10;
-                    }
-
-                    this.VerticalScroll.Maximum = max;
-                    this.VerticalScroll.Visible = true;
-                }
-                else
-                {
-                    _base = 0;
-                    this.VerticalScroll.Value = 0;
-                    this.VerticalScroll.Visible = false;
-                }
-
-                //if (pictureHeight > this.ClientSize.Height)
+                //if (p > clientHeight && clientHeight > 0)
                 //{
-                //    var min = 0;
-                //    var max = pictureHeight - this.ClientSize.Height;
-                //    max = Math.Max(max, 10);
+                //    var defect = p - clientHeight;
+                //    var n = defect / _step + 1;
+                //    var max = n + 9;
+                //    if (max < 10)
+                //    {
+                //        max = 10;
+                //    }
 
-                //    this.VerticalScroll.Minimum = min;
                 //    this.VerticalScroll.Maximum = max;
                 //    this.VerticalScroll.Visible = true;
                 //}
                 //else
                 //{
+                //    _base = 0;
+                //    this.VerticalScroll.Value = 0;
                 //    this.VerticalScroll.Visible = false;
                 //}
             }
@@ -208,100 +336,22 @@ namespace Keeker.Gui.Controls
             clientPen.Dispose();
         }
 
-        protected override void OnScroll(ScrollEventArgs se)
-        {
-            base.OnScroll(se);
+        //private int GetItemHeightWithSpacing()
+        //{
+        //    return ENTRY_HEIGHT + VERT_SPACING;
+        //}
 
-            if (se.ScrollOrientation == ScrollOrientation.VerticalScroll)
-            {
-                _base = this.VerticalScroll.Value * _step;
-                this.Invalidate();
-            }
-        }
+        //private int GetPictureHeight()
+        //{
+        //    var list = _allEntries;
+        //    var count = list?.Count ?? 0;
 
-        protected override void OnLoad(EventArgs e)
-        {
-            //this.VerticalScroll.SmallChange = this.GetItemHeightWithSpacing() / 2;
+        //    var pictureHeight =
+        //        VERT_MARGIN +
+        //        count * _itemHeightWithSpacing;
 
-            base.OnLoad(e);
-        }
-
-        private int GetItemHeightWithSpacing()
-        {
-            return ENTRY_HEIGHT + VERT_SPACING;
-        }
-
-        private int GetPictureHeight()
-        {
-            var list = _allEntries;
-            var count = list?.Count ?? 0;
-
-
-            var pictureHeight =
-                VERT_MARGIN +
-                count * this.GetItemHeightWithSpacing();
-
-            return pictureHeight;
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            if (m.HWnd == this.Handle)
-            {
-                switch (m.Msg)
-                {
-                    case WM_VSCROLL:
-                        {
-                            if (m.LParam != IntPtr.Zero)
-                            {
-                                break; //do the base.WndProc
-                            }
-
-                            var type = GetScrollEventType(m.WParam);
-                            var args = this.BuildScrollEventArgs(this.VerticalScroll, type, m.WParam, ScrollOrientation.VerticalScroll);
-                            if (args != null)
-                            {
-                                this.OnScroll(args);
-                                this.Invalidate();
-                            }
-
-                            return;
-                        }
-
-
-                    case WM_HSCROLL:
-                        {
-                            if (m.LParam != IntPtr.Zero)
-                            {
-                                break; //do the base.WndProc
-                            }
-
-                            var type = GetScrollEventType(m.WParam);
-                            var args = this.BuildScrollEventArgs(this.HorizontalScroll, type, m.WParam, ScrollOrientation.HorizontalScroll);
-                            if (args != null)
-                            {
-                                this.OnScroll(args);
-                                this.Invalidate();
-                            }
-
-                            return;
-                        }
-                }
-            }
-
-            base.WndProc(ref m);
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            if (this.DesignMode)
-            {
-                return;
-            }
-
-            this.DoPainting(e);
-            base.OnPaint(e);
-        }
+        //    return pictureHeight;
+        //}
 
         private ScrollEventArgs BuildScrollEventArgs(
             ScrollProperties scrollProperties,
@@ -392,7 +442,24 @@ namespace Keeker.Gui.Controls
             }
         }
 
-        private ScrollEventType GetScrollEventType(IntPtr wParam)
+        #endregion
+
+        #region Private Utility
+
+        private static int HiWord(int number)
+        {
+            if ((number & 0x80000000) == 0x80000000)
+                return (number >> 16);
+            else
+                return (number >> 16) & 0xffff;
+        }
+
+        private static int LoWord(int number)
+        {
+            return number & 0xffff;
+        }
+
+        private static ScrollEventType GetScrollEventType(IntPtr wParam)
         {
             ScrollEventType result = 0;
             switch (LoWord((int)wParam))
@@ -431,17 +498,6 @@ namespace Keeker.Gui.Controls
             return result;
         }
 
-        private static int HiWord(int number)
-        {
-            if ((number & 0x80000000) == 0x80000000)
-                return (number >> 16);
-            else
-                return (number >> 16) & 0xffff;
-        }
-
-        private static int LoWord(int number)
-        {
-            return number & 0xffff;
-        }
+        #endregion
     }
 }

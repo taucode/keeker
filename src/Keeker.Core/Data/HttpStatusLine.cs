@@ -28,7 +28,7 @@ namespace Keeker.Core.Data
 
         public override string ToString()
         {
-            return $"{this.Version} {(int)this.Code} {this.Reason}";
+            return $"{this.Version} {(int)this.Code} {this.Reason}{HttpHelper.CrLf}";
         }
 
         public byte[] ToArray()

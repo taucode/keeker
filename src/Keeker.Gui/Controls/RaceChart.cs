@@ -285,7 +285,7 @@ namespace Keeker.Gui.Controls
             var clientPen = new Pen(Color.Green);
             var itemPen = new Pen(Color.Black);
 
-            g.DrawRectangle(clientPen, 0, 0, this.ClientSize.Width - 2, this.ClientSize.Height - 2);
+            //g.DrawRectangle(clientPen, 0, 0, this.ClientSize.Width - 2, this.ClientSize.Height - 2);
 
             if (list == null)
             {

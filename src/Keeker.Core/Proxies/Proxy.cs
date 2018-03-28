@@ -3,6 +3,7 @@ using Keeker.Core.Events;
 using Keeker.Core.Listeners;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
@@ -15,6 +16,9 @@ namespace Keeker.Core.Proxies
         private readonly ProxyPlainConf _conf;
         private readonly Dictionary<string, CertificateInfo> _certificates;
         private readonly List<IListener> _listeners;
+        private readonly object _lock;
+        private bool _isRunning;
+        private bool _isDisposed;
 
         #endregion
 
@@ -22,6 +26,7 @@ namespace Keeker.Core.Proxies
 
         public Proxy(ProxyPlainConf conf)
         {
+            _lock = new object();
             _conf = conf.Clone();
 
             _certificates = conf.Certificates
@@ -44,7 +49,8 @@ namespace Keeker.Core.Proxies
             foreach (var listener in _listeners)
             {
                 listener.ConnectionAccepted += listener_ConnectionAccepted;
-                //listener.RelayCreated += listener_RelayCreated;
+                listener.RelayStarted += listener_RelayStarted;
+                listener.RelayDisposed += listener_RelayDisposed;
             }
         }
 
@@ -54,8 +60,19 @@ namespace Keeker.Core.Proxies
 
         private void listener_ConnectionAccepted(object sender, ConnectionAcceptedEventArgs e)
         {
-            this.ListenerConnectionAccepted?.Invoke(sender, e);
+            this.ConnectionAccepted?.Invoke(sender, e);
         }
+
+        private void listener_RelayStarted(object sender, RelayEventArgs e)
+        {
+            this.RelayStarted?.Invoke(sender, e);
+        }
+
+        private void listener_RelayDisposed(object sender, RelayEventArgs e)
+        {
+            this.RelayDisposed?.Invoke(sender, e);
+        }
+
 
         //private void listener_RelayCreated(object sender, RelayEventArgs e)
         //{
@@ -70,23 +87,98 @@ namespace Keeker.Core.Proxies
 
         public void Start()
         {
-            foreach (var listener in _listeners)
+            lock (_lock)
             {
-                listener.Start();
+                if (_isRunning)
+                {
+                    throw new ApplicationException(); // todo2[ak]
+                }
+
+                if (_isDisposed)
+                {
+                    throw new ApplicationException(); // todo2[ak]
+                }
+
+                foreach (var listener in _listeners)
+                {
+                    listener.Start();
+                }
+
+                _isRunning = true;
             }
         }
 
         public void Stop()
         {
-            foreach (var listener in _listeners)
+            lock (_lock)
             {
-                listener.Stop();
+                if (!_isRunning)
+                {
+                    throw new ApplicationException(); // todo2[ak]
+                }
+
+                if (_isDisposed)
+                {
+                    throw new ApplicationException(); // todo2[ak]
+                }
+
+                foreach (var listener in _listeners)
+                {
+                    listener.Dispose();
+                }
+
+                _isRunning = false;
             }
         }
 
-        public event EventHandler<ConnectionAcceptedEventArgs> ListenerConnectionAccepted;
+        public bool IsRunning
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _isRunning;
+                }
+            }
+        }
 
-        //public event EventHandler<RelayEventArgs> ListenerRelayCreated;
+        public IListener[] GetListeners()
+        {
+            lock (_lock)
+            {
+                return _listeners.ToArray();
+            }
+        }
+
+        public StreamWriter Log { get; set; }
+
+        public event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
+
+        public event EventHandler<RelayEventArgs> RelayStarted;
+
+        public event EventHandler<RelayEventArgs> RelayDisposed;
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            lock (_lock)
+            {
+                if (_isDisposed)
+                {
+                    throw new ApplicationException(); // todo2[ak]
+                }
+
+                if (_isRunning)
+                {
+                    this.Stop();
+                }
+
+                _isDisposed = true;
+            }
+        }
 
         #endregion
     }

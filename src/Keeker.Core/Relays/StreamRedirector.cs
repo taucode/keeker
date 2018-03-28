@@ -16,9 +16,13 @@ namespace Keeker.Core.Relays
 
         private readonly TimeSpan _idleTimeout;
         private TMetadata _lastMetadata;
-        
-        protected StreamRedirector(KeekStream sourceStream, Stream destinationStream)
+
+        protected StreamRedirector(
+            Relay relay,
+            KeekStream sourceStream,
+            Stream destinationStream)
         {
+            this.Relay = relay;
             _idleTimeout = TimeSpan.FromMilliseconds(IDLE_TIMEOUT_MILLISECONDS);
 
             this.SourceStream = sourceStream;
@@ -26,6 +30,8 @@ namespace Keeker.Core.Relays
 
             this.DestinationStream = destinationStream;
         }
+
+        protected Relay Relay { get; private set; }
 
         protected KeekStream SourceStream { get; private set; }
         protected AutoBuffer SourceBuffer { get; private set; }
@@ -35,6 +41,17 @@ namespace Keeker.Core.Relays
         protected abstract void CheckMetadata(TMetadata metadata);
         protected abstract TMetadata TransformMetadata(TMetadata metadata);
         protected abstract ContentRedirector ResolveDataRedirector(TMetadata metadata);
+
+        private void DisposeRelay(object dummy)
+        {
+            try
+            {
+                this.Relay.Dispose();
+            }
+            catch
+            {   
+            }
+        }
 
         private void DoIdle()
         {
@@ -48,7 +65,11 @@ namespace Keeker.Core.Relays
 
             if (bytesReadCount == 0)
             {
-                Thread.Sleep(_idleTimeout);
+                var gotSignal = this.Relay.Signal.WaitOne(_idleTimeout);
+                if (gotSignal)
+                {
+                    _state = StreamRedirectorState.Stop;
+                }
             }
             else
             {
@@ -117,26 +138,42 @@ namespace Keeker.Core.Relays
         {
             _state = StreamRedirectorState.Idle;
 
-            while (true)
+            try
             {
-                switch (_state)
+                var goOn = true;
+                while (goOn)
                 {
-                    case StreamRedirectorState.Idle:
-                        this.DoIdle();
-                        break;
+                    switch (_state)
+                    {
+                        case StreamRedirectorState.Idle:
+                            this.DoIdle();
+                            break;
 
-                    case StreamRedirectorState.Metadata:
-                        this.DoMetadata();
-                        break;
+                        case StreamRedirectorState.Metadata:
+                            this.DoMetadata();
+                            break;
 
-                    case StreamRedirectorState.Data:
-                        this.DoData();
-                        break;
+                        case StreamRedirectorState.Data:
+                            this.DoData();
+                            break;
 
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                        case StreamRedirectorState.Stop:
+                            goOn = false;
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
+            catch (Exception)
+            {
+                // todo1[ak] log or something
+
+                this.Relay.Signal.Set();
+            }
+
+            ThreadPool.QueueUserWorkItem(this.DisposeRelay);
         }
 
         public void Start()

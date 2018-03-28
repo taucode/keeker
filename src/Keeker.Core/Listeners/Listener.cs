@@ -4,6 +4,7 @@ using Keeker.Core.Relays;
 using Keeker.Core.Streams;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -26,7 +27,7 @@ namespace Keeker.Core.Listeners
 
         private readonly ListenerPlainConf _conf;
         private readonly TcpListener _tcpListener;
-        private bool _isStarted;
+        private bool _isRunning;
         private readonly object _lock;
 
         private int _nextRelayId;
@@ -77,9 +78,8 @@ namespace Keeker.Core.Listeners
         private void StartImpl()
         {
             var task = new Task(this.ListeningRoutine);
-            _isStarted = true;
+            _isRunning = true;
             task.Start();
-            //this.Started?.Invoke(this, EventArgs.Empty);
         }
 
         private void ListeningRoutine()
@@ -107,7 +107,7 @@ namespace Keeker.Core.Listeners
             if (_conf.IsHttps)
             {
                 var networkStream = client.GetStream();
-                var wrappingStream = new KeekStream(networkStream);
+                var wrappingStream = new KeekStream(networkStream, true);
 
                 var hostConf = this.ResolveHostConf(wrappingStream);
 
@@ -124,23 +124,16 @@ namespace Keeker.Core.Listeners
                 var relayId = this.GetNextRelayId(hostConf.ExternalHostName);
 
                 var relay = new Relay(
+                    this,
+                    relayId,
                     _conf.IsHttps,
                     clientStream,
-                    _conf.Id,
-                    relayId,
                     hostConf);
 
                 relay.Start();
 
-                //var relay = new Relay(
-                //    clientStream,
-                //    _conf.Id,
-                //    hostConf.ExternalHostName,
-                //    relayId,
-                //    hostConf);
+                this.RelayStarted?.Invoke(this, new RelayEventArgs(relay));
 
-                //this.RelayCreated?.Invoke(this, new RelayEventArgs(relay));
-                //relay.Start();
             }
             else
             {
@@ -162,7 +155,7 @@ namespace Keeker.Core.Listeners
             const int TIMEOUT = 1; // we are waiting for incoming handshake for 1 second.
             var timeout = TimeSpan.FromSeconds(TIMEOUT);
 
-            var started = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
 
             var peekedBytes = new byte[HANDSHAKE_MESSAGE_MAX_LENGTH];
 
@@ -185,7 +178,7 @@ namespace Keeker.Core.Listeners
                 Thread.Sleep(1); // wait for a while, maybe will get handshake eventually
                 var now = DateTime.UtcNow;
 
-                if (now - started > timeout)
+                if (now - startTime > timeout)
                 {
                     return null;
                 }
@@ -202,23 +195,12 @@ namespace Keeker.Core.Listeners
         {
             lock (_lock)
             {
-                if (_isStarted)
+                if (_isRunning)
                 {
-                    throw new InvalidOperationException("Listener already started");
+                    throw new InvalidOperationException("Listener already running");
                 }
 
                 this.StartImpl();
-            }
-        }
-
-        public bool IsStarted
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    return _isStarted;
-                }
             }
         }
 
@@ -227,26 +209,29 @@ namespace Keeker.Core.Listeners
             throw new System.NotImplementedException();
         }
 
+        public bool IsRunning
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _isRunning;
+                }
+            }
+        }
+
+        public IRelay[] GetRelays()
+        {
+            throw new NotImplementedException();
+        }
+
+        public StreamWriter Log { get; set; }
+
         public event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
 
-        //public event EventHandler<RelayEventArgs> RelayCreated;
+        public event EventHandler<RelayEventArgs> RelayStarted;
 
-        //public IPEndPoint EndPoint
-        //{
-        //    get
-        //    {
-        //        lock (_lock)
-        //        {
-        //            return _conf.GetEndPoint();
-        //        }
-        //    }
-        //}
-
-        //public event EventHandler Started;
-
-        //public event EventHandler Stopped;
-
-        //public event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
+        public event EventHandler<RelayEventArgs> RelayDisposed;
 
         #endregion
 

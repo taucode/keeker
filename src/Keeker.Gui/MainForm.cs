@@ -5,7 +5,6 @@ using Keeker.Core.Relays;
 using Keeker.Gui.Data;
 using Keeker.Gui.Panes;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -29,48 +28,51 @@ namespace Keeker.Gui
             _conf = ProxyPlainConf.LoadFromAppConfig("proxy");
             _proxy = new Proxy(_conf);
 
-            _proxy.ListenerConnectionAccepted += proxy_ListenerConnectionAccepted;
+            _proxy.ConnectionAccepted += proxy_ListenerConnectionAccepted;
+            _proxy.RelayStarted += proxy_RelayStarted;
+            _proxy.RelayDisposed += proxy_RelayDisposed;
             //_proxy.ListenerRelayCreated += proxy_ListenerRelayCreated;
         }
+
 
         //private void proxy_ListenerRelayCreated(object sender, RelayEventArgs e)
         //{
         //    this.ReflectCreatedRelay(e.Relay);
         //}
 
-        //private void ReflectCreatedRelay(Relay relay)
-        //{
-        //    lock (_lock)
-        //    {
-        //        this.Invoke(new Action<Relay>(
-        //            r =>
-        //            {
-        //                var listenerNode = this.GetListenerNode(r.ListenerId);
-        //                var hostNode = this.GetHostNode(listenerNode, r.ExternalHostName);
+        private void ReflectCreatedRelay(IRelay relay)
+        {
+            lock (_lock)
+            {
+                this.Invoke(new Action<IRelay>(
+                    r =>
+                    {
+                        var listenerNode = this.GetListenerNode(r.ListenerId);
+                        var hostNode = this.GetHostNode(listenerNode, r.ExternalHostName);
 
-        //                var node = new TreeNode(relay.Id)
-        //                {
-        //                    ImageIndex = 2,
-        //                    SelectedImageIndex = 2,
-        //                    Tag = relay,
-        //                };
+                        var node = new TreeNode(relay.Id)
+                        {
+                            ImageIndex = 2,
+                            SelectedImageIndex = 2,
+                            Tag = relay,
+                        };
 
-        //                hostNode.Nodes.Add(node);
-        //            }),
-        //            relay);
+                        hostNode.Nodes.Add(node);
+                    }),
+                    relay);
 
-        //        //var containsListener = _relayCollectionsByListenerId.TryGetValue(relay.ListenerId, out var relays);
-        //        //if (!containsListener)
-        //        //{
-        //        //    relays = new Dictionary<string, Relay>();
-        //        //}
+                //var containsListener = _relayCollectionsByListenerId.TryGetValue(relay.ListenerId, out var relays);
+                //if (!containsListener)
+                //{
+                //    relays = new Dictionary<string, Relay>();
+                //}
 
-        //        //if (containsListener)
-        //        //{
-        //        //    relays.Add(relay.Id, relay);
-        //        //}
-        //    }
-        //}
+                //if (containsListener)
+                //{
+                //    relays.Add(relay.Id, relay);
+                //}
+            }
+        }
 
         private TreeNode GetHostNode(TreeNode listenerNode, string host)
         {
@@ -89,6 +91,16 @@ namespace Keeker.Gui
         private void proxy_ListenerConnectionAccepted(object sender, ConnectionAcceptedEventArgs e)
         {
             //throw new NotImplementedException();
+        }
+
+        private void proxy_RelayStarted(object sender, RelayEventArgs e)
+        {
+            this.ReflectCreatedRelay(e.Relay);
+        }
+
+        private void proxy_RelayDisposed(object sender, RelayEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void buttonStart_Click(object sender, EventArgs e)
@@ -167,11 +179,11 @@ namespace Keeker.Gui
                 var conf = (HostConfDto)node.Tag;
                 this.SetPane(new JsonPropertiesPane(conf));
             }
-            //else if (node.Tag is Relay)
-            //{
-            //    var relay = (Relay)node.Tag;
-            //    this.SetPane(new RelayPane(relay));
-            //}
+            else if (node.Tag is IRelay)
+            {
+                var relay = (Relay)node.Tag;
+                this.SetPane(new RelayPane(relay));
+            }
             else
             {
                 throw new NotImplementedException();
@@ -198,6 +210,19 @@ namespace Keeker.Gui
             panelPane.Controls.Add(pane);
             //pane.Show();
             _currentPane = pane;
+        }
+
+        private void buttonClient_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var form = new ClientForm();
+                form.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

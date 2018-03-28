@@ -1,10 +1,12 @@
 ﻿using Keeker.Core.Conf;
 using Keeker.Core.Events;
+using Keeker.Core.Listeners;
 using System;
+using System.IO;
 
 namespace Keeker.Core.Proxies
 {
-    public interface IProxy
+    public interface IProxy : IDisposable
     {
         ProxyPlainConf GetConf();
 
@@ -12,8 +14,16 @@ namespace Keeker.Core.Proxies
 
         void Stop();
 
-        event EventHandler<ConnectionAcceptedEventArgs> ListenerConnectionAccepted;
+        bool IsRunning { get; }
 
-        //event EventHandler<RelayEventArgs> ListenerRelayCreated;
+        IListener[] GetListeners();
+
+        StreamWriter Log { get; set; }
+
+        event EventHandler<ConnectionAcceptedEventArgs> ConnectionAccepted;
+
+        event EventHandler<RelayEventArgs> RelayStarted;
+
+        event EventHandler<RelayEventArgs> RelayDisposed;
     }
 }

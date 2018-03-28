@@ -8,8 +8,8 @@ namespace Keeker.Core.Streams
         #region Fields
 
         private readonly Stream _innerStream;
+        private readonly bool _disposeInnerStream;
         private readonly object _readLock;
-        //private readonly List<byte[]> _peekedSegments;
 
         private readonly ByteAccumulator _accumulator;
 
@@ -17,10 +17,10 @@ namespace Keeker.Core.Streams
 
         #region Constructor
 
-        public KeekStream(Stream innerStream)
+        public KeekStream(Stream innerStream, bool disposeInnerStream)
         {
             _innerStream = innerStream ?? throw new ArgumentException(nameof(innerStream));
-            //_peekedSegments = new List<byte[]>();
+            _disposeInnerStream = disposeInnerStream;
             _accumulator = new ByteAccumulator();
             _readLock = new object();
         }
@@ -131,6 +131,11 @@ namespace Keeker.Core.Streams
             {
                 var buffer = new byte[maxCount];
                 var bytesRead = _innerStream.Read(buffer, 0, maxCount);
+
+                if (bytesRead == 0)
+                {
+                    throw new NotImplementedException(); // tood909090[ak] temp
+                }
 
                 callback?.Invoke(buffer, bytesRead);
 

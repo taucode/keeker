@@ -35,6 +35,7 @@
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
             this.treeViewRelays = new System.Windows.Forms.TreeView();
             this.panelPane = new System.Windows.Forms.Panel();
+            this.buttonClient = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -106,11 +107,22 @@
             this.panelPane.Size = new System.Drawing.Size(614, 447);
             this.panelPane.TabIndex = 0;
             // 
+            // buttonClient
+            // 
+            this.buttonClient.Location = new System.Drawing.Point(93, 12);
+            this.buttonClient.Name = "buttonClient";
+            this.buttonClient.Size = new System.Drawing.Size(75, 23);
+            this.buttonClient.TabIndex = 8;
+            this.buttonClient.Text = "Client";
+            this.buttonClient.UseVisualStyleBackColor = true;
+            this.buttonClient.Click += new System.EventHandler(this.buttonClient_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(950, 500);
+            this.Controls.Add(this.buttonClient);
             this.Controls.Add(this.splitContainerMain);
             this.Controls.Add(this.buttonStart);
             this.Name = "MainForm";
@@ -132,6 +144,7 @@
         private System.Windows.Forms.SplitContainer splitContainerMain;
         private System.Windows.Forms.TreeView treeViewRelays;
         private System.Windows.Forms.Panel panelPane;
+        private System.Windows.Forms.Button buttonClient;
     }
 }
 

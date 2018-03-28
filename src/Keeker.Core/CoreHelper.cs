@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 
 namespace Keeker.Core
 {
@@ -354,12 +355,18 @@ namespace Keeker.Core
             return (TEnum)Enum.Parse(typeof(TEnum), s, true);
         }
 
-        public static void RedirectStream(Stream source, Stream destination, byte[] buffer, int length)
+        public static void RedirectStream(ManualResetEvent signal, Stream source, Stream destination, byte[] buffer, int length)
         {
             var remaining = length;
 
             while (true)
             {
+                var gotSignal = signal.WaitOne(0);
+                if (gotSignal)
+                {
+                    break;
+                }
+
                 if (remaining == 0)
                 {
                     break;

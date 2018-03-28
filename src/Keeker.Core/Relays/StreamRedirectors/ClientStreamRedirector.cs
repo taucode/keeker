@@ -13,11 +13,12 @@ namespace Keeker.Core.Relays.StreamRedirectors
         private readonly string _targetHost;
 
         public ClientStreamRedirector(
+            Relay relay,
             KeekStream sourceStream,
             Stream destinationStream,
             string host,
             string targetHost)
-            : base(sourceStream, destinationStream)
+            : base(relay, sourceStream, destinationStream)
         {
             _host = host;
             _targetHost = targetHost;
@@ -52,6 +53,7 @@ namespace Keeker.Core.Relays.StreamRedirectors
             {
                 var length = metadata.Headers.GetContentLength();
                 dataRedirector = new FixedSizeContentRedirector(
+                    this.Relay.Signal,
                     this.SourceStream,
                     this.SourceBuffer,
                     this.DestinationStream,

@@ -1,20 +1,24 @@
 ﻿using Keeker.Core.Streams;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Keeker.Core.Relays.ContentRedirectors
 {
     public class ChunkedContentRedirector : ContentRedirector
     {
+        private readonly ManualResetEvent _signal;
         private readonly KeekStream _sourceStream;
         private readonly AutoBuffer _sourceBuffer;
         private readonly Stream _destinationStream;
 
         public ChunkedContentRedirector(
+            ManualResetEvent signal,
             KeekStream sourceStream,
             AutoBuffer sourceBuffer,
             Stream destinationStream)
         {
+            _signal = signal;
             _sourceStream = sourceStream;
             _sourceBuffer = sourceBuffer;
             _destinationStream = destinationStream;
@@ -24,6 +28,12 @@ namespace Keeker.Core.Relays.ContentRedirectors
         {
             while (true)
             {
+                var gotSignal = _signal.WaitOne(0);
+                if (gotSignal)
+                {
+                    break; // bye
+                }
+
                 _sourceStream.ReadInnerStream(20);
                 var crlfIndex = _sourceStream.PeekIndexOf(HttpHelper.CrLfBytes);
 
@@ -90,7 +100,7 @@ namespace Keeker.Core.Relays.ContentRedirectors
                 _destinationStream.Write(_sourceBuffer.Raw, 0, totalByteCountRead);
 
                 // redirect chunk
-                CoreHelper.RedirectStream(_sourceStream, _destinationStream, _sourceBuffer.Raw, lengthOfChunk);
+                CoreHelper.RedirectStream(_signal, _sourceStream, _destinationStream, _sourceBuffer.Raw, lengthOfChunk);
 
                 // read crlf
                 byteCountToRead = HttpHelper.CrLfBytes.Length;

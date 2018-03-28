@@ -1,18 +1,28 @@
 ﻿using Keeker.Core.Conf;
+using Keeker.Core.Listeners;
 using Keeker.Core.Relays.StreamRedirectors;
 using Keeker.Core.Streams;
 using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Keeker.Core.Relays
 {
-    public class Relay
+    public class Relay : IRelay
     {
+        #region Constants
+
         private const int DEFAULT_HTTPS_PORT = 443;
         private const int DEFAULT_HTTP_PORT = 80;
 
-        private bool _isStarted;
+        #endregion
+
+        #region Fields
+        
+        private readonly Listener _listener;
+
+        private bool _isRunning;
         private readonly object _lock;
 
         private readonly bool _isHttps;
@@ -22,14 +32,21 @@ namespace Keeker.Core.Relays
 
         private readonly string _domesticAuthority;
         private readonly string _domesticAuthorityWithPort;
+        
+        #endregion
 
-        public Relay(
+        #region Constructor
+
+        internal Relay(
+            Listener listener,
+            string id,
             bool isHttps,
             Stream innerClientStream,
-            string listenerId,
-            string id,
             HostPlainConf conf)
         {
+            _listener = listener;
+            this.Id = id;
+
             if (conf.EndPoint.Port == DEFAULT_HTTPS_PORT)
             {
                 throw new ApplicationException(); // todo2[ak] suspicious: why domestic has port equal to SSL? we do not authorize as client
@@ -41,13 +58,13 @@ namespace Keeker.Core.Relays
 
             this.ExternalHostName = conf.ExternalHostName;
 
-            _clientStream = new KeekStream(innerClientStream);
+            _clientStream = new KeekStream(innerClientStream, true);
 
             var tcpclient = new TcpClient();
             tcpclient.Connect(conf.EndPoint);
             var serverNetworkStream = tcpclient.GetStream();
 
-            _serverStream = new KeekStream(serverNetworkStream);
+            _serverStream = new KeekStream(serverNetworkStream, true);
 
             string colonWithPortIfNeeded;
             if (conf.EndPoint.Port == DEFAULT_HTTP_PORT)
@@ -61,27 +78,52 @@ namespace Keeker.Core.Relays
 
             _domesticAuthority = $"{conf.DomesticHostName}{colonWithPortIfNeeded}";
             _domesticAuthorityWithPort = $"{conf.DomesticHostName}:{conf.EndPoint.Port}";
+
+            this.Signal = new ManualResetEvent(false);
         }
-        
-        public string ExternalHostName { get; }
+
+        #endregion
+
+        #region Private
+
+        private string GetProtocol()
+        {
+            return _isHttps ? "https" : "http";
+        }
+
+        #endregion
+
+        #region Internal
+
+        internal ManualResetEvent Signal { get; private set; }
+
+        #endregion
+
+        #region IRelay Members
+
+        public string Id { get; }
+
+        public string ListenerId => _listener.Id;
 
         public void Start()
         {
             lock (_lock)
             {
-                if (_isStarted)
+                if (_isRunning)
                 {
                     throw new ApplicationException(); // todo2[ak]
                 }
             }
 
             var clientRedirector = new ClientStreamRedirector(
+                this,
                 _clientStream,
                 _serverStream,
                 this.ExternalHostName,
                 _domesticAuthority);
 
             var serverRedirector = new ServerStreamRedirector(
+                this,
                 _serverStream,
                 _clientStream,
                 this.GetProtocol(),
@@ -94,20 +136,15 @@ namespace Keeker.Core.Relays
 
             lock (_lock)
             {
-                _isStarted = true;
+                _isRunning = true;
             }
-        }
-
-        private string GetProtocol()
-        {
-            return _isHttps ? "https" : "http";
         }
 
         public void Stop()
         {
             lock (_lock)
             {
-                if (!_isStarted)
+                if (!_isRunning)
                 {
                     throw new ApplicationException(); // todo2[ak]
                 }
@@ -116,15 +153,29 @@ namespace Keeker.Core.Relays
             throw new NotImplementedException();
         }
 
-        public bool IsStarted
+        public bool IsRunning
         {
             get
             {
                 lock (_lock)
                 {
-                    return _isStarted;
+                    return _isRunning;
                 }
             }
         }
+
+        public string ExternalHostName { get; }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            // don't forget signal!!
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

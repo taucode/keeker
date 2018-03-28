@@ -9,14 +9,13 @@ namespace Keeker.Gui.Panes
             InitializeComponent();
         }
 
-        //public RelayPane(Relay relay)
-        //{
-        //    this.Relay = relay;
+        public RelayPane(IRelay relay)
+            : this()
+        {
+            this.Relay = relay;
+        }
 
-            
-        //}
-
-        //public Relay Relay { get; }
+        public IRelay Relay { get; }
 
         private void RelayPane_Load(object sender, System.EventArgs e)
         {

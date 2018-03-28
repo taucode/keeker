@@ -33,8 +33,9 @@
             // 
             // raceChartPackets
             // 
+            this.raceChartPackets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.raceChartPackets.BackColor = System.Drawing.Color.White;
-            this.raceChartPackets.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.raceChartPackets.Location = new System.Drawing.Point(3, 3);
             this.raceChartPackets.Name = "raceChartPackets";
             this.raceChartPackets.Size = new System.Drawing.Size(192, 452);

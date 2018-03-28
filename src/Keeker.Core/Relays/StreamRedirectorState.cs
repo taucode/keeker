@@ -2,9 +2,10 @@
 {
     public enum StreamRedirectorState
     {
-        NotStarted = 0,
+        Unknown = 0,
         Idle,
         Metadata,
         Data,
+        Stop,
     }
 }

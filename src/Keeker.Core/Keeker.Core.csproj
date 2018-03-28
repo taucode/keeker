@@ -45,6 +45,7 @@
     <Compile Include="Relays\ContentRedirector.cs" />
     <Compile Include="Relays\ContentRedirectors\ChunkedContentRedirector.cs" />
     <Compile Include="Relays\ContentRedirectors\FixedSizeContentRedirector.cs" />
+    <Compile Include="Relays\IRelay.cs" />
     <Compile Include="Relays\StreamRedirectors\ClientStreamRedirector.cs" />
     <Compile Include="Relays\StreamRedirectors\ServerStreamRedirector.cs" />
     <Compile Include="Relays\StreamRedirector.cs" />

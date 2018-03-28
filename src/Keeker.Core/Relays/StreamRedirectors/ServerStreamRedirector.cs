@@ -16,13 +16,14 @@ namespace Keeker.Core.Relays.StreamRedirectors
         private readonly string _domesticAuthorityWithPort;
 
         public ServerStreamRedirector(
+            Relay relay,
             KeekStream sourceStream,
             Stream destinationStream,
             string protocol,
             string externalHostName,
             string domesticAuthority,
             string domesticAuthorityWithPort)
-            : base(sourceStream, destinationStream)
+            : base(relay, sourceStream, destinationStream)
         {
             _protocol = protocol;
             _externalHostName = externalHostName;
@@ -75,6 +76,7 @@ namespace Keeker.Core.Relays.StreamRedirectors
             {
                 var length = metadata.Headers.GetContentLength();
                 dataRedirector = new FixedSizeContentRedirector(
+                    this.Relay.Signal,
                     this.SourceStream,
                     this.SourceBuffer,
                     this.DestinationStream,
@@ -86,6 +88,7 @@ namespace Keeker.Core.Relays.StreamRedirectors
                 if (transferEncoding == HttpTransferEncoding.Chunked)
                 {
                     dataRedirector = new ChunkedContentRedirector(
+                        this.Relay.Signal,
                         this.SourceStream,
                         this.SourceBuffer,
                         this.DestinationStream);

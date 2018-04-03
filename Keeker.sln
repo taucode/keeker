@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keeker.Core", "src\Keeker.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keeker.Core.Test", "test\Keeker.Core.Test\Keeker.Core.Test.csproj", "{32086352-F513-4F29-88CE-6C99C8BA6AA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keeker.Convey", "src\Keeker.Convey\Keeker.Convey.csproj", "{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{32086352-F513-4F29-88CE-6C99C8BA6AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32086352-F513-4F29-88CE-6C99C8BA6AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32086352-F513-4F29-88CE-6C99C8BA6AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{48EAA43A-E921-4165-90E9-CDA18FD9CD5C} = {CC46CD06-CEC1-416E-8F6E-22825FC60D8E}
 		{AF446FE4-67AE-4E9C-A95B-71DB676B85A3} = {CC46CD06-CEC1-416E-8F6E-22825FC60D8E}
 		{32086352-F513-4F29-88CE-6C99C8BA6AA4} = {B5E4E568-F325-4FA3-A76F-69554EACC9E6}
+		{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6} = {CC46CD06-CEC1-416E-8F6E-22825FC60D8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89390666-BFE2-414C-9E00-CC60CB9DA997}

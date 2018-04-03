@@ -35,6 +35,12 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Serilog.2.0.0\lib\net45\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.TextWriter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Serilog.Sinks.TextWriter.2.1.0\lib\net45\Serilog.Sinks.TextWriter.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="ClientForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -64,11 +71,17 @@
       <DependentUpon>RaceChart.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\RaceChartEntry.cs" />
-    <Compile Include="Controls\TextBoxStreamWriter.cs" />
+    <Compile Include="Controls\TextBoxWriter.cs" />
     <Compile Include="Data\HostConfDto.cs" />
     <Compile Include="Data\ListenerConfDto.cs" />
     <Compile Include="FooData.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="LogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LogForm.Designer.cs">
+      <DependentUpon>LogForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -106,6 +119,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\RaceChart.resx">
       <DependentUpon>RaceChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogForm.resx">
+      <DependentUpon>LogForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -146,9 +162,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Keeker.Core\Keeker.Core.csproj">
-      <Project>{AF446FE4-67AE-4E9C-A95B-71DB676B85A3}</Project>
-      <Name>Keeker.Core</Name>
+    <ProjectReference Include="..\Keeker.Convey\Keeker.Convey.csproj">
+      <Project>{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6}</Project>
+      <Name>Keeker.Convey</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

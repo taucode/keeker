@@ -1,5 +1,4 @@
-﻿using Keeker.Core;
-using Keeker.Gui.Controls;
+﻿using Keeker.Gui.Controls;
 using System;
 using System.Windows.Forms;
 
@@ -67,10 +66,11 @@ namespace Keeker.Gui
         {
             try
             {
-                var props = raceChartMain.VerticalScroll;
-                props.Minimum = textBoxMin.Text.ToInt32();
-                props.Maximum = textBoxMax.Text.ToInt32();
-                props.Value = textBoxPos.Text.ToInt32();
+                throw new NotImplementedException();
+                //var props = raceChartMain.VerticalScroll;
+                //props.Minimum = textBoxMin.Text.ToInt32();
+                //props.Maximum = textBoxMax.Text.ToInt32();
+                //props.Value = textBoxPos.Text.ToInt32();
             }
             catch (Exception ex)
             {

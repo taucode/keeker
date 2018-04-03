@@ -13,6 +13,8 @@ namespace Keeker.Gui
         //private readonly ProxyPlainConf _conf;
         //private readonly Dictionary<string, Dictionary<string, Relay>> _relayCollectionsByListenerId;
 
+        private LogForm _logForm;
+
         private ITauProxy _proxy;
         private readonly object _lock;
 
@@ -22,6 +24,8 @@ namespace Keeker.Gui
         public MainForm()
         {
             InitializeComponent();
+
+            _logForm = new LogForm();
 
             _lock = new object();
             //_relayCollectionsByListenerId = new Dictionary<string, Dictionary<string, Relay>>();
@@ -108,8 +112,7 @@ namespace Keeker.Gui
         {
             try
             {
-                throw new NotImplementedException();
-                //_proxy.Start();
+                _proxy.Start();
             }
             catch (Exception ex)
             {
@@ -270,6 +273,11 @@ namespace Keeker.Gui
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void buttonLog_Click(object sender, EventArgs e)
+        {
+            _logForm.Show();
         }
     }
 }

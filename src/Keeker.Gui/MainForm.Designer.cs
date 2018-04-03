@@ -39,6 +39,7 @@
             this.buttonStop = new System.Windows.Forms.Button();
             this.buttonDispose = new System.Windows.Forms.Button();
             this.buttonCreate = new System.Windows.Forms.Button();
+            this.buttonLog = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -150,11 +151,22 @@
             this.buttonCreate.UseVisualStyleBackColor = true;
             this.buttonCreate.Click += new System.EventHandler(this.buttonCreate_Click);
             // 
+            // buttonLog
+            // 
+            this.buttonLog.Location = new System.Drawing.Point(506, 12);
+            this.buttonLog.Name = "buttonLog";
+            this.buttonLog.Size = new System.Drawing.Size(75, 23);
+            this.buttonLog.TabIndex = 6;
+            this.buttonLog.Text = "Log";
+            this.buttonLog.UseVisualStyleBackColor = true;
+            this.buttonLog.Click += new System.EventHandler(this.buttonLog_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(950, 500);
+            this.Controls.Add(this.buttonLog);
             this.Controls.Add(this.buttonCreate);
             this.Controls.Add(this.buttonDispose);
             this.Controls.Add(this.buttonStop);
@@ -184,6 +196,7 @@
         private System.Windows.Forms.Button buttonStop;
         private System.Windows.Forms.Button buttonDispose;
         private System.Windows.Forms.Button buttonCreate;
+        private System.Windows.Forms.Button buttonLog;
     }
 }
 

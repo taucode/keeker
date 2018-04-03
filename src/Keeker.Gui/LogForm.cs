@@ -1,7 +1,5 @@
 ﻿using Keeker.Gui.Controls;
-using Keeker.Gui.Logging;
 using Serilog;
-using System;
 using System.Windows.Forms;
 
 namespace Keeker.Gui
@@ -20,16 +18,20 @@ namespace Keeker.Gui
             Log.Logger = log;
         }
 
-        private void buttonLogInfo_Click(object sender, System.EventArgs e)
+        private void buttonClear_Click(object sender, System.EventArgs e)
         {
-            try
-            {
-                LogProvider.GetCurrentClassLogger().InfoFormat("{@Wat}", new { Id = 1, Name = "Olya" });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            textBoxLog.Text = string.Empty;
+        }
+
+        private void LogForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Hide();
+            e.Cancel = true;
+        }
+
+        public void StopLogging()
+        {
+            Log.Logger = null;
         }
     }
 }

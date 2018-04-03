@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Keeker.Core
+namespace Keeker.Core.Streams
 {
     public class ByteAccumulator
     {
         private class Segment
         {
-            private byte[] _bytes;
+            private readonly byte[] _bytes;
             private int _ownOffset;
 
             internal Segment(byte[] buffer, int offset, int count)
@@ -37,12 +37,14 @@ namespace Keeker.Core
                 return _bytes.Length - _ownOffset;
             }
         }
-
+        
         private readonly Queue<Segment> _segments;
+        private readonly object _lock;
 
         public ByteAccumulator()
         {
             _segments = new Queue<Segment>();
+            _lock = new object();
         }
 
         public void Put(byte[] buffer, int offset, int count)
@@ -57,8 +59,11 @@ namespace Keeker.Core
                 throw new ArgumentOutOfRangeException(nameof(count));
             }
 
-            var segment = new Segment(buffer, offset, count);
-            _segments.Enqueue(segment);
+            lock (_lock)
+            {
+                var segment = new Segment(buffer, offset, count);
+                _segments.Enqueue(segment);
+            }
         }
 
         public int Peek(byte[] buffer, int offset, int count)
@@ -87,26 +92,30 @@ namespace Keeker.Core
             var remaining = count;
             var current = offset;
 
-            foreach (var segment in _segments)
+            lock (_lock)
             {
-                if (remaining == 0)
+
+                foreach (var segment in _segments)
                 {
-                    break;
+                    if (remaining == 0)
+                    {
+                        break;
+                    }
+
+                    var copiedBySegment = segment.CopyTo(buffer, current, remaining);
+
+                    copiedTotal += copiedBySegment;
+                    remaining -= copiedBySegment;
+                    current += copiedBySegment;
+
+                    if (remaining == 0)
+                    {
+                        break;
+                    }
                 }
 
-                var copiedBySegment = segment.CopyTo(buffer, current, remaining);
-
-                copiedTotal += copiedBySegment;
-                remaining -= copiedBySegment;
-                current += copiedBySegment;
-
-                if (remaining == 0)
-                {
-                    break;
-                }
+                return copiedTotal;
             }
-
-            return copiedTotal;
         }
 
         public int Bite(byte[] buffer, int offset, int count)
@@ -135,37 +144,64 @@ namespace Keeker.Core
             var current = offset;
             var remaining = count;
 
-            while (true)
+            lock (_lock)
             {
-                if (_segments.Count == 0)
+                while (true)
                 {
-                    break;
+                    if (_segments.Count == 0)
+                    {
+                        break;
+                    }
+
+                    if (remaining == 0)
+                    {
+                        break;
+                    }
+
+                    var segment = _segments.Peek();
+                    var bittenFromSegment = segment.Bite(buffer, current, remaining);
+
+                    totalBitten += bittenFromSegment;
+                    current += bittenFromSegment;
+                    remaining -= bittenFromSegment;
+
+                    if (segment.GetLength() == 0)
+                    {
+                        _segments.Dequeue();
+                    }
                 }
 
-                if (remaining == 0)
-                {
-                    break;
-                }
-
-                var segment = _segments.Peek();
-                var bittenFromSegment = segment.Bite(buffer, current, remaining);
-
-                totalBitten += bittenFromSegment;
-                current += bittenFromSegment;
-                remaining -= bittenFromSegment;
-
-                if (segment.GetLength() == 0)
-                {
-                    _segments.Dequeue();
-                }
+                return totalBitten;
             }
-
-            return totalBitten;
         }
 
         public bool IsEmpty
         {
-            get { return _segments.Count == 0; }
+            get
+            {
+                lock (_lock)
+                {
+                    return _segments.Count == 0;
+                }
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                // todo1[ak] optimize/cache?
+                var count = 0;
+                lock (_lock)
+                {
+                    foreach (var segment in _segments)
+                    {
+                        count += segment.GetLength();
+                    }
+                }
+
+                return count;
+            }
         }
     }
 }

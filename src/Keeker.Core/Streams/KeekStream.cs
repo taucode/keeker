@@ -1,15 +1,15 @@
 ﻿using System;
 using System.IO;
 
-namespace Keeker.Core
+namespace Keeker.Core.Streams
 {
     public class KeekStream : Stream
     {
         #region Fields
 
         private readonly Stream _innerStream;
-        private readonly object _lock;
-        //private readonly List<byte[]> _peekedSegments;
+        private readonly bool _disposeInnerStream;
+        private readonly object _readLock;
 
         private readonly ByteAccumulator _accumulator;
 
@@ -17,17 +17,17 @@ namespace Keeker.Core
 
         #region Constructor
 
-        public KeekStream(Stream innerStream)
+        public KeekStream(Stream innerStream, bool disposeInnerStream)
         {
             _innerStream = innerStream ?? throw new ArgumentException(nameof(innerStream));
-            //_peekedSegments = new List<byte[]>();
+            _disposeInnerStream = disposeInnerStream;
             _accumulator = new ByteAccumulator();
-            _lock = new object();
+            _readLock = new object();
         }
 
         #endregion
 
-        #region Overridden from  Stream
+        #region Overridden from Stream
 
         public override void Flush()
         {
@@ -46,13 +46,13 @@ namespace Keeker.Core
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            lock (_lock)
+            lock (_readLock)
             {
                 if (_accumulator.IsEmpty)
                 {
                     // read all from inner stream
-                    var readFromInnerStremBytesCount = _innerStream.Read(buffer, offset, count);
-                    return readFromInnerStremBytesCount;
+                    var readFromInnerStreamBytesCount = _innerStream.Read(buffer, offset, count);
+                    return readFromInnerStreamBytesCount;
                 }
                 else
                 {
@@ -76,10 +76,7 @@ namespace Keeker.Core
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            lock (_lock)
-            {
-                _innerStream.Write(buffer, offset, count);
-            }
+            _innerStream.Write(buffer, offset, count);
         }
 
         public override bool CanRead => true;
@@ -114,21 +111,34 @@ namespace Keeker.Core
             }
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Public
 
-        public int ReadInnerStream(int maxCount)
+        public int ReadInnerStream(int maxCount, Action<byte[], int> callback = null)
         {
             if (maxCount < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(maxCount));
             }
 
-            lock (_lock)
+            lock (_readLock)
             {
                 var buffer = new byte[maxCount];
                 var bytesRead = _innerStream.Read(buffer, 0, maxCount);
+
+                if (bytesRead == 0)
+                {
+                    throw new NotImplementedException(); // tood909090[ak] temp
+                }
+
+                callback?.Invoke(buffer, bytesRead);
+
                 if (bytesRead == 0)
                 {
                     return 0; // we haven't read anything from the inner stream
@@ -143,7 +153,25 @@ namespace Keeker.Core
 
         public int Peek(byte[] buffer, int offset, int count)
         {
-            return _accumulator.Peek(buffer, offset, count);
+            lock (_readLock)
+            {
+                return _accumulator.Peek(buffer, offset, count);
+            }
+        }
+
+        public int PeekIndexOf(byte[] subarray)
+        {
+            lock (_readLock)
+            {
+                var allBytes = _accumulator.PeekAll(); // todo0[ak] not much good
+                var index = allBytes.IndexOfSubarray(subarray, 0, allBytes.Length);
+                return index;
+            }
+        }
+
+        public int AccumulatedBytesCount
+        {
+            get { return _accumulator.Count; }
         }
 
         #endregion

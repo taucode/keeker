@@ -41,17 +41,45 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ByteAccumulator.cs" />
-    <Compile Include="ConnectionAcceptedEventArgs.cs" />
+    <Compile Include="Data\IHttpMetadata.cs" />
+    <Compile Include="Relays\ContentRedirector.cs" />
+    <Compile Include="Relays\ContentRedirectors\ChunkedContentRedirector.cs" />
+    <Compile Include="Relays\ContentRedirectors\FixedSizeContentRedirector.cs" />
+    <Compile Include="Relays\IRelay.cs" />
+    <Compile Include="Relays\StreamRedirectors\ClientStreamRedirector.cs" />
+    <Compile Include="Relays\StreamRedirectors\ServerStreamRedirector.cs" />
+    <Compile Include="Relays\StreamRedirector.cs" />
+    <Compile Include="Relays\StreamRedirectorState.cs" />
+    <Compile Include="Relays\Relay.cs" />
+    <Compile Include="Streams\ByteAccumulator.cs" />
+    <Compile Include="CertificateInfo.cs" />
+    <Compile Include="Events\ConnectionAcceptedEventArgs.cs" />
     <Compile Include="CoreHelper.cs" />
-    <Compile Include="IListener.cs" />
-    <Compile Include="IProxy.cs" />
-    <Compile Include="Listener.cs" />
-    <Compile Include="KeekStream.cs" />
-    <Compile Include="Proxy.cs" />
-    <Compile Include="ProxySection.cs" />
-    <Compile Include="ProxyPlainConf.cs" />
+    <Compile Include="Events\RelayEventArgs.cs" />
+    <Compile Include="Data\HttpHeader.cs" />
+    <Compile Include="Data\Builders\HttpHeaderBuilder.cs" />
+    <Compile Include="Data\HttpHeaderCollection.cs" />
+    <Compile Include="Data\Builders\HttpHeaderCollectionBuilder.cs" />
+    <Compile Include="HttpHelper.cs" />
+    <Compile Include="Data\HttpRequestLine.cs" />
+    <Compile Include="Data\Builders\HttpRequestLineBuilder.cs" />
+    <Compile Include="Data\HttpRequestMetadata.cs" />
+    <Compile Include="Data\Builders\HttpRequestMetadataBuilder.cs" />
+    <Compile Include="Data\HttpResponseMetadata.cs" />
+    <Compile Include="Data\Builders\HttpResponseMetadataBuilder.cs" />
+    <Compile Include="Data\HttpStatusLine.cs" />
+    <Compile Include="Data\Builders\HttpStatusLineBuilder.cs" />
+    <Compile Include="Data\HttpTransferEncoding.cs" />
+    <Compile Include="Listeners\IListener.cs" />
+    <Compile Include="Proxies\IProxy.cs" />
+    <Compile Include="Listeners\Listener.cs" />
+    <Compile Include="Streams\KeekStream.cs" />
+    <Compile Include="Proxies\Proxy.cs" />
+    <Compile Include="Conf\ProxySection.cs" />
+    <Compile Include="Conf\ProxyPlainConf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Relays\AutoBuffer.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

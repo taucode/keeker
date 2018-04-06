@@ -1,7 +1,9 @@
-﻿using Keeker.Convey.Proxies;
+﻿using Keeker.Convey.Conf;
+using Keeker.Convey.Proxies;
 using Keeker.Gui.Data;
 using Keeker.Gui.Panes;
 using System;
+using System.Configuration;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -122,9 +124,9 @@ namespace Keeker.Gui
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            //this.ReflectListeners();
-
-            //this.buttonStart_Click(sender, e);
+            buttonCreate_Click(sender, e);
+            buttonStart_Click(sender, e);
+            buttonLog_Click(sender, e);
         }
 
         private void ReflectListeners()
@@ -241,7 +243,10 @@ namespace Keeker.Gui
                     throw new ApplicationException();
                 }
 
-                _proxy = new TauProxy();
+                var conf = (TauProxySection)ConfigurationManager.GetSection("tauProxy");
+                var plainConf = conf.ToPlainConf();
+
+                _proxy = new TauProxy(plainConf);
             }
             catch (Exception ex)
             {
@@ -253,8 +258,7 @@ namespace Keeker.Gui
         {
             try
             {
-                throw new NotImplementedException();
-
+                _proxy.Stop();
             }
             catch (Exception ex)
             {

@@ -55,12 +55,6 @@
     <EmbeddedResource Include="Resources\SampleConfig.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Keeker.Core\Keeker.Core.csproj">
-      <Project>{AF446FE4-67AE-4E9C-A95B-71DB676B85A3}</Project>
-      <Name>Keeker.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

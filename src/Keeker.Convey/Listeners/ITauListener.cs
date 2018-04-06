@@ -1,6 +1,13 @@
-﻿namespace Keeker.Convey.Listeners
+﻿using System;
+
+namespace Keeker.Convey.Listeners
 {
-    public interface ITauListener
+    public interface ITauListener : IDisposable
     {
+        void Start();
+
+        void Stop();
+
+        bool IsRunning { get; }
     }
 }

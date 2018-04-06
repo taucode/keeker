@@ -7,5 +7,7 @@ namespace Keeker.Convey.Proxies
         void Start();
 
         void Stop();
+
+        bool IsRunning { get; }
     }
 }

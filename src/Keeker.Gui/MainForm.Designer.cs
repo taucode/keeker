@@ -36,6 +36,10 @@
             this.treeViewRelays = new System.Windows.Forms.TreeView();
             this.panelPane = new System.Windows.Forms.Panel();
             this.buttonClient = new System.Windows.Forms.Button();
+            this.buttonStop = new System.Windows.Forms.Button();
+            this.buttonDispose = new System.Windows.Forms.Button();
+            this.buttonCreate = new System.Windows.Forms.Button();
+            this.buttonLog = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -44,10 +48,10 @@
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(12, 12);
+            this.buttonStart.Location = new System.Drawing.Point(93, 12);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(75, 23);
-            this.buttonStart.TabIndex = 0;
+            this.buttonStart.TabIndex = 1;
             this.buttonStart.Text = "Start";
             this.buttonStart.UseVisualStyleBackColor = true;
             this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
@@ -77,7 +81,7 @@
             this.splitContainerMain.Panel2.Controls.Add(this.panelPane);
             this.splitContainerMain.Size = new System.Drawing.Size(926, 447);
             this.splitContainerMain.SplitterDistance = 308;
-            this.splitContainerMain.TabIndex = 7;
+            this.splitContainerMain.TabIndex = 5;
             // 
             // treeViewRelays
             // 
@@ -109,19 +113,63 @@
             // 
             // buttonClient
             // 
-            this.buttonClient.Location = new System.Drawing.Point(93, 12);
+            this.buttonClient.Location = new System.Drawing.Point(425, 12);
             this.buttonClient.Name = "buttonClient";
             this.buttonClient.Size = new System.Drawing.Size(75, 23);
-            this.buttonClient.TabIndex = 8;
+            this.buttonClient.TabIndex = 4;
             this.buttonClient.Text = "Client";
             this.buttonClient.UseVisualStyleBackColor = true;
             this.buttonClient.Click += new System.EventHandler(this.buttonClient_Click);
+            // 
+            // buttonStop
+            // 
+            this.buttonStop.Location = new System.Drawing.Point(174, 12);
+            this.buttonStop.Name = "buttonStop";
+            this.buttonStop.Size = new System.Drawing.Size(75, 23);
+            this.buttonStop.TabIndex = 2;
+            this.buttonStop.Text = "Stop";
+            this.buttonStop.UseVisualStyleBackColor = true;
+            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
+            // 
+            // buttonDispose
+            // 
+            this.buttonDispose.Location = new System.Drawing.Point(255, 12);
+            this.buttonDispose.Name = "buttonDispose";
+            this.buttonDispose.Size = new System.Drawing.Size(75, 23);
+            this.buttonDispose.TabIndex = 3;
+            this.buttonDispose.Text = "Dispose";
+            this.buttonDispose.UseVisualStyleBackColor = true;
+            this.buttonDispose.Click += new System.EventHandler(this.buttonDispose_Click);
+            // 
+            // buttonCreate
+            // 
+            this.buttonCreate.Location = new System.Drawing.Point(12, 12);
+            this.buttonCreate.Name = "buttonCreate";
+            this.buttonCreate.Size = new System.Drawing.Size(75, 23);
+            this.buttonCreate.TabIndex = 0;
+            this.buttonCreate.Text = "Create";
+            this.buttonCreate.UseVisualStyleBackColor = true;
+            this.buttonCreate.Click += new System.EventHandler(this.buttonCreate_Click);
+            // 
+            // buttonLog
+            // 
+            this.buttonLog.Location = new System.Drawing.Point(506, 12);
+            this.buttonLog.Name = "buttonLog";
+            this.buttonLog.Size = new System.Drawing.Size(75, 23);
+            this.buttonLog.TabIndex = 6;
+            this.buttonLog.Text = "Log";
+            this.buttonLog.UseVisualStyleBackColor = true;
+            this.buttonLog.Click += new System.EventHandler(this.buttonLog_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(950, 500);
+            this.Controls.Add(this.buttonLog);
+            this.Controls.Add(this.buttonCreate);
+            this.Controls.Add(this.buttonDispose);
+            this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.buttonClient);
             this.Controls.Add(this.splitContainerMain);
             this.Controls.Add(this.buttonStart);
@@ -145,6 +193,10 @@
         private System.Windows.Forms.TreeView treeViewRelays;
         private System.Windows.Forms.Panel panelPane;
         private System.Windows.Forms.Button buttonClient;
+        private System.Windows.Forms.Button buttonStop;
+        private System.Windows.Forms.Button buttonDispose;
+        private System.Windows.Forms.Button buttonCreate;
+        private System.Windows.Forms.Button buttonLog;
     }
 }
 

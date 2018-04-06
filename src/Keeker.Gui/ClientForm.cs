@@ -1,5 +1,4 @@
-﻿using Keeker.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -24,7 +23,6 @@ namespace Keeker.Gui
                 using (WebClient client = new WebClient())
                 {
                     var txt = client.DownloadString("https://rho.me/");
-                    int p = 33;
                 }
             }
             catch (Exception ex)
@@ -58,10 +56,6 @@ namespace Keeker.Gui
 
                 var bytesRead = sslStream.Read(buf, 0, buf.Length);
                 total.AddRange(buf.Take(bytesRead));
-
-
-                var wwwaaat = total.ToArray().ToAsciiString();
-
 
                 bytesRead = sslStream.Read(buf, 0, buf.Length);
                 total.AddRange(buf.Take(bytesRead));

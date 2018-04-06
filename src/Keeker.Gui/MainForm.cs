@@ -1,10 +1,9 @@
-﻿using Keeker.Core.Conf;
-using Keeker.Core.Events;
-using Keeker.Core.Proxies;
-using Keeker.Core.Relays;
+﻿using Keeker.Convey.Conf;
+using Keeker.Convey.Proxies;
 using Keeker.Gui.Data;
 using Keeker.Gui.Panes;
 using System;
+using System.Configuration;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -12,25 +11,33 @@ namespace Keeker.Gui
 {
     public partial class MainForm : Form
     {
-        private readonly IProxy _proxy;
-        private readonly ProxyPlainConf _conf;
+        //private readonly IProxy _proxy;
+        //private readonly ProxyPlainConf _conf;
         //private readonly Dictionary<string, Dictionary<string, Relay>> _relayCollectionsByListenerId;
+
+        private LogForm _logForm;
+
+        private ITauProxy _proxy;
         private readonly object _lock;
+
         private Pane _currentPane;
+
 
         public MainForm()
         {
             InitializeComponent();
 
+            _logForm = new LogForm();
+
             _lock = new object();
             //_relayCollectionsByListenerId = new Dictionary<string, Dictionary<string, Relay>>();
 
-            _conf = ProxyPlainConf.LoadFromAppConfig("proxy");
-            _proxy = new Proxy(_conf);
+            //_conf = ProxyPlainConf.LoadFromAppConfig("proxy");
+            //_proxy = new Proxy(_conf);
 
-            _proxy.ConnectionAccepted += proxy_ListenerConnectionAccepted;
-            _proxy.RelayStarted += proxy_RelayStarted;
-            _proxy.RelayDisposed += proxy_RelayDisposed;
+            //_proxy.ConnectionAccepted += proxy_ListenerConnectionAccepted;
+            //_proxy.RelayStarted += proxy_RelayStarted;
+            //_proxy.RelayDisposed += proxy_RelayDisposed;
             //_proxy.ListenerRelayCreated += proxy_ListenerRelayCreated;
         }
 
@@ -40,39 +47,39 @@ namespace Keeker.Gui
         //    this.ReflectCreatedRelay(e.Relay);
         //}
 
-        private void ReflectCreatedRelay(IRelay relay)
-        {
-            lock (_lock)
-            {
-                this.Invoke(new Action<IRelay>(
-                    r =>
-                    {
-                        var listenerNode = this.GetListenerNode(r.ListenerId);
-                        var hostNode = this.GetHostNode(listenerNode, r.ExternalHostName);
+        //private void ReflectCreatedRelay(IRelay relay)
+        //{
+        //    lock (_lock)
+        //    {
+        //        this.Invoke(new Action<IRelay>(
+        //            r =>
+        //            {
+        //                var listenerNode = this.GetListenerNode(r.ListenerId);
+        //                var hostNode = this.GetHostNode(listenerNode, r.ExternalHostName);
 
-                        var node = new TreeNode(relay.Id)
-                        {
-                            ImageIndex = 2,
-                            SelectedImageIndex = 2,
-                            Tag = relay,
-                        };
+        //                var node = new TreeNode(relay.Id)
+        //                {
+        //                    ImageIndex = 2,
+        //                    SelectedImageIndex = 2,
+        //                    Tag = relay,
+        //                };
 
-                        hostNode.Nodes.Add(node);
-                    }),
-                    relay);
+        //                hostNode.Nodes.Add(node);
+        //            }),
+        //            relay);
 
-                //var containsListener = _relayCollectionsByListenerId.TryGetValue(relay.ListenerId, out var relays);
-                //if (!containsListener)
-                //{
-                //    relays = new Dictionary<string, Relay>();
-                //}
+        //        //var containsListener = _relayCollectionsByListenerId.TryGetValue(relay.ListenerId, out var relays);
+        //        //if (!containsListener)
+        //        //{
+        //        //    relays = new Dictionary<string, Relay>();
+        //        //}
 
-                //if (containsListener)
-                //{
-                //    relays.Add(relay.Id, relay);
-                //}
-            }
-        }
+        //        //if (containsListener)
+        //        //{
+        //        //    relays.Add(relay.Id, relay);
+        //        //}
+        //    }
+        //}
 
         private TreeNode GetHostNode(TreeNode listenerNode, string host)
         {
@@ -88,20 +95,20 @@ namespace Keeker.Gui
                 .Single(x => ((ListenerConfDto)x.Tag).Id == listenerId);
         }
 
-        private void proxy_ListenerConnectionAccepted(object sender, ConnectionAcceptedEventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
+        //private void proxy_ListenerConnectionAccepted(object sender, ConnectionAcceptedEventArgs e)
+        //{
+        //    //throw new NotImplementedException();
+        //}
 
-        private void proxy_RelayStarted(object sender, RelayEventArgs e)
-        {
-            this.ReflectCreatedRelay(e.Relay);
-        }
+        //private void proxy_RelayStarted(object sender, RelayEventArgs e)
+        //{
+        //    this.ReflectCreatedRelay(e.Relay);
+        //}
 
-        private void proxy_RelayDisposed(object sender, RelayEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+        //private void proxy_RelayDisposed(object sender, RelayEventArgs e)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
@@ -117,36 +124,38 @@ namespace Keeker.Gui
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            this.ReflectListeners();
-
-            this.buttonStart_Click(sender, e);
+            buttonCreate_Click(sender, e);
+            buttonStart_Click(sender, e);
+            buttonLog_Click(sender, e);
         }
 
         private void ReflectListeners()
         {
-            foreach (var listenerConf in _conf.Listeners.Values)
-            {
-                var node = new TreeNode(listenerConf.Id)
-                {
-                    ImageIndex = 0,
-                    SelectedImageIndex = 0,
-                    Tag = listenerConf.ToListenerConfDto(),
-                };
+            throw new NotImplementedException();
 
-                treeViewRelays.Nodes.Add(node);
+            //foreach (var listenerConf in _conf.Listeners.Values)
+            //{
+            //    var node = new TreeNode(listenerConf.Id)
+            //    {
+            //        ImageIndex = 0,
+            //        SelectedImageIndex = 0,
+            //        Tag = listenerConf.ToListenerConfDto(),
+            //    };
 
-                foreach (var hostConf in listenerConf.Hosts.Values)
-                {
-                    this.ReflectHost(node, hostConf);
-                }
+            //    treeViewRelays.Nodes.Add(node);
 
-                //var item = new ListViewItem();
-                //listViewListeners.Items.Add(item);
-                //item.SubItems[0].Text = listenerConf.Id;
-                //item.SubItems.Add(listenerConf.EndPoint.ToString());
-                //item.SubItems.Add(listenerConf.IsHttps.ToString());
-                //item.SubItems.Add(listenerConf.Hosts.Count.ToString());
-            }
+            //    foreach (var hostConf in listenerConf.Hosts.Values)
+            //    {
+            //        this.ReflectHost(node, hostConf);
+            //    }
+
+            //    //var item = new ListViewItem();
+            //    //listViewListeners.Items.Add(item);
+            //    //item.SubItems[0].Text = listenerConf.Id;
+            //    //item.SubItems.Add(listenerConf.EndPoint.ToString());
+            //    //item.SubItems.Add(listenerConf.IsHttps.ToString());
+            //    //item.SubItems.Add(listenerConf.Hosts.Count.ToString());
+            //}
 
             //if (listViewListeners.Items.Count > 0)
             //{
@@ -154,17 +163,17 @@ namespace Keeker.Gui
             //}
         }
 
-        private void ReflectHost(TreeNode listenerNode, HostPlainConf hostConf)
-        {
-            var node = new TreeNode(hostConf.ExternalHostName)
-            {
-                ImageIndex = 1,
-                SelectedImageIndex = 1,
-                Tag = hostConf.ToHostConfDto(),
-            };
+        //private void ReflectHost(TreeNode listenerNode, HostPlainConf hostConf)
+        //{
+        //    var node = new TreeNode(hostConf.ExternalHostName)
+        //    {
+        //        ImageIndex = 1,
+        //        SelectedImageIndex = 1,
+        //        Tag = hostConf.ToHostConfDto(),
+        //    };
 
-            listenerNode.Nodes.Add(node);
-        }
+        //    listenerNode.Nodes.Add(node);
+        //}
 
         private void treeViewRelays_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -179,11 +188,11 @@ namespace Keeker.Gui
                 var conf = (HostConfDto)node.Tag;
                 this.SetPane(new JsonPropertiesPane(conf));
             }
-            else if (node.Tag is IRelay)
-            {
-                var relay = (Relay)node.Tag;
-                this.SetPane(new RelayPane(relay));
-            }
+            //else if (node.Tag is IRelay)
+            //{
+            //    var relay = (Relay)node.Tag;
+            //    this.SetPane(new RelayPane(relay));
+            //}
             else
             {
                 throw new NotImplementedException();
@@ -223,6 +232,56 @@ namespace Keeker.Gui
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void buttonCreate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_proxy != null)
+                {
+                    throw new ApplicationException();
+                }
+
+                var conf = (TauProxySection)ConfigurationManager.GetSection("tauProxy");
+                var plainConf = conf.ToPlainConf();
+
+                _proxy = new TauProxy(plainConf);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void buttonStop_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                _proxy.Stop();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void buttonDispose_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                throw new NotImplementedException();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void buttonLog_Click(object sender, EventArgs e)
+        {
+            _logForm.Show();
         }
     }
 }

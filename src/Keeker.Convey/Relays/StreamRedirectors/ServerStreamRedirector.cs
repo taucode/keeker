@@ -5,7 +5,6 @@ using Keeker.Convey.Streams;
 using System;
 using System.IO;
 using System.Net;
-using System.Threading;
 
 namespace Keeker.Convey.Relays.StreamRedirectors
 {
@@ -17,7 +16,7 @@ namespace Keeker.Convey.Relays.StreamRedirectors
         private readonly string _domesticAuthorityWithPort;
 
         public ServerStreamRedirector(
-            ManualResetEvent stopSignal,
+            TauRelay relay,
             KeekStream sourceStream,
             Stream destinationStream,
             string protocol,
@@ -25,7 +24,7 @@ namespace Keeker.Convey.Relays.StreamRedirectors
             string domesticAuthority,
             string domesticAuthorityWithPort)
             : base(
-                  stopSignal,
+                  relay,
                   sourceStream,
                   destinationStream)
         {
@@ -80,7 +79,7 @@ namespace Keeker.Convey.Relays.StreamRedirectors
             {
                 var length = metadata.Headers.GetContentLength();
                 dataRedirector = new FixedSizeContentRedirector(
-                    this.StopSignal,
+                    this.Relay.StopSignal,
                     this.SourceStream,
                     this.SourceBuffer,
                     this.DestinationStream,
@@ -92,7 +91,7 @@ namespace Keeker.Convey.Relays.StreamRedirectors
                 if (transferEncoding == HttpTransferEncoding.Chunked)
                 {
                     dataRedirector = new ChunkedContentRedirector(
-                        this.StopSignal,
+                        this.Relay.StopSignal,
                         this.SourceStream,
                         this.SourceBuffer,
                         this.DestinationStream);

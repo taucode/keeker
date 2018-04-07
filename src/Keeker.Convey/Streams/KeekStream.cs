@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Net.Sockets;
+using System.Reflection;
 
 namespace Keeker.Convey.Streams
 {
@@ -8,6 +10,7 @@ namespace Keeker.Convey.Streams
         #region Fields
 
         private readonly Stream _innerStream;
+        private readonly bool _leaveInnerStreamOpen;
         private readonly object _readLock;
 
         private readonly ByteAccumulator _accumulator;
@@ -16,9 +19,10 @@ namespace Keeker.Convey.Streams
 
         #region Constructor
 
-        public KeekStream(Stream innerStream)
+        public KeekStream(Stream innerStream, bool leaveInnerStreamOpen)
         {
             _innerStream = innerStream ?? throw new ArgumentException(nameof(innerStream));
+            _leaveInnerStreamOpen = leaveInnerStreamOpen;
             _accumulator = new ByteAccumulator();
             _readLock = new object();
         }
@@ -111,7 +115,25 @@ namespace Keeker.Convey.Streams
 
         protected override void Dispose(bool disposing)
         {
-            throw new NotImplementedException();
+            if (!_leaveInnerStreamOpen)
+            {
+                _innerStream.Dispose();
+            }
+
+            if (_innerStream is NetworkStream)
+            {
+                var ns = (NetworkStream)_innerStream;
+
+
+                BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+                PropertyInfo pi = ns.GetType().GetProperty("Socket", bindingFlags);
+
+                var sock = (Socket) pi.GetValue(ns);
+
+                int a = 33;
+
+            }
         }
 
         #endregion

@@ -25,11 +25,11 @@ namespace Keeker.Convey.Relays
         private TMetadata _lastMetadata;
 
         protected StreamRedirector(
-            ManualResetEvent stopSignal,
+            TauRelay relay,
             KeekStream sourceStream,
             Stream destinationStream)
         {
-            this.StopSignal = stopSignal;
+            this.Relay = relay;
             _idleTimeout = TimeSpan.FromMilliseconds(IDLE_TIMEOUT_MILLISECONDS);
 
             this.SourceStream = sourceStream;
@@ -39,8 +39,7 @@ namespace Keeker.Convey.Relays
             this.Task = new Task(this.Routine);
         }
 
-        protected ManualResetEvent StopSignal { get; private set; }
-
+        protected TauRelay Relay { get; private set; }
         protected KeekStream SourceStream { get; private set; }
         protected AutoBuffer SourceBuffer { get; private set; }
         protected Stream DestinationStream { get; private set; }
@@ -50,18 +49,7 @@ namespace Keeker.Convey.Relays
         protected abstract void CheckMetadata(TMetadata metadata);
         protected abstract TMetadata TransformMetadata(TMetadata metadata);
         protected abstract ContentRedirector ResolveDataRedirector(TMetadata metadata);
-
-        //private void DisposeRelay(object dummy)
-        //{
-        //    try
-        //    {
-        //        this.Relay.Dispose();
-        //    }
-        //    catch
-        //    {   
-        //    }
-        //}
-
+        
         private void DoIdle()
         {
             if (this.SourceStream.AccumulatedBytesCount > 0)
@@ -74,7 +62,7 @@ namespace Keeker.Convey.Relays
 
             if (bytesReadCount == 0)
             {
-                var gotSignal = this.StopSignal.WaitOne(_idleTimeout);
+                var gotSignal = this.Relay.StopSignal.WaitOne(_idleTimeout);
                 if (gotSignal)
                 {
                     _state = StreamRedirectorState.Stop;
@@ -178,19 +166,27 @@ namespace Keeker.Convey.Relays
                     }
                 }
 
-                throw new NotImplementedException(); // todo000[ak]
+                Logger.Info("Stopped due to request");
+
             }
             catch (Exception ex)
             {
                 // todo1[ak] log or something
-                Logger.InfoException("{0} stopped due to an exception", ex);
-                this.StopSignal.Set();
+                Logger.InfoFormat("{0} Stopped due to an exception {1}", this.GetType().FullName, ex.GetType().FullName);
+                this.Relay.StopSignal.Set();
             }
+
+            ThreadPool.QueueUserWorkItem(x => this.Relay.Dispose());
         }
 
         public void Start()
         {
             this.Task.Start();
+        }
+
+        public void Wait()
+        {
+            this.Task.Wait();
         }
     }
 }

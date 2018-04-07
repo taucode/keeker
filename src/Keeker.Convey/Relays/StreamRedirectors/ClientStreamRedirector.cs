@@ -4,7 +4,6 @@ using Keeker.Convey.Relays.ContentRedirectors;
 using Keeker.Convey.Streams;
 using System;
 using System.IO;
-using System.Threading;
 
 namespace Keeker.Convey.Relays.StreamRedirectors
 {
@@ -14,15 +13,15 @@ namespace Keeker.Convey.Relays.StreamRedirectors
         private readonly string _targetHost;
 
         public ClientStreamRedirector(
-            ManualResetEvent stopSignal,
+            TauRelay relay,
             KeekStream sourceStream,
             Stream destinationStream,
             string host,
             string targetHost)
             : base(
-                  stopSignal,
-                  sourceStream,
-                  destinationStream)
+                relay,
+                sourceStream,
+                destinationStream)
         {
             _host = host;
             _targetHost = targetHost;
@@ -57,7 +56,7 @@ namespace Keeker.Convey.Relays.StreamRedirectors
             {
                 var length = metadata.Headers.GetContentLength();
                 dataRedirector = new FixedSizeContentRedirector(
-                    this.StopSignal,
+                    this.Relay.StopSignal,
                     this.SourceStream,
                     this.SourceBuffer,
                     this.DestinationStream,

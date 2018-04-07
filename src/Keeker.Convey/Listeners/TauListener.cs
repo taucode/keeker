@@ -35,7 +35,7 @@ namespace Keeker.Convey.Listeners
         private bool _isRunning;
         private bool _isDisposed;
         private readonly object _lock;
-        private readonly Task _task;
+        private readonly Task _listeningTask;
         private TcpListener _tcpListener;
 
         private readonly Dictionary<string, X509Certificate2> _certificates;
@@ -51,7 +51,7 @@ namespace Keeker.Convey.Listeners
         {
             _conf = conf.Clone();
             _lock = new object();
-            _task = new Task(this.Routine);
+            _listeningTask = new Task(this.ListeningRoutine);
 
             _certificates = new Dictionary<string, X509Certificate2>();
 
@@ -73,7 +73,7 @@ namespace Keeker.Convey.Listeners
 
         #region Private
 
-        private void Routine()
+        private void ListeningRoutine()
         {
             lock (_lock)
             {
@@ -105,7 +105,7 @@ namespace Keeker.Convey.Listeners
             }
 
             TcpClient client = null;
-            ITauRelay relay = null;
+            TauRelay relay = null;
 
             try
             {
@@ -156,12 +156,12 @@ namespace Keeker.Convey.Listeners
             return $"{_conf.Id};{externalHostName};{incremented}";
         }
 
-        private ITauRelay EstablishConnection(TcpClient client)
+        private TauRelay EstablishConnection(TcpClient client)
         {
             if (_conf.IsHttps)
             {
                 var networkStream = client.GetStream();
-                var wrappingStream = new KeekStream(networkStream);
+                var wrappingStream = new KeekStream(networkStream, false);
 
                 var hostConf = this.ResolveHostConf(wrappingStream);
 
@@ -192,11 +192,8 @@ namespace Keeker.Convey.Listeners
                 var domesticAuthority = $"{hostConf.DomesticHostName}{colonWithPortIfNeeded}";
                 var domesticAuthorityWithPort = $"{hostConf.DomesticHostName}:{hostConf.EndPoint.Port}";
 
-
-                //var domesticAuthority = this.GetDomesticAuthority(hostConf);
-                //var domesticAuthorityWithPort = this.GetDomesticAuthorityWithPort(hostConf);
-
                 var relay = new TauRelay(
+                    relayId,
                     clientStream,
                     serverStream,
                     hostConf.ExternalHostName,
@@ -205,51 +202,12 @@ namespace Keeker.Convey.Listeners
                     _conf.IsHttps);
 
                 return relay;
-
-                //var relay = new Relay(
-                //    this,
-                //    relayId,
-                //    _conf.IsHttps,
-                //    clientStream,
-                //    hostConf);
-
-                //relay.Start();
-
-                //this.RelayStarted?.Invoke(this, new RelayEventArgs(relay));
-
             }
             else
             {
                 throw new NotImplementedException();
             }
         }
-
-        //private string GetDomesticAuthorityWithPort(TauHostPlainConf hostConf)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //private string GetDomesticAuthority(TauHostPlainConf hostConf)
-        //{
-        //    // todo1[ak] cache?
-
-        //    string result;
-        //    var port = hostConf.EndPoint.Port;
-
-        //    if (_conf.IsHttps)
-        //    {
-        //        if (port == TauHelper.DEFAULT_HTTPS_PORT)
-        //        {
-        //            result = hostConf.DomesticHostName;
-        //        }
-        //        else
-        //        {
-        //            //result = $"{hostConf}:{}"
-        //        }
-        //    }
-
-        //    return result;
-        //}
 
         private Stream CreateServerStream(TauHostPlainConf hostConf)
         {
@@ -315,7 +273,7 @@ namespace Keeker.Convey.Listeners
                     }
 
                     _isRunning = true;
-                    _task.Start();
+                    _listeningTask.Start();
                 }
                 catch (Exception ex)
                 {

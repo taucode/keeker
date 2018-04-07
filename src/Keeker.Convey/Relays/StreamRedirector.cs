@@ -12,7 +12,7 @@ namespace Keeker.Convey.Relays
     {
         #region Logging
 
-        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+        private ILog Logger { get; } = LogProvider.GetCurrentClassLogger();
 
         #endregion
 
@@ -182,6 +182,12 @@ namespace Keeker.Convey.Relays
         public void Start()
         {
             this.Task.Start();
+
+            throw new NotImplementedException();
+            //var sourceSocket = this.GetSourceSocket();
+            //var destinationSocket = this.GetDestinationSocket();
+
+            //Logger.InfoFormat("Started redirector: {0}{1}", this.Relay.Id, this.GetType().Name);
         }
 
         public void Wait()

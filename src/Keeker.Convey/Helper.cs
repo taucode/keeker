@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace Keeker.Convey
 {
-    public static class TauHelper
+    internal static class Helper
     {
         public static int ToInt32(this string s)
         {

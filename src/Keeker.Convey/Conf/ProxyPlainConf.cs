@@ -4,11 +4,11 @@ using System.Net;
 
 namespace Keeker.Convey.Conf
 {
-    public class TauProxyPlainConf
+    public class ProxyPlainConf
     {
-        public TauProxyPlainConf(
-            TauCertificatePlainConf[] certificates,
-            TauListenerPlainConf[] listeners)
+        public ProxyPlainConf(
+            CertificatePlainConf[] certificates,
+            ListenerPlainConf[] listeners)
         {
             this.Certificates = certificates
                 .Select(x => x.Clone())
@@ -19,23 +19,23 @@ namespace Keeker.Convey.Conf
                 .ToArray();
         }
 
-        public TauCertificatePlainConf[] Certificates { get; }
+        public CertificatePlainConf[] Certificates { get; }
 
-        public TauListenerPlainConf[] Listeners { get; }
+        public ListenerPlainConf[] Listeners { get; }
     }
 
-    public class TauCertificatePlainConf
+    public class CertificatePlainConf
     {
         public string Id { get; }
         public string FilePath { get; }
         public string Password { get; }
-        public TauDomainPlainConf[] Domains { get; }
+        public DomainPlainConf[] Domains { get; }
 
-        public TauCertificatePlainConf(
+        public CertificatePlainConf(
             string id,
             string filePath,
             string password,
-            TauDomainPlainConf[] domains)
+            DomainPlainConf[] domains)
         {
             this.Id = id;
             this.FilePath = filePath;
@@ -44,28 +44,28 @@ namespace Keeker.Convey.Conf
         }
     }
 
-    public class TauDomainPlainConf
+    public class DomainPlainConf
     {
         public string Name { get; }
 
-        public TauDomainPlainConf(string name)
+        public DomainPlainConf(string name)
         {
             this.Name = name;
         }
     }
 
-    public class TauListenerPlainConf
+    public class ListenerPlainConf
     {
         public string Id { get; }
         public IPEndPoint IPEndPoint { get; }
         public bool IsHttps { get; }
-        public TauHostPlainConf[] Hosts { get; }
+        public HostPlainConf[] Hosts { get; }
 
-        public TauListenerPlainConf(
+        public ListenerPlainConf(
             string id,
             IPEndPoint iPEndPoint,
             bool isHttps,
-            TauHostPlainConf[] hosts)
+            HostPlainConf[] hosts)
         {
             this.Id = id;
             this.IPEndPoint = iPEndPoint;
@@ -74,14 +74,14 @@ namespace Keeker.Convey.Conf
         }
     }
 
-    public class TauHostPlainConf
+    public class HostPlainConf
     {
         public string ExternalHostName { get; }
         public string DomesticHostName { get; }
         public IPEndPoint EndPoint { get; }
         public string CertificateId { get; }
 
-        public TauHostPlainConf(
+        public HostPlainConf(
             string externalHostName,
             string domesticHostName,
             IPEndPoint endPoint,
@@ -94,41 +94,41 @@ namespace Keeker.Convey.Conf
         }
     }
 
-    public static class TauProxyPlainConfExtensions
+    public static class ProxyPlainConfExtensions
     {
-        public static TauProxyPlainConf ToPlainConf(this TauProxySection section)
+        public static ProxyPlainConf ToPlainConf(this ProxySection section)
         {
-            return new TauProxyPlainConf(
+            return new ProxyPlainConf(
                 section.Certificates
-                    .Cast<TauCertificateElement>()
+                    .Cast<CertificateElement>()
                     .Select(x => x.ToPlainConf())
                     .ToArray(),
                 section.Listeners
-                    .Cast<TauListenerElement>()
+                    .Cast<ListenerElement>()
                     .Select(x => x.ToPlainConf())
                     .ToArray());
         }
 
-        public static TauProxyPlainConf Clone(this TauProxyPlainConf conf)
+        public static ProxyPlainConf Clone(this ProxyPlainConf conf)
         {
             throw new NotImplementedException();
         }
 
-        public static TauCertificatePlainConf ToPlainConf(this TauCertificateElement element)
+        public static CertificatePlainConf ToPlainConf(this CertificateElement element)
         {
-            return new TauCertificatePlainConf(
+            return new CertificatePlainConf(
                 element.Id,
                 element.FilePath,
                 element.Password,
                 element.Domains
-                    .Cast<TauDomainElement>()
+                    .Cast<DomainElement>()
                     .Select(x => x.ToPlainConf())
                     .ToArray());
         }
 
-        public static TauCertificatePlainConf Clone(this TauCertificatePlainConf conf)
+        public static CertificatePlainConf Clone(this CertificatePlainConf conf)
         {
-            return new TauCertificatePlainConf(
+            return new CertificatePlainConf(
                 conf.Id,
                 conf.FilePath,
                 conf.Password,
@@ -137,31 +137,31 @@ namespace Keeker.Convey.Conf
                     .ToArray());
         }
 
-        public static TauDomainPlainConf ToPlainConf(this TauDomainElement element)
+        public static DomainPlainConf ToPlainConf(this DomainElement element)
         {
-            return new TauDomainPlainConf(element.Name);
+            return new DomainPlainConf(element.Name);
         }
 
-        public static TauDomainPlainConf Clone(this TauDomainPlainConf conf)
+        public static DomainPlainConf Clone(this DomainPlainConf conf)
         {
-            return new TauDomainPlainConf(conf.Name);
+            return new DomainPlainConf(conf.Name);
         }
 
-        public static TauListenerPlainConf ToPlainConf(this TauListenerElement element)
+        public static ListenerPlainConf ToPlainConf(this ListenerElement element)
         {
-            return new TauListenerPlainConf(
+            return new ListenerPlainConf(
                 element.Id,
                 element.EndPoint.ToIPEndPoint(),
                 element.IsHttps,
                 element.Hosts
-                    .Cast<TauHostElement>()
+                    .Cast<HostElement>()
                     .Select(x => x.ToPlainConf())
                     .ToArray());
         }
 
-        public static TauListenerPlainConf Clone(this TauListenerPlainConf conf)
+        public static ListenerPlainConf Clone(this ListenerPlainConf conf)
         {
-            return new TauListenerPlainConf(
+            return new ListenerPlainConf(
                 conf.Id,
                 conf.IPEndPoint,
                 conf.IsHttps,
@@ -170,25 +170,25 @@ namespace Keeker.Convey.Conf
                     .ToArray());
         }
 
-        public static TauHostPlainConf ToPlainConf(this TauHostElement element)
+        public static HostPlainConf ToPlainConf(this HostElement element)
         {
-            return new TauHostPlainConf(
+            return new HostPlainConf(
                 element.ExternalHostName,
                 element.DomesticHostName,
                 element.EndPoint.ToIPEndPoint(),
                 element.CertificateId);
         }
 
-        public static TauHostPlainConf Clone(this TauHostPlainConf conf)
+        public static HostPlainConf Clone(this HostPlainConf conf)
         {
-            return new TauHostPlainConf(
+            return new HostPlainConf(
                 conf.ExternalHostName,
                 conf.DomesticHostName,
                 conf.EndPoint,
                 conf.CertificateId);
         }
 
-        public static string[] GetUserCertificateIds(this TauListenerPlainConf conf)
+        public static string[] GetUserCertificateIds(this ListenerPlainConf conf)
         {
             return conf.Hosts?
                 .Select(x => x.CertificateId)

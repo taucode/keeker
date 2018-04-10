@@ -13,7 +13,7 @@ namespace Keeker.Convey.Relays.StreamRedirectors
         private readonly string _targetHost;
 
         public ClientStreamRedirector(
-            TauRelay relay,
+            Relay relay,
             KeekStream sourceStream,
             Stream destinationStream,
             string host,

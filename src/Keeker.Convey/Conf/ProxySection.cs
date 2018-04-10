@@ -2,38 +2,38 @@
 
 namespace Keeker.Convey.Conf
 {
-    public class TauProxySection : ConfigurationSection
+    public class ProxySection : ConfigurationSection
     {
         [ConfigurationProperty("certificates")]
-        public TauCertificateElementCollection Certificates
+        public CertificateElementCollection Certificates
         {
-            get => this["certificates"] as TauCertificateElementCollection;
+            get => this["certificates"] as CertificateElementCollection;
             set => this["certificates"] = value;
         }
 
         [ConfigurationProperty("listeners")]
-        public TauListenerElementCollection Listeners
+        public ListenerElementCollection Listeners
         {
-            get => this["listeners"] as TauListenerElementCollection;
+            get => this["listeners"] as ListenerElementCollection;
             set => this["listeners"] = value;
         }
     }
 
-    [ConfigurationCollection(typeof(TauCertificateElement))]
-    public class TauCertificateElementCollection : ConfigurationElementCollection
+    [ConfigurationCollection(typeof(CertificateElement))]
+    public class CertificateElementCollection : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
         {
-            return new TauCertificateElement();
+            return new CertificateElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((TauCertificateElement)element).Id;
+            return ((CertificateElement)element).Id;
         }
     }
 
-    public class TauCertificateElement : ConfigurationElement
+    public class CertificateElement : ConfigurationElement
     {
         [ConfigurationProperty("id", IsKey = true, IsRequired = true)]
         public string Id
@@ -57,28 +57,28 @@ namespace Keeker.Convey.Conf
         }
 
         [ConfigurationProperty("domains")]
-        public TauDomainElementCollection Domains
+        public DomainElementCollection Domains
         {
-            get => this["domains"] as TauDomainElementCollection;
+            get => this["domains"] as DomainElementCollection;
             set => this["domains"] = value;
         }
     }
 
-    [ConfigurationCollection(typeof(TauDomainElement))]
-    public class TauDomainElementCollection : ConfigurationElementCollection
+    [ConfigurationCollection(typeof(DomainElement))]
+    public class DomainElementCollection : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
         {
-            return new TauDomainElement();
+            return new DomainElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((TauDomainElement)element).Name;
+            return ((DomainElement)element).Name;
         }
     }
 
-    public class TauDomainElement : ConfigurationElement
+    public class DomainElement : ConfigurationElement
     {
         [ConfigurationProperty("name", IsKey = true, IsRequired = true)]
         public string Name
@@ -88,21 +88,21 @@ namespace Keeker.Convey.Conf
         }
     }
 
-    [ConfigurationCollection(typeof(TauListenerElement))]
-    public class TauListenerElementCollection : ConfigurationElementCollection
+    [ConfigurationCollection(typeof(ListenerElement))]
+    public class ListenerElementCollection : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
         {
-            return new TauListenerElement();
+            return new ListenerElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((TauListenerElement)element).Id;
+            return ((ListenerElement)element).Id;
         }
     }
 
-    public class TauListenerElement : ConfigurationElement
+    public class ListenerElement : ConfigurationElement
     {
         [ConfigurationProperty("id", IsKey = true, IsRequired = true)]
         public string Id
@@ -126,28 +126,28 @@ namespace Keeker.Convey.Conf
         }
 
         [ConfigurationProperty("hosts")]
-        public TauHostElementCollection Hosts
+        public HostElementCollection Hosts
         {
-            get => this["hosts"] as TauHostElementCollection;
+            get => this["hosts"] as HostElementCollection;
             set => this["hosts"] = value;
         }
     }
 
-    [ConfigurationCollection(typeof(TauHostElement))]
-    public class TauHostElementCollection : ConfigurationElementCollection
+    [ConfigurationCollection(typeof(HostElement))]
+    public class HostElementCollection : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
         {
-            return new TauHostElement();
+            return new HostElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((TauHostElement)element).ExternalHostName;
+            return ((HostElement)element).ExternalHostName;
         }
     }
 
-    public class TauHostElement : ConfigurationElement
+    public class HostElement : ConfigurationElement
     {
         [ConfigurationProperty("externalHostName", IsKey = true, IsRequired = true)]
         public string ExternalHostName

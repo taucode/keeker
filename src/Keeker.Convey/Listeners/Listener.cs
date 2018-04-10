@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Keeker.Convey.Listeners
 {
-    public class TauListener : ITauListener
+    public class Listener : IListener
     {
         #region Constants
 
@@ -31,7 +31,7 @@ namespace Keeker.Convey.Listeners
 
         #region Fields
 
-        private readonly TauListenerPlainConf _conf;
+        private readonly ListenerPlainConf _conf;
         private bool _isRunning;
         private bool _isDisposed;
         private readonly object _lock;
@@ -47,7 +47,7 @@ namespace Keeker.Convey.Listeners
 
         #region Constructor
 
-        public TauListener(TauListenerPlainConf conf, TauCertificateInfo[] certificates)
+        public Listener(ListenerPlainConf conf, CertificateInfo[] certificates)
         {
             _conf = conf.Clone();
             _lock = new object();
@@ -105,7 +105,7 @@ namespace Keeker.Convey.Listeners
             }
 
             TcpClient client = null;
-            TauRelay relay = null;
+            Relay relay = null;
 
             try
             {
@@ -156,7 +156,7 @@ namespace Keeker.Convey.Listeners
             return $"{_conf.Id};{externalHostName};{incremented}";
         }
 
-        private TauRelay EstablishConnection(TcpClient client)
+        private Relay EstablishConnection(TcpClient client)
         {
             if (_conf.IsHttps)
             {
@@ -180,7 +180,7 @@ namespace Keeker.Convey.Listeners
                 var serverStream = this.CreateServerStream(hostConf);
 
                 string colonWithPortIfNeeded;
-                if (hostConf.EndPoint.Port == TauHelper.DEFAULT_HTTP_PORT)
+                if (hostConf.EndPoint.Port == Helper.DEFAULT_HTTP_PORT)
                 {
                     colonWithPortIfNeeded = "";
                 }
@@ -192,7 +192,7 @@ namespace Keeker.Convey.Listeners
                 var domesticAuthority = $"{hostConf.DomesticHostName}{colonWithPortIfNeeded}";
                 var domesticAuthorityWithPort = $"{hostConf.DomesticHostName}:{hostConf.EndPoint.Port}";
 
-                var relay = new TauRelay(
+                var relay = new Relay(
                     relayId,
                     clientStream,
                     serverStream,
@@ -209,7 +209,7 @@ namespace Keeker.Convey.Listeners
             }
         }
 
-        private Stream CreateServerStream(TauHostPlainConf hostConf)
+        private Stream CreateServerStream(HostPlainConf hostConf)
         {
             var tcpclient = new TcpClient();
             tcpclient.Connect(hostConf.EndPoint);
@@ -217,7 +217,7 @@ namespace Keeker.Convey.Listeners
             return stream;
         }
 
-        private TauHostPlainConf ResolveHostConf(KeekStream keekStream)
+        private HostPlainConf ResolveHostConf(KeekStream keekStream)
         {
             const int TIMEOUT = 1; // we are waiting for incoming handshake for 1 second.
             var timeout = TimeSpan.FromSeconds(TIMEOUT);
@@ -254,7 +254,7 @@ namespace Keeker.Convey.Listeners
 
         #endregion
 
-        #region ITauListener Members
+        #region IListener Members
 
         public void Start()
         {

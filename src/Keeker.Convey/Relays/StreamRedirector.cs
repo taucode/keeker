@@ -25,7 +25,7 @@ namespace Keeker.Convey.Relays
         private TMetadata _lastMetadata;
 
         protected StreamRedirector(
-            TauRelay relay,
+            Relay relay,
             KeekStream sourceStream,
             Stream destinationStream)
         {
@@ -39,7 +39,7 @@ namespace Keeker.Convey.Relays
             this.Task = new Task(this.Routine);
         }
 
-        protected TauRelay Relay { get; private set; }
+        protected Relay Relay { get; private set; }
         protected KeekStream SourceStream { get; private set; }
         protected AutoBuffer SourceBuffer { get; private set; }
         protected Stream DestinationStream { get; private set; }
@@ -76,13 +76,13 @@ namespace Keeker.Convey.Relays
 
         private int GetMetadataLength()
         {
-            var index = this.SourceStream.PeekIndexOf(TauHelper.CrLfCrLfBytes);
+            var index = this.SourceStream.PeekIndexOf(Helper.CrLfCrLfBytes);
             if (index == -1)
             {
                 return -1;
             }
 
-            var metadataLength = index + TauHelper.CrLfCrLfBytes.Length;
+            var metadataLength = index + Helper.CrLfCrLfBytes.Length;
             return metadataLength;
         }
 

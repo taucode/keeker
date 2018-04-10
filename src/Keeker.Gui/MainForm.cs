@@ -13,7 +13,7 @@ namespace Keeker.Gui
     {
         private readonly LogForm _logForm;
 
-        private ITauProxy _proxy;
+        private IProxy _proxy;
         private readonly object _lock;
 
         private Pane _currentPane;
@@ -175,10 +175,10 @@ namespace Keeker.Gui
                     throw new ApplicationException();
                 }
 
-                var conf = (TauProxySection)ConfigurationManager.GetSection("tauProxy");
+                var conf = (ProxySection)ConfigurationManager.GetSection("proxy");
                 var plainConf = conf.ToPlainConf();
 
-                _proxy = new TauProxy(plainConf);
+                _proxy = new Proxy(plainConf);
             }
             catch (Exception ex)
             {

@@ -17,7 +17,7 @@ namespace Keeker.Convey.Data
             this.ByteCount =
                 this.Version.Length + 1 +
                 ((int)this.Code).ToString().Length + 1 +
-                this.Reason.Length + TauHelper.CrLfBytes.Length;
+                this.Reason.Length + Helper.CrLfBytes.Length;
         }
 
         public string Version { get; }
@@ -28,7 +28,7 @@ namespace Keeker.Convey.Data
 
         public override string ToString()
         {
-            return $"{this.Version} {(int)this.Code} {this.Reason}{TauHelper.CrLf}";
+            return $"{this.Version} {(int)this.Code} {this.Reason}{Helper.CrLf}";
         }
 
         public byte[] ToArray()
@@ -40,7 +40,7 @@ namespace Keeker.Convey.Data
 
         public static HttpStatusLine Parse(byte[] buffer, int start)
         {
-            var crLfIndex = buffer.IndexOfSubarray(TauHelper.CrLfBytes, start, -1);
+            var crLfIndex = buffer.IndexOfSubarray(Helper.CrLfBytes, start, -1);
             if (crLfIndex == -1)
             {
                 throw new ApplicationException(); // todo1[ak]

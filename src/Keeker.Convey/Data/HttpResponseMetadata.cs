@@ -21,7 +21,7 @@ namespace Keeker.Convey.Data
                 stream.WriteAll(this.Line.ToArray());
                 stream.WriteAll(this.Headers.ToArray());
 
-                stream.WriteAll(TauHelper.CrLfBytes);
+                stream.WriteAll(Helper.CrLfBytes);
 
                 return stream.ToArray();
             }

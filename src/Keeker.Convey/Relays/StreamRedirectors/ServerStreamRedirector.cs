@@ -16,7 +16,7 @@ namespace Keeker.Convey.Relays.StreamRedirectors
         private readonly string _domesticAuthorityWithPort;
 
         public ServerStreamRedirector(
-            TauRelay relay,
+            Relay relay,
             KeekStream sourceStream,
             Stream destinationStream,
             string protocol,

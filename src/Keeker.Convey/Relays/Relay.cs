@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Keeker.Convey.Relays
 {
-    public class TauRelay : IDisposable
+    public class Relay : IDisposable
     {
         #region Logging
 
@@ -35,7 +35,7 @@ namespace Keeker.Convey.Relays
 
         #region Constructor
 
-        public TauRelay(
+        public Relay(
             string id,
             Stream innerClientStream,
             Stream innerServerStream,

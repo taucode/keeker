@@ -21,7 +21,7 @@ namespace Keeker.Convey.Data.Builders
 
         public override string ToString()
         {
-            return $"{this.Method} {this.RequestUri} {this.Version}{TauHelper.CrLf}";
+            return $"{this.Method} {this.RequestUri} {this.Version}{Helper.CrLf}";
         }
 
         public HttpRequestLine Build()

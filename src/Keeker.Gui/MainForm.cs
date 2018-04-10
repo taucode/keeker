@@ -11,11 +11,7 @@ namespace Keeker.Gui
 {
     public partial class MainForm : Form
     {
-        //private readonly IProxy _proxy;
-        //private readonly ProxyPlainConf _conf;
-        //private readonly Dictionary<string, Dictionary<string, Relay>> _relayCollectionsByListenerId;
-
-        private LogForm _logForm;
+        private readonly LogForm _logForm;
 
         private ITauProxy _proxy;
         private readonly object _lock;
@@ -30,56 +26,7 @@ namespace Keeker.Gui
             _logForm = new LogForm();
 
             _lock = new object();
-            //_relayCollectionsByListenerId = new Dictionary<string, Dictionary<string, Relay>>();
-
-            //_conf = ProxyPlainConf.LoadFromAppConfig("proxy");
-            //_proxy = new Proxy(_conf);
-
-            //_proxy.ConnectionAccepted += proxy_ListenerConnectionAccepted;
-            //_proxy.RelayStarted += proxy_RelayStarted;
-            //_proxy.RelayDisposed += proxy_RelayDisposed;
-            //_proxy.ListenerRelayCreated += proxy_ListenerRelayCreated;
         }
-
-
-        //private void proxy_ListenerRelayCreated(object sender, RelayEventArgs e)
-        //{
-        //    this.ReflectCreatedRelay(e.Relay);
-        //}
-
-        //private void ReflectCreatedRelay(IRelay relay)
-        //{
-        //    lock (_lock)
-        //    {
-        //        this.Invoke(new Action<IRelay>(
-        //            r =>
-        //            {
-        //                var listenerNode = this.GetListenerNode(r.ListenerId);
-        //                var hostNode = this.GetHostNode(listenerNode, r.ExternalHostName);
-
-        //                var node = new TreeNode(relay.Id)
-        //                {
-        //                    ImageIndex = 2,
-        //                    SelectedImageIndex = 2,
-        //                    Tag = relay,
-        //                };
-
-        //                hostNode.Nodes.Add(node);
-        //            }),
-        //            relay);
-
-        //        //var containsListener = _relayCollectionsByListenerId.TryGetValue(relay.ListenerId, out var relays);
-        //        //if (!containsListener)
-        //        //{
-        //        //    relays = new Dictionary<string, Relay>();
-        //        //}
-
-        //        //if (containsListener)
-        //        //{
-        //        //    relays.Add(relay.Id, relay);
-        //        //}
-        //    }
-        //}
 
         private TreeNode GetHostNode(TreeNode listenerNode, string host)
         {
@@ -94,21 +41,6 @@ namespace Keeker.Gui
                 .Cast<TreeNode>()
                 .Single(x => ((ListenerConfDto)x.Tag).Id == listenerId);
         }
-
-        //private void proxy_ListenerConnectionAccepted(object sender, ConnectionAcceptedEventArgs e)
-        //{
-        //    //throw new NotImplementedException();
-        //}
-
-        //private void proxy_RelayStarted(object sender, RelayEventArgs e)
-        //{
-        //    this.ReflectCreatedRelay(e.Relay);
-        //}
-
-        //private void proxy_RelayDisposed(object sender, RelayEventArgs e)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         private void buttonStart_Click(object sender, EventArgs e)
         {

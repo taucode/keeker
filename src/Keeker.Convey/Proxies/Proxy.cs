@@ -64,12 +64,12 @@ namespace Keeker.Convey.Proxies
                 {
                     if (_isRunning)
                     {
-                        throw new ApplicationException();
+                        throw new InvalidOperationException("Proxy already running");
                     }
 
                     if (_isDisposed)
                     {
-                        throw new NotImplementedException();
+                        throw new ObjectDisposedException("Proxy");
                     }
 
                     _isRunning = true;
@@ -118,12 +118,12 @@ namespace Keeker.Convey.Proxies
                 {
                     if (!_isRunning)
                     {
-                        throw new ApplicationException();
+                        throw new InvalidOperationException("Proxy not running");
                     }
 
                     if (_isDisposed)
                     {
-                        throw new NotImplementedException();
+                        throw new ObjectDisposedException("Proxy");
                     }
 
                     _isRunning = false;

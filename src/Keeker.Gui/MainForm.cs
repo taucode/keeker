@@ -202,8 +202,8 @@ namespace Keeker.Gui
         {
             try
             {
-                throw new NotImplementedException();
-
+                _proxy.Dispose();
+                _proxy = null;
             }
             catch (Exception ex)
             {

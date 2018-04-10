@@ -56,6 +56,7 @@
     <Compile Include="Data\Builders\HttpRequestMetadataBuilder.cs" />
     <Compile Include="Data\Builders\HttpResponseMetadataBuilder.cs" />
     <Compile Include="Data\Builders\HttpStatusLineBuilder.cs" />
+    <Compile Include="Exceptions\BadHttpDataException.cs" />
     <Compile Include="Data\HttpHeader.cs" />
     <Compile Include="Data\HttpHeaderCollection.cs" />
     <Compile Include="Data\HttpRequestLine.cs" />

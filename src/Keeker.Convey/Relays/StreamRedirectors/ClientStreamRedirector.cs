@@ -1,8 +1,8 @@
 ﻿using Keeker.Convey.Data;
 using Keeker.Convey.Data.Builders;
+using Keeker.Convey.Exceptions;
 using Keeker.Convey.Relays.ContentRedirectors;
 using Keeker.Convey.Streams;
-using System;
 using System.IO;
 
 namespace Keeker.Convey.Relays.StreamRedirectors
@@ -36,7 +36,7 @@ namespace Keeker.Convey.Relays.StreamRedirectors
         {
             if (metadata.Headers.GetHost() != _host)
             {
-                throw new ApplicationException(); // todo0[ak] what to do?
+                throw new BadHttpDataException("Unexpected host");
             }
         }
 

@@ -183,11 +183,7 @@ namespace Keeker.Convey.Relays
         {
             this.Task.Start();
 
-            throw new NotImplementedException();
-            //var sourceSocket = this.GetSourceSocket();
-            //var destinationSocket = this.GetDestinationSocket();
-
-            //Logger.InfoFormat("Started redirector: {0}{1}", this.Relay.Id, this.GetType().Name);
+            Logger.InfoFormat("Started redirector: {0}{1}", this.Relay.Id, this.GetType().Name);
         }
 
         public void Wait()

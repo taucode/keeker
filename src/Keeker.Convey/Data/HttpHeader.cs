@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Keeker.Convey.Exceptions;
 using System.Text;
 
 namespace Keeker.Convey.Data
@@ -33,7 +33,7 @@ namespace Keeker.Convey.Data
 
         public static HttpHeader Parse(byte[] buffer, int start)
         {
-            var crlfIndex = Helper.IndexOfSubarray(buffer, Helper.CrLfBytes, start);
+            var crlfIndex = buffer.IndexOfSubarray(Helper.CrLfBytes, start);
             if (crlfIndex == start)
             {
                 return null;
@@ -44,7 +44,7 @@ namespace Keeker.Convey.Data
             var colonPos = line.IndexOf(':');
             if (colonPos == -1)
             {
-                throw new ApplicationException(); // todo1[ak]
+                throw new BadHttpDataException();
             }
 
             var name = line.Substring(0, colonPos);

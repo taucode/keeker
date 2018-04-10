@@ -1,5 +1,5 @@
-﻿using Keeker.Convey.Streams;
-using System;
+﻿using Keeker.Convey.Exceptions;
+using Keeker.Convey.Streams;
 using System.IO;
 using System.Threading;
 
@@ -24,6 +24,11 @@ namespace Keeker.Convey.Relays.ContentRedirectors
             _destinationStream = destinationStream;
         }
 
+        private BadHttpDataException CreateException()
+        {
+            return new BadHttpDataException("Bad chunked HTTP stream");
+        }
+
         public override void Redirect()
         {
             while (true)
@@ -39,7 +44,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
 
                 if (crlfIndex == -1)
                 {
-                    throw new ApplicationException(); // todo2[ak] wtf
+                    throw this.CreateException();
                 }
 
                 int byteCountToRead;
@@ -52,7 +57,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, offset, byteCountToRead);
                 if (byteCountToRead != byteCountActuallyRead)
                 {
-                    throw new ApplicationException(); // todo2[ak]
+                    throw this.CreateException();
                 }
                 totalByteCountRead += byteCountToRead;
                 offset += byteCountToRead;
@@ -66,7 +71,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                     byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, offset, byteCountToRead);
                     if (byteCountActuallyRead != byteCountToRead)
                     {
-                        throw new ApplicationException(); // todo2[ak]
+                        throw new BadHttpDataException(); // todo2[ak]
                     }
                     totalByteCountRead += byteCountToRead;
                     offset += byteCountToRead;
@@ -78,7 +83,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                         0,
                         Helper.CrLfCrLfBytes.Length))
                     {
-                        throw new ApplicationException(); // todo2[ak]
+                        throw this.CreateException();
                     }
 
                     _destinationStream.Write(_sourceBuffer.Raw, 0, totalByteCountRead);
@@ -90,7 +95,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, offset, byteCountToRead);
                 if (byteCountToRead != byteCountActuallyRead)
                 {
-                    throw new ApplicationException(); // todo2[ak]
+                    throw this.CreateException();
                 }
 
                 totalByteCountRead += byteCountToRead;
@@ -107,7 +112,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, 0, byteCountToRead);
                 if (byteCountToRead != byteCountActuallyRead)
                 {
-                    throw new ApplicationException(); // todo2[ak]
+                    throw this.CreateException();
                 }
                 if (!Helper.ByteArraysEquivalent(
                     _sourceBuffer.Raw,
@@ -116,7 +121,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                     0,
                     Helper.CrLfBytes.Length))
                 {
-                    throw new ApplicationException(); // todo2[ak]
+                    throw this.CreateException();
                 }
 
                 _destinationStream.Write(_sourceBuffer.Raw, 0, byteCountActuallyRead);

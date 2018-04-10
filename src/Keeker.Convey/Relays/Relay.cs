@@ -77,32 +77,6 @@ namespace Keeker.Convey.Relays
 
         #region Private
 
-        //private Socket GetClientSocket()
-        //{
-        //    Socket socket;
-
-        //    if (_innerClientStream is SslStream)
-        //    {
-        //        socket = ((NetworkStream)((SslStream)_innerClientStream).InnerStream).Socket;
-
-        //    }
-        //    else if (_innerClientStream is NetworkStream)
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-        //    else
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-
-        //    return socket;
-        //}
-
-        //private Socket GetServerSocket()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         private void ExecuteIgnoringExceptions(Action action)
         {
             try
@@ -127,12 +101,12 @@ namespace Keeker.Convey.Relays
                 {
                     if (_isRunning)
                     {
-                        throw new ApplicationException();
+                        throw new InvalidOperationException("Relay already running");
                     }
 
                     if (_isDisposed)
                     {
-                        throw new NotImplementedException();
+                        throw new ObjectDisposedException("Relay");
                     }
 
                     _isRunning = true;
@@ -152,6 +126,8 @@ namespace Keeker.Convey.Relays
         }
 
         public ManualResetEvent StopSignal => _stopSignal;
+
+        public string Id => _id;
 
         #endregion
 

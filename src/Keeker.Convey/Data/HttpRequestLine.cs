@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Keeker.Convey.Exceptions;
 using System.Net.Http;
 using System.Text;
 
@@ -41,14 +41,14 @@ namespace Keeker.Convey.Data
             var crLfIndex = buffer.IndexOfSubarray(Helper.CrLfBytes, start, -1);
             if (crLfIndex == -1)
             {
-                throw new ApplicationException(); // todo1[ak]
+                throw new BadHttpDataException();
             }
 
             // method
             var indexOfSpaceAfterMethod = buffer.IndexOf(SPACE_BYTE, start);
             if (indexOfSpaceAfterMethod == -1)
             {
-                throw new ApplicationException(); // todo1[ak]
+                throw new BadHttpDataException();
             }
 
             var length = indexOfSpaceAfterMethod - start;

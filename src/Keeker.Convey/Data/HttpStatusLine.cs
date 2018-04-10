@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Keeker.Convey.Exceptions;
 using System.Net;
 using System.Text;
 
@@ -43,14 +43,14 @@ namespace Keeker.Convey.Data
             var crLfIndex = buffer.IndexOfSubarray(Helper.CrLfBytes, start, -1);
             if (crLfIndex == -1)
             {
-                throw new ApplicationException(); // todo1[ak]
+                throw new BadHttpDataException("Could not parse status line");
             }
 
             // version
             var indexOfSpaceAfterVersion = buffer.IndexOf(SPACE_BYTE, start);
             if (indexOfSpaceAfterVersion == -1)
             {
-                throw new ApplicationException(); // todo1[ak]
+                throw new BadHttpDataException("Could not parse status line");
             }
 
             var length = indexOfSpaceAfterVersion - start;

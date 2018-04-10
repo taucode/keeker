@@ -213,6 +213,11 @@ namespace Keeker.Convey.Listeners
         {
             var tcpclient = new TcpClient();
             tcpclient.Connect(hostConf.EndPoint);
+
+            var socket = tcpclient.Client;
+
+            Logger.InfoFormat("Allocated socket: handle={0}, local={1}, remote={2}", socket.Handle, socket.LocalEndPoint, socket.RemoteEndPoint);
+
             var stream = tcpclient.GetStream();
             return stream;
         }
@@ -264,12 +269,12 @@ namespace Keeker.Convey.Listeners
                 {
                     if (_isRunning)
                     {
-                        throw new ApplicationException();
+                        throw new InvalidOperationException("Listener already running");
                     }
 
                     if (_isDisposed)
                     {
-                        throw new NotImplementedException();
+                        throw new ObjectDisposedException("Listener");
                     }
 
                     _isRunning = true;

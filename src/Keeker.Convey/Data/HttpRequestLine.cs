@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Keeker.Convey.Exceptions;
 using System.Net.Http;
 using System.Text;
 
@@ -17,7 +17,7 @@ namespace Keeker.Convey.Data
             this.ByteCount =
                 this.Method.ToString().Length + 1 +
                 this.RequestUri.Length + 1 +
-                this.Version.Length + TauHelper.CrLfBytes.Length;
+                this.Version.Length + Helper.CrLfBytes.Length;
         }
 
         public HttpMethod Method { get; }
@@ -26,7 +26,7 @@ namespace Keeker.Convey.Data
 
         public override string ToString()
         {
-            return $"{this.Method} {this.RequestUri} {this.Version}{TauHelper.CrLf}";
+            return $"{this.Method} {this.RequestUri} {this.Version}{Helper.CrLf}";
         }
 
         public byte[] ToArray()
@@ -38,17 +38,17 @@ namespace Keeker.Convey.Data
 
         public static HttpRequestLine Parse(byte[] buffer, int start)
         {
-            var crLfIndex = buffer.IndexOfSubarray(TauHelper.CrLfBytes, start, -1);
+            var crLfIndex = buffer.IndexOfSubarray(Helper.CrLfBytes, start, -1);
             if (crLfIndex == -1)
             {
-                throw new ApplicationException(); // todo1[ak]
+                throw new BadHttpDataException();
             }
 
             // method
             var indexOfSpaceAfterMethod = buffer.IndexOf(SPACE_BYTE, start);
             if (indexOfSpaceAfterMethod == -1)
             {
-                throw new ApplicationException(); // todo1[ak]
+                throw new BadHttpDataException();
             }
 
             var length = indexOfSpaceAfterMethod - start;

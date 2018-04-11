@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace Keeker.Core.Conf
+namespace Keeker.Convey.Conf
 {
     public class ProxySection : ConfigurationSection
     {

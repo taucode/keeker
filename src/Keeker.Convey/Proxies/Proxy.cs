@@ -8,7 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Keeker.Convey.Proxies
 {
-    public class TauProxy : ITauProxy
+    public class Proxy : IProxy
     {
         #region Logging
 
@@ -21,21 +21,21 @@ namespace Keeker.Convey.Proxies
         private bool _isRunning;
         private bool _isDisposed;
         private readonly object _lock;
-        private readonly Dictionary<string, TauCertificateInfo> _certificates;
-        private readonly List<TauListener> _listeners;
+        private readonly Dictionary<string, CertificateInfo> _certificates;
+        private readonly List<Listener> _listeners;
 
         #endregion
 
         #region Constructor
 
-        public TauProxy(TauProxyPlainConf conf)
+        public Proxy(ProxyPlainConf conf)
         {
             _lock = new object();
 
             _certificates = conf.Certificates
                 .ToDictionary(
                     x => x.Id,
-                    x => new TauCertificateInfo(
+                    x => new CertificateInfo(
                         x.Domains
                             .Select(y => y.Name)
                             .ToArray(),
@@ -44,7 +44,7 @@ namespace Keeker.Convey.Proxies
                             x.Password)));
 
             _listeners = conf.Listeners
-                .Select(x => new TauListener(
+                .Select(x => new Listener(
                     x,
                     x.GetUserCertificateIds()
                         .Select(y => _certificates[y])
@@ -54,7 +54,7 @@ namespace Keeker.Convey.Proxies
 
         #endregion
 
-        #region ITauProxy Members
+        #region IProxy Members
 
         public void Start()
         {
@@ -64,12 +64,12 @@ namespace Keeker.Convey.Proxies
                 {
                     if (_isRunning)
                     {
-                        throw new ApplicationException();
+                        throw new InvalidOperationException("Proxy already running");
                     }
 
                     if (_isDisposed)
                     {
-                        throw new NotImplementedException();
+                        throw new ObjectDisposedException("Proxy");
                     }
 
                     _isRunning = true;
@@ -118,12 +118,12 @@ namespace Keeker.Convey.Proxies
                 {
                     if (!_isRunning)
                     {
-                        throw new ApplicationException();
+                        throw new InvalidOperationException("Proxy not running");
                     }
 
                     if (_isDisposed)
                     {
-                        throw new NotImplementedException();
+                        throw new ObjectDisposedException("Proxy");
                     }
 
                     _isRunning = false;

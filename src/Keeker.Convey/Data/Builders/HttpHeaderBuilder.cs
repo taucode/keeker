@@ -18,7 +18,7 @@
 
         public override string ToString()
         {
-            return $"{this.Name}: {this.Value}{TauHelper.CrLf}";
+            return $"{this.Name}: {this.Value}{Helper.CrLf}";
         }
 
         public HttpHeader Build()

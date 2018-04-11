@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Keeker.Convey.Exceptions;
 using System.Text;
 
 namespace Keeker.Convey.Data
@@ -12,7 +12,7 @@ namespace Keeker.Convey.Data
 
             this.ByteCount =
                 this.Name.Length + 1 + 1 + // ':' and ' '
-                this.Value.Length + TauHelper.CrLfBytes.Length;
+                this.Value.Length + Helper.CrLfBytes.Length;
         }
 
         public string Name { get; }
@@ -23,7 +23,7 @@ namespace Keeker.Convey.Data
 
         public override string ToString()
         {
-            return $"{this.Name}: {this.Value}{TauHelper.CrLf}";
+            return $"{this.Name}: {this.Value}{Helper.CrLf}";
         }
 
         public byte[] ToArray()
@@ -33,7 +33,7 @@ namespace Keeker.Convey.Data
 
         public static HttpHeader Parse(byte[] buffer, int start)
         {
-            var crlfIndex = TauHelper.IndexOfSubarray(buffer, TauHelper.CrLfBytes, start);
+            var crlfIndex = buffer.IndexOfSubarray(Helper.CrLfBytes, start);
             if (crlfIndex == start)
             {
                 return null;
@@ -44,7 +44,7 @@ namespace Keeker.Convey.Data
             var colonPos = line.IndexOf(':');
             if (colonPos == -1)
             {
-                throw new ApplicationException(); // todo1[ak]
+                throw new BadHttpDataException();
             }
 
             var name = line.Substring(0, colonPos);

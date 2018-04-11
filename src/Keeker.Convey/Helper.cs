@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace Keeker.Convey
 {
-    public static class TauHelper
+    internal static class Helper
     {
         public static int ToInt32(this string s)
         {
@@ -28,7 +28,7 @@ namespace Keeker.Convey
 
         public static int ToIn32FromHex(this string s)
         {
-            var n = Int32.Parse(s, System.Globalization.NumberStyles.HexNumber);
+            var n = int.Parse(s, NumberStyles.HexNumber);
             return n;
         }
 

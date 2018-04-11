@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Keeker.Convey.Listeners
+namespace Keeker.Convey.Proxies
 {
-    public interface ITauListener : IDisposable
+    public interface IProxy : IDisposable
     {
         void Start();
 

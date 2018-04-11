@@ -2,9 +2,9 @@
 
 namespace Keeker.Convey
 {
-    public class TauCertificateInfo
+    public class CertificateInfo
     {
-        public TauCertificateInfo(string[] domainNames, X509Certificate2 certificate)
+        public CertificateInfo(string[] domainNames, X509Certificate2 certificate)
         {
             this.DomainNames = domainNames;
             this.Certificate = certificate;

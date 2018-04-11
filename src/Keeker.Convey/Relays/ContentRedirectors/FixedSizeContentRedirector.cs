@@ -32,7 +32,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
         {
             _sourceBuffer.Allocate(CONTENT_TRANSFER_PORTION_SIZE);
 
-            TauHelper.RedirectStream(_signal, _sourceStream, _destinationStream, _sourceBuffer.Raw, _length);
+            Helper.RedirectStream(_signal, _sourceStream, _destinationStream, _sourceBuffer.Raw, _length);
         }
     }
 }

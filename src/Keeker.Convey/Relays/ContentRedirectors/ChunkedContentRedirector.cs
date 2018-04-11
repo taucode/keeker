@@ -1,5 +1,5 @@
-﻿using Keeker.Convey.Streams;
-using System;
+﻿using Keeker.Convey.Exceptions;
+using Keeker.Convey.Streams;
 using System.IO;
 using System.Threading;
 
@@ -24,6 +24,11 @@ namespace Keeker.Convey.Relays.ContentRedirectors
             _destinationStream = destinationStream;
         }
 
+        private BadHttpDataException CreateException()
+        {
+            return new BadHttpDataException("Bad chunked HTTP stream");
+        }
+
         public override void Redirect()
         {
             while (true)
@@ -35,11 +40,11 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 }
 
                 _sourceStream.ReadInnerStream(20);
-                var crlfIndex = _sourceStream.PeekIndexOf(TauHelper.CrLfBytes);
+                var crlfIndex = _sourceStream.PeekIndexOf(Helper.CrLfBytes);
 
                 if (crlfIndex == -1)
                 {
-                    throw new ApplicationException(); // todo2[ak] wtf
+                    throw this.CreateException();
                 }
 
                 int byteCountToRead;
@@ -52,7 +57,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, offset, byteCountToRead);
                 if (byteCountToRead != byteCountActuallyRead)
                 {
-                    throw new ApplicationException(); // todo2[ak]
+                    throw this.CreateException();
                 }
                 totalByteCountRead += byteCountToRead;
                 offset += byteCountToRead;
@@ -62,23 +67,23 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 if (lengthOfChunk == 0)
                 {
                     // end of chunked content. should read <crlf><crlf> and exit
-                    byteCountToRead = TauHelper.CrLfCrLfBytes.Length;
+                    byteCountToRead = Helper.CrLfCrLfBytes.Length;
                     byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, offset, byteCountToRead);
                     if (byteCountActuallyRead != byteCountToRead)
                     {
-                        throw new ApplicationException(); // todo2[ak]
+                        throw new BadHttpDataException(); // todo2[ak]
                     }
                     totalByteCountRead += byteCountToRead;
                     offset += byteCountToRead;
 
-                    if (!TauHelper.ByteArraysEquivalent(
+                    if (!Helper.ByteArraysEquivalent(
                         _sourceBuffer.Raw,
                         1,
-                        TauHelper.CrLfCrLfBytes,
+                        Helper.CrLfCrLfBytes,
                         0,
-                        TauHelper.CrLfCrLfBytes.Length))
+                        Helper.CrLfCrLfBytes.Length))
                     {
-                        throw new ApplicationException(); // todo2[ak]
+                        throw this.CreateException();
                     }
 
                     _destinationStream.Write(_sourceBuffer.Raw, 0, totalByteCountRead);
@@ -86,11 +91,11 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 }
 
                 // read crlf
-                byteCountToRead = TauHelper.CrLfBytes.Length;
+                byteCountToRead = Helper.CrLfBytes.Length;
                 byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, offset, byteCountToRead);
                 if (byteCountToRead != byteCountActuallyRead)
                 {
-                    throw new ApplicationException(); // todo2[ak]
+                    throw this.CreateException();
                 }
 
                 totalByteCountRead += byteCountToRead;
@@ -100,23 +105,23 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 _destinationStream.Write(_sourceBuffer.Raw, 0, totalByteCountRead);
 
                 // redirect chunk
-                TauHelper.RedirectStream(_signal, _sourceStream, _destinationStream, _sourceBuffer.Raw, lengthOfChunk);
+                Helper.RedirectStream(_signal, _sourceStream, _destinationStream, _sourceBuffer.Raw, lengthOfChunk);
 
                 // read crlf
-                byteCountToRead = TauHelper.CrLfBytes.Length;
+                byteCountToRead = Helper.CrLfBytes.Length;
                 byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, 0, byteCountToRead);
                 if (byteCountToRead != byteCountActuallyRead)
                 {
-                    throw new ApplicationException(); // todo2[ak]
+                    throw this.CreateException();
                 }
-                if (!TauHelper.ByteArraysEquivalent(
+                if (!Helper.ByteArraysEquivalent(
                     _sourceBuffer.Raw,
                     0,
-                    TauHelper.CrLfBytes,
+                    Helper.CrLfBytes,
                     0,
-                    TauHelper.CrLfBytes.Length))
+                    Helper.CrLfBytes.Length))
                 {
-                    throw new ApplicationException(); // todo2[ak]
+                    throw this.CreateException();
                 }
 
                 _destinationStream.Write(_sourceBuffer.Raw, 0, byteCountActuallyRead);

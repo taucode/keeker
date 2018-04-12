@@ -1,7 +1,8 @@
-﻿using Keeker.Convey.Data;
-using Keeker.Convey.Data.Builders;
-using Keeker.Convey.Relays.ContentRedirectors;
-using Keeker.Convey.Streams;
+﻿using Keeker.Convey.Relays.ContentRedirectors;
+using Keeker.Core;
+using Keeker.Core.Data;
+using Keeker.Core.Data.Builders;
+using Keeker.Core.Streams;
 using System;
 using System.IO;
 using System.Net;

@@ -72,17 +72,10 @@
       <DependentUpon>RaceChart.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\RaceChartEntry.cs" />
-    <Compile Include="Controls\TextBoxWriter.cs" />
     <Compile Include="Data\HostConfDto.cs" />
     <Compile Include="Data\ListenerConfDto.cs" />
     <Compile Include="FooData.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="LogForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LogForm.Designer.cs">
-      <DependentUpon>LogForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,9 +113,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\RaceChart.resx">
       <DependentUpon>RaceChart.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LogForm.resx">
-      <DependentUpon>LogForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -166,6 +156,10 @@
     <ProjectReference Include="..\Keeker.Convey\Keeker.Convey.csproj">
       <Project>{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6}</Project>
       <Name>Keeker.Convey</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Keeker.UI\Keeker.UI.csproj">
+      <Project>{5154FDB4-1B39-444F-97D8-F560D71255FB}</Project>
+      <Name>Keeker.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

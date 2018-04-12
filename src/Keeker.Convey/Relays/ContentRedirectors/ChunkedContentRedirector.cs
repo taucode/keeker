@@ -1,5 +1,6 @@
-﻿using Keeker.Convey.Exceptions;
-using Keeker.Convey.Streams;
+﻿using Keeker.Core;
+using Keeker.Core.Exceptions;
+using Keeker.Core.Streams;
 using System.IO;
 using System.Threading;
 
@@ -40,7 +41,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 }
 
                 _sourceStream.ReadInnerStream(20);
-                var crlfIndex = _sourceStream.PeekIndexOf(Helper.CrLfBytes);
+                var crlfIndex = _sourceStream.PeekIndexOf(CoreHelper.CrLfBytes);
 
                 if (crlfIndex == -1)
                 {
@@ -67,7 +68,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 if (lengthOfChunk == 0)
                 {
                     // end of chunked content. should read <crlf><crlf> and exit
-                    byteCountToRead = Helper.CrLfCrLfBytes.Length;
+                    byteCountToRead = CoreHelper.CrLfCrLfBytes.Length;
                     byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, offset, byteCountToRead);
                     if (byteCountActuallyRead != byteCountToRead)
                     {
@@ -76,12 +77,12 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                     totalByteCountRead += byteCountToRead;
                     offset += byteCountToRead;
 
-                    if (!Helper.ByteArraysEquivalent(
+                    if (!CoreHelper.ByteArraysEquivalent(
                         _sourceBuffer.Raw,
                         1,
-                        Helper.CrLfCrLfBytes,
+                        CoreHelper.CrLfCrLfBytes,
                         0,
-                        Helper.CrLfCrLfBytes.Length))
+                        CoreHelper.CrLfCrLfBytes.Length))
                     {
                         throw this.CreateException();
                     }
@@ -91,7 +92,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 }
 
                 // read crlf
-                byteCountToRead = Helper.CrLfBytes.Length;
+                byteCountToRead = CoreHelper.CrLfBytes.Length;
                 byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, offset, byteCountToRead);
                 if (byteCountToRead != byteCountActuallyRead)
                 {
@@ -105,21 +106,21 @@ namespace Keeker.Convey.Relays.ContentRedirectors
                 _destinationStream.Write(_sourceBuffer.Raw, 0, totalByteCountRead);
 
                 // redirect chunk
-                Helper.RedirectStream(_signal, _sourceStream, _destinationStream, _sourceBuffer.Raw, lengthOfChunk);
+                CoreHelper.RedirectStream(_signal, _sourceStream, _destinationStream, _sourceBuffer.Raw, lengthOfChunk);
 
                 // read crlf
-                byteCountToRead = Helper.CrLfBytes.Length;
+                byteCountToRead = CoreHelper.CrLfBytes.Length;
                 byteCountActuallyRead = _sourceStream.Read(_sourceBuffer.Raw, 0, byteCountToRead);
                 if (byteCountToRead != byteCountActuallyRead)
                 {
                     throw this.CreateException();
                 }
-                if (!Helper.ByteArraysEquivalent(
+                if (!CoreHelper.ByteArraysEquivalent(
                     _sourceBuffer.Raw,
                     0,
-                    Helper.CrLfBytes,
+                    CoreHelper.CrLfBytes,
                     0,
-                    Helper.CrLfBytes.Length))
+                    CoreHelper.CrLfBytes.Length))
                 {
                     throw this.CreateException();
                 }

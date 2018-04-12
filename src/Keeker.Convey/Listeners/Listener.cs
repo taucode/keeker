@@ -1,7 +1,8 @@
 ﻿using Keeker.Convey.Conf;
 using Keeker.Convey.Logging;
 using Keeker.Convey.Relays;
-using Keeker.Convey.Streams;
+using Keeker.Core;
+using Keeker.Core.Streams;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -180,7 +181,7 @@ namespace Keeker.Convey.Listeners
                 var serverStream = this.CreateServerStream(hostConf);
 
                 string colonWithPortIfNeeded;
-                if (hostConf.EndPoint.Port == Helper.DEFAULT_HTTP_PORT)
+                if (hostConf.EndPoint.Port == CoreHelper.DEFAULT_HTTP_PORT)
                 {
                     colonWithPortIfNeeded = "";
                 }

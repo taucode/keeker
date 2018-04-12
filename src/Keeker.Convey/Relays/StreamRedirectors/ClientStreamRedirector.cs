@@ -1,9 +1,10 @@
-﻿using Keeker.Convey.Data;
-using Keeker.Convey.Data.Builders;
-using Keeker.Convey.Exceptions;
-using Keeker.Convey.Relays.ContentRedirectors;
-using Keeker.Convey.Streams;
+﻿using Keeker.Convey.Relays.ContentRedirectors;
+using Keeker.Core.Data;
+using Keeker.Core.Data.Builders;
+using Keeker.Core.Exceptions;
+using Keeker.Core.Streams;
 using System.IO;
+using Keeker.Core;
 
 namespace Keeker.Convey.Relays.StreamRedirectors
 {

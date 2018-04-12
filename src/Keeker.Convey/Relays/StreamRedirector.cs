@@ -1,10 +1,11 @@
-﻿using Keeker.Convey.Data;
-using Keeker.Convey.Logging;
-using Keeker.Convey.Streams;
+﻿using Keeker.Convey.Logging;
+using Keeker.Core.Data;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Keeker.Core;
+using Keeker.Core.Streams;
 
 namespace Keeker.Convey.Relays
 {
@@ -76,13 +77,13 @@ namespace Keeker.Convey.Relays
 
         private int GetMetadataLength()
         {
-            var index = this.SourceStream.PeekIndexOf(Helper.CrLfCrLfBytes);
+            var index = this.SourceStream.PeekIndexOf(CoreHelper.CrLfCrLfBytes);
             if (index == -1)
             {
                 return -1;
             }
 
-            var metadataLength = index + Helper.CrLfCrLfBytes.Length;
+            var metadataLength = index + CoreHelper.CrLfCrLfBytes.Length;
             return metadataLength;
         }
 

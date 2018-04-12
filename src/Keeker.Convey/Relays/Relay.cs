@@ -1,9 +1,9 @@
 ﻿using Keeker.Convey.Logging;
 using Keeker.Convey.Relays.StreamRedirectors;
-using Keeker.Convey.Streams;
 using System;
 using System.IO;
 using System.Threading;
+using Keeker.Core.Streams;
 
 namespace Keeker.Convey.Relays
 {

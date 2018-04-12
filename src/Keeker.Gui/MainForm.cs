@@ -2,6 +2,7 @@
 using Keeker.Convey.Proxies;
 using Keeker.Gui.Data;
 using Keeker.Gui.Panes;
+using Keeker.UI;
 using System;
 using System.Configuration;
 using System.Linq;

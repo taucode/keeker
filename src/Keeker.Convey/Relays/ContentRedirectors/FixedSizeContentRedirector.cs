@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Keeker.Core;
 using System.IO;
 using System.Threading;
 
@@ -32,7 +32,7 @@ namespace Keeker.Convey.Relays.ContentRedirectors
         {
             _sourceBuffer.Allocate(CONTENT_TRANSFER_PORTION_SIZE);
 
-            Helper.RedirectStream(_signal, _sourceStream, _destinationStream, _sourceBuffer.Raw, _length);
+            CoreHelper.RedirectStream(_signal, _sourceStream, _destinationStream, _sourceBuffer.Raw, _length);
         }
     }
 }

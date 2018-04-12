@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6}</ProjectGuid>
+    <ProjectGuid>{3AB7C111-F064-4E02-98F7-A7D39230DEE3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Keeker.Convey</RootNamespace>
-    <AssemblyName>Keeker.Convey</AssemblyName>
+    <RootNamespace>Keeker.Server</RootNamespace>
+    <AssemblyName>Keeker.Server</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,12 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Serilog.2.6.0\lib\net46\Serilog.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Sinks.TextWriter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Serilog.Sinks.TextWriter.2.1.0\lib\net45\Serilog.Sinks.TextWriter.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -48,28 +42,31 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
-    <Compile Include="Conf\ProxyPlainConf.cs" />
-    <Compile Include="Conf\ProxySection.cs" />
-    <Compile Include="Listeners\Listener.cs" />
-    <Compile Include="Listeners\IListener.cs" />
+    <Compile Include="Conf\ServerPlainConf.cs" />
+    <Compile Include="Conf\ServerSection.cs" />
+    <Compile Include="Connection.cs" />
+    <Compile Include="HandlerFactoryBase.cs" />
+    <Compile Include="Handlers\ContentHandler.cs" />
+    <Compile Include="Handlers\NotFoundHandler.cs" />
+    <Compile Include="Handlers\StaticContentHandler.cs" />
+    <Compile Include="HttpServer.cs" />
+    <Compile Include="IHandlerFactory.cs" />
+    <Compile Include="IHandler.cs" />
+    <Compile Include="IHttpServer.cs" />
+    <Compile Include="StaticContentResolver.cs" />
+    <Compile Include="IStaticContentResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Proxies\IProxy.cs" />
-    <Compile Include="Proxies\Proxy.cs" />
-    <Compile Include="Relays\AutoBuffer.cs" />
-    <Compile Include="Relays\ContentRedirector.cs" />
-    <Compile Include="Relays\ContentRedirectors\ChunkedContentRedirector.cs" />
-    <Compile Include="Relays\ContentRedirectors\FixedSizeContentRedirector.cs" />
-    <Compile Include="Relays\StreamRedirector.cs" />
-    <Compile Include="Relays\StreamRedirectorState.cs" />
-    <Compile Include="Relays\StreamRedirectors\ClientStreamRedirector.cs" />
-    <Compile Include="Relays\StreamRedirectors\ServerStreamRedirector.cs" />
-    <Compile Include="Relays\Relay.cs" />
-    <Compile Include="CertificateInfo.cs" />
+    <Compile Include="RequestMetadataReader.cs" />
+    <Compile Include="StaticContentInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Keeker.Convey\Keeker.Convey.csproj">
+      <Project>{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6}</Project>
+      <Name>Keeker.Convey</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Keeker.Core\Keeker.Core.csproj">
       <Project>{3195BB27-0EE2-432F-914E-974B318F2A78}</Project>
       <Name>Keeker.Core</Name>

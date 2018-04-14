@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Keeker.Core.Data;
 
 namespace Keeker.Client
 {
@@ -6,5 +7,6 @@ namespace Keeker.Client
     {
         void Connect(IPEndPoint endPoint);
 
+        void Send(HttpRequestMetadata metadata, byte[] content);
     }
 }

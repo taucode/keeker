@@ -34,6 +34,8 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonConnect = new System.Windows.Forms.Button();
+            this.textBoxSample = new System.Windows.Forms.TextBox();
+            this.binaryView1 = new Keeker.Client.Gui.BinaryView();
             this.SuspendLayout();
             // 
             // textBoxEndPoint
@@ -86,11 +88,34 @@
             this.buttonConnect.Text = "Connect";
             this.buttonConnect.UseVisualStyleBackColor = true;
             // 
+            // textBoxSample
+            // 
+            this.textBoxSample.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBoxSample.Location = new System.Drawing.Point(260, 38);
+            this.textBoxSample.Multiline = true;
+            this.textBoxSample.Name = "textBoxSample";
+            this.textBoxSample.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxSample.Size = new System.Drawing.Size(528, 400);
+            this.textBoxSample.TabIndex = 4;
+            this.textBoxSample.WordWrap = false;
+            // 
+            // binaryView1
+            // 
+            this.binaryView1.BackColor = System.Drawing.SystemColors.Window;
+            this.binaryView1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.binaryView1.Bytes = new byte[0];
+            this.binaryView1.Location = new System.Drawing.Point(794, 38);
+            this.binaryView1.Name = "binaryView1";
+            this.binaryView1.Size = new System.Drawing.Size(605, 400);
+            this.binaryView1.TabIndex = 5;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1411, 450);
+            this.Controls.Add(this.binaryView1);
+            this.Controls.Add(this.textBoxSample);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.listViewConnections);
             this.Controls.Add(this.label1);
@@ -98,6 +123,7 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Client Main Form";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -111,6 +137,8 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Button buttonConnect;
+        private System.Windows.Forms.TextBox textBoxSample;
+        private BinaryView binaryView1;
     }
 }
 

@@ -45,6 +45,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BinaryView.Designer.cs">
+      <DependentUpon>BinaryView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomScrollableControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomScrollableControl.Designer.cs">
+      <DependentUpon>CustomScrollableControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Helper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -36,6 +36,8 @@
             this.buttonConnect = new System.Windows.Forms.Button();
             this.textBoxSample = new System.Windows.Forms.TextBox();
             this.binaryView1 = new Keeker.Client.Gui.BinaryView();
+            this.button1 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textBoxEndPoint
@@ -66,7 +68,7 @@
             this.listViewConnections.HideSelection = false;
             this.listViewConnections.Location = new System.Drawing.Point(12, 38);
             this.listViewConnections.Name = "listViewConnections";
-            this.listViewConnections.Size = new System.Drawing.Size(242, 400);
+            this.listViewConnections.Size = new System.Drawing.Size(242, 401);
             this.listViewConnections.TabIndex = 2;
             this.listViewConnections.UseCompatibleStateImageBehavior = false;
             this.listViewConnections.View = System.Windows.Forms.View.Details;
@@ -106,14 +108,33 @@
             this.binaryView1.Bytes = new byte[0];
             this.binaryView1.Location = new System.Drawing.Point(794, 38);
             this.binaryView1.Name = "binaryView1";
-            this.binaryView1.Size = new System.Drawing.Size(605, 400);
+            this.binaryView1.Size = new System.Drawing.Size(605, 310);
             this.binaryView1.TabIndex = 5;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(806, 372);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(887, 374);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 7;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1411, 450);
+            this.ClientSize = new System.Drawing.Size(1411, 451);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.binaryView1);
             this.Controls.Add(this.textBoxSample);
             this.Controls.Add(this.buttonConnect);
@@ -139,6 +160,8 @@
         private System.Windows.Forms.Button buttonConnect;
         private System.Windows.Forms.TextBox textBoxSample;
         private BinaryView binaryView1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

@@ -18,6 +18,8 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+
+            _offsetBrush.Dispose();
         }
 
         #region Component Designer generated code

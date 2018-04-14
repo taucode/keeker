@@ -21,6 +21,8 @@ namespace Keeker.Client.Gui
         private int _fontWidth;
         private int _fontHeight;
 
+        private readonly Brush _offsetBrush;
+
 
         public BinaryView()
         {
@@ -30,6 +32,12 @@ namespace Keeker.Client.Gui
             this.SetFont(font);
 
             _bytes = new byte[0];
+            _offsetBrush = new SolidBrush(Color.Black);
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
         }
 
         [Browsable(false)]
@@ -38,7 +46,7 @@ namespace Keeker.Client.Gui
             get => _bytes;
             set
             {
-                _bytes = value ?? throw new ArgumentNullException(nameof(value)); 
+                _bytes = value ?? throw new ArgumentNullException(nameof(value));
                 this.Invalidate();
             }
         }
@@ -49,6 +57,17 @@ namespace Keeker.Client.Gui
             set => this.SetFont(value);
         }
 
+        private string _wat;
+        public string Wat
+        {
+            get { return _wat; }
+            set
+            {
+                _wat = value;
+                Invalidate();
+            }
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             if (this.DesignMode)
@@ -56,14 +75,28 @@ namespace Keeker.Client.Gui
                 return;
             }
 
-            var lineCount = this.GetLineCount();
+            var s = _wat ?? "";
 
-            for (int i = 0; i < lineCount; i++)
-            {
-                this.DrawLine(e.Graphics, i);
-            }
+            TextRenderer.DrawText(e.Graphics, s, _font, new Point(0, 0), Color.Black);
 
-            base.OnPaint(e);
+            var penWidth = new Pen(Color.Green);
+            var penMeasure = new Pen(Color.Red);
+
+            var width = _fontWidth * s.Length;
+            var measure = TextRenderer.MeasureText(e.Graphics, s, _font).Width;
+            
+
+            e.Graphics.DrawLine(penWidth, 0, 20, width, 20);
+            e.Graphics.DrawLine(penMeasure, 0, 25, measure, 25);
+
+            //var lineCount = this.GetLineCount();
+
+            //for (int i = 0; i < lineCount; i++)
+            //{
+            //    this.DrawLine(e.Graphics, i);
+            //}
+
+            //base.OnPaint(e);
         }
 
         private void DrawLine(Graphics g, int lineIndex)
@@ -73,8 +106,46 @@ namespace Keeker.Client.Gui
 
             x += LEFT_MARGIN;
 
-            g.DrawString();
-            
+            var offset = lineIndex * BYTES_PER_LINE;
+            var offsetString = offset.ToString("x8");
+
+            g.DrawString(offsetString, _font, _offsetBrush, x, y);
+            var measure = g.MeasureString(offsetString, _font);
+            //var dx = (int)measure.Width;
+            var dx = offsetString.Length * _fontWidth;
+            x += dx;
+
+            //var dx1 = (int) g.MeasureString(offsetString, _font).Width;
+            var dx1 = TextRenderer.MeasureText(offsetString, _font);
+
+            var dx2 = offsetString.Length * _fontWidth;
+
+            var dd = 33;
+            var ddd = g.PageUnit;
+
+            var byteCount = BYTES_PER_LINE;
+            if (lineIndex == this.GetLineCount() - 1)
+            {
+                byteCount = _bytes.Length % BYTES_PER_LINE;
+                if (byteCount == 0)
+                {
+                    byteCount = BYTES_PER_LINE;
+                }
+            }
+
+            for (int i = 0; i < byteCount; i++)
+            {
+                var byteIndex = lineIndex * BYTES_PER_LINE + i;
+                var b = _bytes[byteIndex];
+                var hex = b.ToString("x2");
+
+                g.DrawString(hex, _font, _offsetBrush, x, y);
+
+                x += _fontWidth * 2;
+            }
+
+            int k = 3;
+
         }
 
         private int GetLineCount()
@@ -109,6 +180,11 @@ namespace Keeker.Client.Gui
 
             _fontHeight = _font.Height;
             _fontWidth = (int)_font.GetCharSize('M').Width;
+
+            var fw2 = TextRenderer.MeasureText("M", _font);
+
+            var waaat = 33;
+
         }
 
         private Font CreateStandardMonospaceFont()

@@ -9,34 +9,36 @@ namespace Keeker.UI
     {
         #region Constants
 
-        #region Margins
+        private const int BYTES_PER_LINE = 16;
 
-        private const int DEFAULT_ADDRESS_MARGIN = 0;
-        private const int DEFAULT_LINE_MARGIN = 8;
-        private const int DEFAULT_HEX_MARGIN = 8;
-        private const int DEFAULT_HALF_LINE_MARGIN = 16;
-        private const int DEFAULT_DUMP_BYTE_MARGIN = 8; // ⌂~АР ■¤№
-
-        #endregion
-
-        #endregion
+        #region Font Names
 
         private const string DEFAULT_MONOSPACE_FONT_FAMILY_NAME = "Consolas";
         private const string RESERVE_MONOSPACE_FONT_FAMILY_NAME = "Courier New";
+
+        #endregion
+
+        #region Margins
+
+        private const int DEFAULT_ADDRESS_MARGIN = 0;
+        private const int DEFAULT_LINE_MARGIN = 16;
+        private const int DEFAULT_HEX_MARGIN = 8;
+        private const int DEFAULT_HALF_LINE_MARGIN = 16;
+        private const int DEFAULT_DUMP_BYTE_MARGIN = 16;
+
+        #endregion
+
+        #region Substitution Strings
 
         private const string SYMBOL_SUBSTITUTIONS_0x00 = " ☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼";
 
         private const string SYMBOL_SUBSTITUTIONS_0x7f =
             "⌂АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмноп░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀рстуфхцчшщъыьэюяЁёЄєЇїЎў°∙·√№¤■ ";
 
-        private const int BYTES_PER_LINE = 16;
 
-        private byte[] _bytes;
+        #endregion
 
-        private Font _font;
-
-        private int _fontWidth;
-        private int _fontHeight;
+        #endregion
 
         #region Fields
 
@@ -50,12 +52,24 @@ namespace Keeker.UI
 
         #endregion
 
+        private byte[] _bytes;
+
+        private Font _font;
+
+        private int _fontWidth;
+        private int _fontHeight;
+
+        private int _baseLineIndex;
+        private int _pictureHeight;
+
+
         private int _addressPosition;
         private readonly int[] _hexPositions;
         private readonly int[] _dumpBytePositions;
 
         #endregion
 
+        #region Constructor
 
         public BinaryView()
         {
@@ -78,21 +92,9 @@ namespace Keeker.UI
             this.CalculatePositions();
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-        }
+        #endregion
 
-        [Browsable(false)]
-        public byte[] Bytes
-        {
-            get => _bytes;
-            set
-            {
-                _bytes = value ?? throw new ArgumentNullException(nameof(value));
-                this.Invalidate();
-            }
-        }
+        #region Overridden
 
         public override Font Font
         {
@@ -108,14 +110,117 @@ namespace Keeker.UI
             }
 
             var lineCount = this.GetLineCount();
-
-            for (int i = 0; i < lineCount; i++)
+            if (lineCount == 0)
             {
-                this.DrawLine(e.Graphics, i);
+                return; // nothing to paint
+            }
+
+            var visibleLineCount = this.GetVisibleLineCount();
+            if (visibleLineCount == 0)
+            {
+                return; // nothing to paint
+            }
+
+
+            var fromLineIndex = _baseLineIndex;
+            int toLineIndex;
+            
+            if (fromLineIndex >= lineCount)
+            {
+                fromLineIndex = lineCount - 1;
+                toLineIndex = fromLineIndex;
+            }
+            else
+            {
+                toLineIndex = fromLineIndex + visibleLineCount - 1;
+                if (toLineIndex >= lineCount)
+                {
+                    toLineIndex = lineCount - 1;
+                }
+            }
+
+            for (var lineIndex = fromLineIndex; lineIndex <= toLineIndex; lineIndex++)
+            {
+                this.DrawLine(e.Graphics, lineIndex);
             }
 
             base.OnPaint(e);
         }
+
+        protected override void OnScroll(ScrollEventArgs se)
+        {
+            base.OnScroll(se);
+
+            if (se.ScrollOrientation == ScrollOrientation.VerticalScroll)
+            {
+                _baseLineIndex = this.VerticalScroll.Value;
+                this.Invalidate();
+            }
+        }
+
+        protected override void OnClientSizeChanged(EventArgs e)
+        {
+            this.RecalculateSizes();
+            this.RefreshScrollBars();
+
+            base.OnClientSizeChanged(e);
+        }
+        
+        #endregion
+
+        #region Public Properties
+        
+        [Browsable(false)]
+        public byte[] Bytes
+        {
+            get => _bytes;
+            set
+            {
+                _bytes = value ?? throw new ArgumentNullException(nameof(value));
+                this.Invalidate();
+            }
+        }
+
+        [Browsable(false)]
+        public int AddressMargin
+        {
+            get => _addressMargin;
+            set => this.SetMargin(ref _addressMargin, value);
+        }
+
+        [Browsable(false)]
+        public int LineMargin
+        {
+            get => _lineMargin;
+            set => this.SetMargin(ref _lineMargin, value);
+        }
+
+        [Browsable(false)]
+        public int HexMargin
+        {
+            get => _hexMargin;
+            set => this.SetMargin(ref _hexMargin, value);
+        }
+
+        [Browsable(false)]
+        public int HalfLineMargin
+        {
+            get => _halfLineMargin;
+            set => this.SetMargin(ref _halfLineMargin, value);
+        }
+
+        [Browsable(false)]
+        public int DumpByteMargin
+        {
+            get => _dumpByteMargin;
+            set => this.SetMargin(ref _dumpByteMargin, value);
+        }
+
+
+
+        #endregion
+
+        #region Private
 
         private void RenderText(Graphics g, string text, int x, int y, Color color)
         {
@@ -147,6 +252,8 @@ namespace Keeker.UI
         private void DrawLine(Graphics g, int lineIndex)
         {
             var y = _fontHeight * lineIndex;
+            var verticalOffset = _baseLineIndex * _fontHeight;
+            y -= verticalOffset;
 
             // render address
             var address = lineIndex * BYTES_PER_LINE;
@@ -165,7 +272,7 @@ namespace Keeker.UI
                 }
             }
 
-            // render hex-es
+            // render hex-es & dump bytes
             for (var i = 0; i < byteCount; i++)
             {
                 var byteIndex = lineIndex * BYTES_PER_LINE + i;
@@ -175,17 +282,25 @@ namespace Keeker.UI
                 this.RenderText(g, hex, _hexPositions[i], y, Color.Black);
 
                 var c = this.SubstituteChar(b);
-
                 this.RenderText(g, c.ToString(), _dumpBytePositions[i], y, Color.Black);
             }
-
-            // render dump bytes
         }
 
         private int GetLineCount()
         {
             var count = _bytes.Length / BYTES_PER_LINE;
             if (_bytes.Length % BYTES_PER_LINE > 0)
+            {
+                count++;
+            }
+
+            return count;
+        }
+
+        private int GetVisibleLineCount()
+        {
+            var count = this.ClientSize.Height / _fontHeight;
+            if (this.ClientSize.Height % _fontHeight > 0)
             {
                 count++;
             }
@@ -232,60 +347,6 @@ namespace Keeker.UI
             return font;
         }
 
-        #region Margins
-
-        [Browsable(false)]
-        public int AddressMargin
-        {
-            get => _addressMargin;
-            set
-            {
-                this.SetMargin(ref _addressMargin, value);
-            }
-        }
-
-        [Browsable(false)]
-        public int LineMargin
-        {
-            get => _lineMargin;
-            set
-            {
-                this.SetMargin(ref _lineMargin, value);
-            }
-        }
-
-        [Browsable(false)]
-        public int HexMargin
-        {
-            get => _hexMargin;
-            set
-            {
-                this.SetMargin(ref _hexMargin, value);
-            }
-        }
-
-        [Browsable(false)]
-        public int HalfLineMargin
-        {
-            get => _halfLineMargin;
-            set
-            {
-                this.SetMargin(ref _halfLineMargin, value);
-            }
-        }
-
-        [Browsable(false)]
-        public int DumpByteMargin
-        {
-            get => _dumpByteMargin;
-            set
-            {
-                this.SetMargin(ref _dumpByteMargin, value);
-            }
-        }
-
-        #endregion
-
         private void SetMargin(ref int margin, int marginValue)
         {
             if (marginValue < 0)
@@ -310,7 +371,7 @@ namespace Keeker.UI
             x += _fontWidth * 8; // address is 8 bytes long
 
             // hex-es
-            for (int i = 0; i < BYTES_PER_LINE; i++)
+            for (var i = 0; i < BYTES_PER_LINE; i++)
             {
                 int delta;
                 if (i == 0)
@@ -329,7 +390,10 @@ namespace Keeker.UI
                 x += delta;
                 _hexPositions[i] = x;
 
-                x += _fontWidth * 2;
+                if (i < BYTES_PER_LINE - 1)
+                {
+                    x += _fontWidth * 2;
+                }
             }
 
             x += this.HexMargin;
@@ -342,5 +406,40 @@ namespace Keeker.UI
                 x += _fontWidth;
             }
         }
+
+        private void RecalculateSizes()
+        {
+            var count = this.GetLineCount();
+
+            _pictureHeight = count * _fontHeight;
+        }
+
+        private void RefreshScrollBars()
+        {
+            var clientHeight = this.ClientSize.Height;
+
+            if (_pictureHeight > clientHeight && clientHeight > 0)
+            {
+                var defect = _pictureHeight - clientHeight;
+
+                var n = defect / _fontHeight + 1;
+                var max = n + 9;
+                if (max < 10)
+                {
+                    max = 10;
+                }
+
+                this.VerticalScroll.Maximum = max;
+                this.VerticalScroll.Visible = true;
+            }
+            else
+            {
+                _baseLineIndex = 0;
+                this.VerticalScroll.Value = 0;
+                this.VerticalScroll.Visible = false;
+            }
+        }
+
+        #endregion
     }
 }

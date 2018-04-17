@@ -96,10 +96,10 @@
             this.binaryViewGood.BackColor = System.Drawing.SystemColors.Window;
             this.binaryViewGood.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.binaryViewGood.Bytes = new byte[0];
-            this.binaryViewGood.DumpByteMargin = 8;
+            this.binaryViewGood.DumpByteMargin = 16;
             this.binaryViewGood.HalfLineMargin = 16;
             this.binaryViewGood.HexMargin = 8;
-            this.binaryViewGood.LineMargin = 8;
+            this.binaryViewGood.LineMargin = 16;
             this.binaryViewGood.Location = new System.Drawing.Point(260, 38);
             this.binaryViewGood.Name = "binaryViewGood";
             this.binaryViewGood.Size = new System.Drawing.Size(602, 401);

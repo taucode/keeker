@@ -124,7 +124,7 @@ namespace Keeker.UI
 
             var fromLineIndex = _baseLineIndex;
             int toLineIndex;
-            
+
             if (fromLineIndex >= lineCount)
             {
                 fromLineIndex = lineCount - 1;
@@ -165,11 +165,11 @@ namespace Keeker.UI
 
             base.OnClientSizeChanged(e);
         }
-        
+
         #endregion
 
         #region Public Properties
-        
+
         [Browsable(false)]
         public byte[] Bytes
         {
@@ -390,13 +390,9 @@ namespace Keeker.UI
                 x += delta;
                 _hexPositions[i] = x;
 
-                if (i < BYTES_PER_LINE - 1)
-                {
-                    x += _fontWidth * 2;
-                }
+                x += _fontWidth * 2;
             }
 
-            x += this.HexMargin;
             x += this.DumpByteMargin;
 
             // dump bytes

@@ -34,7 +34,13 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonConnect = new System.Windows.Forms.Button();
-            this.binaryViewGood = new Keeker.UI.BinaryView();
+            this.splitContainerRequestResponse = new System.Windows.Forms.SplitContainer();
+            this.panelRequest = new System.Windows.Forms.Panel();
+            this.panelResponse = new System.Windows.Forms.Panel();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerRequestResponse)).BeginInit();
+            this.splitContainerRequestResponse.Panel1.SuspendLayout();
+            this.splitContainerRequestResponse.Panel2.SuspendLayout();
+            this.splitContainerRequestResponse.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBoxEndPoint
@@ -65,7 +71,7 @@
             this.listViewConnections.HideSelection = false;
             this.listViewConnections.Location = new System.Drawing.Point(12, 38);
             this.listViewConnections.Name = "listViewConnections";
-            this.listViewConnections.Size = new System.Drawing.Size(242, 401);
+            this.listViewConnections.Size = new System.Drawing.Size(242, 480);
             this.listViewConnections.TabIndex = 2;
             this.listViewConnections.UseCompatibleStateImageBehavior = false;
             this.listViewConnections.View = System.Windows.Forms.View.Details;
@@ -87,30 +93,54 @@
             this.buttonConnect.Text = "Connect";
             this.buttonConnect.UseVisualStyleBackColor = true;
             // 
-            // binaryViewGood
+            // splitContainerRequestResponse
             // 
-            this.binaryViewGood.AddressMargin = 0;
-            this.binaryViewGood.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.splitContainerRequestResponse.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.binaryViewGood.BackColor = System.Drawing.SystemColors.Window;
-            this.binaryViewGood.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.binaryViewGood.Bytes = new byte[0];
-            this.binaryViewGood.DumpByteMargin = 16;
-            this.binaryViewGood.HalfLineMargin = 16;
-            this.binaryViewGood.HexMargin = 8;
-            this.binaryViewGood.LineMargin = 16;
-            this.binaryViewGood.Location = new System.Drawing.Point(260, 38);
-            this.binaryViewGood.Name = "binaryViewGood";
-            this.binaryViewGood.Size = new System.Drawing.Size(602, 401);
-            this.binaryViewGood.TabIndex = 5;
+            this.splitContainerRequestResponse.Location = new System.Drawing.Point(260, 38);
+            this.splitContainerRequestResponse.Name = "splitContainerRequestResponse";
+            // 
+            // splitContainerRequestResponse.Panel1
+            // 
+            this.splitContainerRequestResponse.Panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.splitContainerRequestResponse.Panel1.Controls.Add(this.panelRequest);
+            // 
+            // splitContainerRequestResponse.Panel2
+            // 
+            this.splitContainerRequestResponse.Panel2.Controls.Add(this.panelResponse);
+            this.splitContainerRequestResponse.Size = new System.Drawing.Size(622, 480);
+            this.splitContainerRequestResponse.SplitterDistance = 298;
+            this.splitContainerRequestResponse.TabIndex = 4;
+            // 
+            // panelRequest
+            // 
+            this.panelRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelRequest.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelRequest.Location = new System.Drawing.Point(0, 0);
+            this.panelRequest.Name = "panelRequest";
+            this.panelRequest.Size = new System.Drawing.Size(298, 480);
+            this.panelRequest.TabIndex = 0;
+            // 
+            // panelResponse
+            // 
+            this.panelResponse.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelResponse.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelResponse.Location = new System.Drawing.Point(0, 0);
+            this.panelResponse.Name = "panelResponse";
+            this.panelResponse.Size = new System.Drawing.Size(320, 480);
+            this.panelResponse.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(874, 451);
-            this.Controls.Add(this.binaryViewGood);
+            this.ClientSize = new System.Drawing.Size(894, 530);
+            this.Controls.Add(this.splitContainerRequestResponse);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.listViewConnections);
             this.Controls.Add(this.label1);
@@ -119,6 +149,10 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Client Main Form";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.splitContainerRequestResponse.Panel1.ResumeLayout(false);
+            this.splitContainerRequestResponse.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerRequestResponse)).EndInit();
+            this.splitContainerRequestResponse.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -132,7 +166,9 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Button buttonConnect;
-        private Keeker.UI.BinaryView binaryViewGood;
+        private System.Windows.Forms.SplitContainer splitContainerRequestResponse;
+        private System.Windows.Forms.Panel panelRequest;
+        private System.Windows.Forms.Panel panelResponse;
     }
 }
 

@@ -17,10 +17,6 @@ namespace Keeker.Client.Gui
             {
                 bytes[i] = (byte)i;
             }
-
-            // АБВ
-
-            binaryViewGood.Bytes = bytes;
         }
 
         private void button1_Click(object sender, EventArgs e)

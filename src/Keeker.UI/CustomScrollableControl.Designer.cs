@@ -1,4 +1,4 @@
-﻿namespace Keeker.Client.Gui
+﻿namespace Keeker.UI
 {
     partial class CustomScrollableControl
     {

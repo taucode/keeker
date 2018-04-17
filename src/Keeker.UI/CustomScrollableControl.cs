@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 
-namespace Keeker.Client.Gui
+namespace Keeker.UI
 {
     public partial class CustomScrollableControl : UserControl
     {
@@ -23,8 +22,6 @@ namespace Keeker.Client.Gui
 
         #endregion
 
-
-
         public CustomScrollableControl()
         {
             this.SetStyle(
@@ -37,8 +34,6 @@ namespace Keeker.Client.Gui
             InitializeComponent();
 
         }
-
-        
 
         protected override void WndProc(ref Message m)
         {
@@ -252,7 +247,5 @@ namespace Keeker.Client.Gui
             }
             return result;
         }
-
-        
     }
 }

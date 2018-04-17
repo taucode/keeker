@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace Keeker.Client.Gui
+namespace Keeker.UI
 {
     internal static class Helper
     {

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Keeker.Client.Gui
+namespace Keeker.UI
 {
     public partial class BinaryView : CustomScrollableControl
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Keeker.Client.Gui
@@ -12,15 +13,27 @@ namespace Keeker.Client.Gui
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            var bytes = new byte[256];
-            for (int i = 0; i < 256; i++)
-            {
-                bytes[i] = (byte)i;
-            }
+            this.InitMethods();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void InitMethods()
         {
+            var methods = new []
+            {
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+            };
+
+            comboBoxMethod.DataSource = methods;
+            comboBoxMethod.SelectedIndex = 0;
+        }
+
+        private void comboBoxUri_TextChanged(object sender, EventArgs e)
+        {
+            Trace.TraceInformation(comboBoxUri.Text);
         }
     }
 }

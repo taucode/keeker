@@ -189,7 +189,8 @@
             // 
             // buttonDeleteHeader
             // 
-            this.buttonDeleteHeader.Location = new System.Drawing.Point(168, 257);
+            this.buttonDeleteHeader.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDeleteHeader.Location = new System.Drawing.Point(289, 136);
             this.buttonDeleteHeader.Name = "buttonDeleteHeader";
             this.buttonDeleteHeader.Size = new System.Drawing.Size(75, 23);
             this.buttonDeleteHeader.TabIndex = 8;
@@ -198,7 +199,8 @@
             // 
             // buttonEditHeader
             // 
-            this.buttonEditHeader.Location = new System.Drawing.Point(87, 257);
+            this.buttonEditHeader.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEditHeader.Location = new System.Drawing.Point(289, 107);
             this.buttonEditHeader.Name = "buttonEditHeader";
             this.buttonEditHeader.Size = new System.Drawing.Size(75, 23);
             this.buttonEditHeader.TabIndex = 7;
@@ -207,12 +209,14 @@
             // 
             // buttonAddHeader
             // 
-            this.buttonAddHeader.Location = new System.Drawing.Point(6, 257);
+            this.buttonAddHeader.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAddHeader.Location = new System.Drawing.Point(289, 78);
             this.buttonAddHeader.Name = "buttonAddHeader";
             this.buttonAddHeader.Size = new System.Drawing.Size(75, 23);
             this.buttonAddHeader.TabIndex = 6;
             this.buttonAddHeader.Text = "Add...";
             this.buttonAddHeader.UseVisualStyleBackColor = true;
+            this.buttonAddHeader.Click += new System.EventHandler(this.buttonAddHeader_Click);
             // 
             // listViewHeaders
             // 
@@ -226,7 +230,7 @@
             this.listViewHeaders.HideSelection = false;
             this.listViewHeaders.Location = new System.Drawing.Point(6, 78);
             this.listViewHeaders.Name = "listViewHeaders";
-            this.listViewHeaders.Size = new System.Drawing.Size(358, 173);
+            this.listViewHeaders.Size = new System.Drawing.Size(277, 173);
             this.listViewHeaders.TabIndex = 5;
             this.listViewHeaders.UseCompatibleStateImageBehavior = false;
             this.listViewHeaders.View = System.Windows.Forms.View.Details;

@@ -17,17 +17,21 @@ namespace Keeker.Client.Gui
 ee f7 63                                         x9x
 ";
 
-            binaryView1.Bytes = new byte[]
+            var bytes = new byte[256];
+            for (int i = 0; i < 256; i++)
             {
-                0x00, 0xff, 0xde, 0xe1, 0x00, 0x00, 0x00, 0x00, 0xff, 0xde, 0xe1, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0xff, 0xde, 0xe1, 0x00, 0x00, 0x00, 0x00, 0xff, 0xde, 0xe1, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0xee, 0xf7, 0x63,
-            };
+                bytes[i] = (byte)i;
+            }
+
+            // АБВ
+
+            binaryView1.Bytes = bytes;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            binaryView1.Wat = textBox1.Text;
+            var s = ((char)1).ToString();
+            var n = 33;
         }
     }
 }

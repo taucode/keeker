@@ -7,12 +7,29 @@ namespace Keeker.Client.Gui
 {
     public partial class BinaryView : CustomScrollableControl
     {
+        #region Constants
+
+        #region Margins
+
+        private const int DEFAULT_ADDRESS_MARGIN = 0;
+        private const int DEFAULT_LINE_MARGIN = 8;
+        private const int DEFAULT_HEX_MARGIN = 8;
+        private const int DEFAULT_HALF_LINE_MARGIN = 16;
+        private const int DEFAULT_DUMP_BYTE_MARGIN = 8; // ⌂~АР ■¤№
+
+        #endregion
+
+        #endregion
+
         private const string DEFAULT_MONOSPACE_FONT_FAMILY_NAME = "Consolas";
         private const string RESERVE_MONOSPACE_FONT_FAMILY_NAME = "Courier New";
 
-        private const int BYTES_PER_LINE = 16;
+        private const string SYMBOL_SUBSTITUTIONS_0x00 = " ☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼";
 
-        private const int LEFT_MARGIN = 4;
+        private const string SYMBOL_SUBSTITUTIONS_0x7f =
+            "⌂АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмноп░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀рстуфхцчшщъыьэюяЁёЄєЇїЎў°∙·√№¤■ ";
+
+        private const int BYTES_PER_LINE = 16;
 
         private byte[] _bytes;
 
@@ -21,18 +38,44 @@ namespace Keeker.Client.Gui
         private int _fontWidth;
         private int _fontHeight;
 
-        private readonly Brush _offsetBrush;
+        #region Fields
+
+        #region Margins
+
+        private int _addressMargin;
+        private int _lineMargin;
+        private int _hexMargin;
+        private int _halfLineMargin;
+        private int _dumpByteMargin;
+
+        #endregion
+
+        private int _addressPosition;
+        private readonly int[] _hexPositions;
+        private readonly int[] _dumpBytePositions;
+
+        #endregion
 
 
         public BinaryView()
         {
             InitializeComponent();
 
+            _addressMargin = DEFAULT_ADDRESS_MARGIN;
+            _lineMargin = DEFAULT_LINE_MARGIN;
+            _hexMargin = DEFAULT_HEX_MARGIN;
+            _halfLineMargin = DEFAULT_HALF_LINE_MARGIN;
+            _dumpByteMargin = DEFAULT_DUMP_BYTE_MARGIN;
+
             var font = this.CreateStandardMonospaceFont();
             this.SetFont(font);
 
             _bytes = new byte[0];
-            _offsetBrush = new SolidBrush(Color.Black);
+
+            _hexPositions = new int[BYTES_PER_LINE];
+            _dumpBytePositions = new int[BYTES_PER_LINE];
+
+            this.CalculatePositions();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -57,17 +100,6 @@ namespace Keeker.Client.Gui
             set => this.SetFont(value);
         }
 
-        private string _wat;
-        public string Wat
-        {
-            get { return _wat; }
-            set
-            {
-                _wat = value;
-                Invalidate();
-            }
-        }
-
         protected override void OnPaint(PaintEventArgs e)
         {
             if (this.DesignMode)
@@ -75,54 +107,54 @@ namespace Keeker.Client.Gui
                 return;
             }
 
-            var s = _wat ?? "";
+            var lineCount = this.GetLineCount();
 
-            TextRenderer.DrawText(e.Graphics, s, _font, new Point(0, 0), Color.Black);
+            for (int i = 0; i < lineCount; i++)
+            {
+                this.DrawLine(e.Graphics, i);
+            }
 
-            var penWidth = new Pen(Color.Green);
-            var penMeasure = new Pen(Color.Red);
+            base.OnPaint(e);
+        }
 
-            var width = _fontWidth * s.Length;
-            var measure = TextRenderer.MeasureText(e.Graphics, s, _font).Width;
-            
+        private void RenderText(Graphics g, string text, int x, int y, Color color)
+        {
+            for (int i = 0; i < text.Length; i++)
+            {
+                var symbolString = text[i].ToString();
+                var symbolX = x + _fontWidth * i;
+                var pt = new Point(symbolX, y);
+                TextRenderer.DrawText(g, symbolString, _font, pt, color);
+            }
+        }
 
-            e.Graphics.DrawLine(penWidth, 0, 20, width, 20);
-            e.Graphics.DrawLine(penMeasure, 0, 25, measure, 25);
+        private char SubstituteChar(byte b)
+        {
+            var c = (char)b;
 
-            //var lineCount = this.GetLineCount();
+            if (c < 0x20)
+            {
+                c = SYMBOL_SUBSTITUTIONS_0x00[c];
+            }
+            else if (c >= 0x7f)
+            {
+                c = SYMBOL_SUBSTITUTIONS_0x7f[c - 0x7f];
+            }
 
-            //for (int i = 0; i < lineCount; i++)
-            //{
-            //    this.DrawLine(e.Graphics, i);
-            //}
-
-            //base.OnPaint(e);
+            return c;
         }
 
         private void DrawLine(Graphics g, int lineIndex)
         {
             var y = _fontHeight * lineIndex;
-            var x = 0;
 
-            x += LEFT_MARGIN;
+            // render address
+            var address = lineIndex * BYTES_PER_LINE;
+            var addressString = address.ToString("x8");
 
-            var offset = lineIndex * BYTES_PER_LINE;
-            var offsetString = offset.ToString("x8");
+            this.RenderText(g, addressString, _addressPosition, y, Color.Black);
 
-            g.DrawString(offsetString, _font, _offsetBrush, x, y);
-            var measure = g.MeasureString(offsetString, _font);
-            //var dx = (int)measure.Width;
-            var dx = offsetString.Length * _fontWidth;
-            x += dx;
-
-            //var dx1 = (int) g.MeasureString(offsetString, _font).Width;
-            var dx1 = TextRenderer.MeasureText(offsetString, _font);
-
-            var dx2 = offsetString.Length * _fontWidth;
-
-            var dd = 33;
-            var ddd = g.PageUnit;
-
+            // count number of bytes to render
             var byteCount = BYTES_PER_LINE;
             if (lineIndex == this.GetLineCount() - 1)
             {
@@ -133,19 +165,21 @@ namespace Keeker.Client.Gui
                 }
             }
 
-            for (int i = 0; i < byteCount; i++)
+            // render hex-es
+            for (var i = 0; i < byteCount; i++)
             {
                 var byteIndex = lineIndex * BYTES_PER_LINE + i;
                 var b = _bytes[byteIndex];
                 var hex = b.ToString("x2");
 
-                g.DrawString(hex, _font, _offsetBrush, x, y);
+                this.RenderText(g, hex, _hexPositions[i], y, Color.Black);
 
-                x += _fontWidth * 2;
+                var c = this.SubstituteChar(b);
+
+                this.RenderText(g, c.ToString(), _dumpBytePositions[i], y, Color.Black);
             }
 
-            int k = 3;
-
+            // render dump bytes
         }
 
         private int GetLineCount()
@@ -180,11 +214,6 @@ namespace Keeker.Client.Gui
 
             _fontHeight = _font.Height;
             _fontWidth = (int)_font.GetCharSize('M').Width;
-
-            var fw2 = TextRenderer.MeasureText("M", _font);
-
-            var waaat = 33;
-
         }
 
         private Font CreateStandardMonospaceFont()
@@ -201,6 +230,117 @@ namespace Keeker.Client.Gui
             }
 
             return font;
+        }
+
+        #region Margins
+
+        [Browsable(false)]
+        public int AddressMargin
+        {
+            get => _addressMargin;
+            set
+            {
+                this.SetMargin(ref _addressMargin, value);
+            }
+        }
+
+        [Browsable(false)]
+        public int LineMargin
+        {
+            get => _lineMargin;
+            set
+            {
+                this.SetMargin(ref _lineMargin, value);
+            }
+        }
+
+        [Browsable(false)]
+        public int HexMargin
+        {
+            get => _hexMargin;
+            set
+            {
+                this.SetMargin(ref _hexMargin, value);
+            }
+        }
+
+        [Browsable(false)]
+        public int HalfLineMargin
+        {
+            get => _halfLineMargin;
+            set
+            {
+                this.SetMargin(ref _halfLineMargin, value);
+            }
+        }
+
+        [Browsable(false)]
+        public int DumpByteMargin
+        {
+            get => _dumpByteMargin;
+            set
+            {
+                this.SetMargin(ref _dumpByteMargin, value);
+            }
+        }
+
+        #endregion
+
+        private void SetMargin(ref int margin, int marginValue)
+        {
+            if (marginValue < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(margin));
+            }
+
+            margin = marginValue;
+            this.CalculatePositions();
+            this.Invalidate();
+        }
+
+        private void CalculatePositions()
+        {
+            var x = 0;
+            var half = BYTES_PER_LINE / 2;
+
+            // address
+            x += this.AddressMargin;
+            _addressPosition = x;
+
+            x += _fontWidth * 8; // address is 8 bytes long
+
+            // hex-es
+            for (int i = 0; i < BYTES_PER_LINE; i++)
+            {
+                int delta;
+                if (i == 0)
+                {
+                    delta = this.LineMargin;
+                }
+                else if (i == half)
+                {
+                    delta = this.HalfLineMargin;
+                }
+                else
+                {
+                    delta = this.HexMargin;
+                }
+
+                x += delta;
+                _hexPositions[i] = x;
+
+                x += _fontWidth * 2;
+            }
+
+            x += this.HexMargin;
+            x += this.DumpByteMargin;
+
+            // dump bytes
+            for (int i = 0; i < BYTES_PER_LINE; i++)
+            {
+                _dumpBytePositions[i] = x;
+                x += _fontWidth;
+            }
         }
     }
 }

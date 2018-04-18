@@ -140,5 +140,22 @@ namespace Keeker.Client.Gui
                 this.SetRequestHeader(header.Name, header.Value, null);
             }
         }
+
+        private void buttonApply_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.SaveSettings();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void SaveSettings()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

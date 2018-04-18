@@ -10,6 +10,8 @@ namespace Keeker.Client.Gui
         private string _name;
         private string _value;
 
+        private string _caption;
+
         public EditHeaderDialog()
         {
             InitializeComponent();
@@ -19,6 +21,7 @@ namespace Keeker.Client.Gui
 
         public HttpHeader CreateHeader()
         {
+            _caption = "Create Header";
             var dres = this.ShowDialog();
 
             if (dres == DialogResult.OK)
@@ -50,6 +53,11 @@ namespace Keeker.Client.Gui
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
+        }
+
+        private void EditHeaderDialog_Load(object sender, EventArgs e)
+        {
+            this.Text = _caption;
         }
     }
 }

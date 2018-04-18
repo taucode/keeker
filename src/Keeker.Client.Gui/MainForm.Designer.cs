@@ -136,7 +136,6 @@
             this.splitContainerRequestResponse.Size = new System.Drawing.Size(805, 480);
             this.splitContainerRequestResponse.SplitterDistance = 385;
             this.splitContainerRequestResponse.TabIndex = 4;
-            this.splitContainerRequestResponse.Visible = false;
             // 
             // panelRequest
             // 
@@ -196,6 +195,7 @@
             this.buttonApply.Size = new System.Drawing.Size(27, 25);
             this.buttonApply.TabIndex = 14;
             this.buttonApply.UseVisualStyleBackColor = true;
+            this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
             // 
             // buttonRecent
             // 

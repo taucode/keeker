@@ -4,13 +4,13 @@ namespace Keeker.Client.Gui
 {
     public class AppSettings
     {
-        public string Method { get; set; }
+        public string LastMethod { get; set; }
 
-        public string Uri { get; set; }
+        public string LastUri { get; set; }
 
         public List<string> RecentUris { get; set; }
 
-        public List<HttpHeaderDto> Headers { get; set; }
+        public List<HttpHeaderDto> LastHeaders { get; set; }
 
         public class HttpHeaderDto
         {

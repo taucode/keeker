@@ -28,13 +28,43 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.textBoxEndPoint = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.listViewConnections = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonConnect = new System.Windows.Forms.Button();
-            this.binaryViewGood = new Keeker.UI.BinaryView();
+            this.splitContainerRequestResponse = new System.Windows.Forms.SplitContainer();
+            this.panelRequest = new System.Windows.Forms.Panel();
+            this.tabControlRequest = new System.Windows.Forms.TabControl();
+            this.tabPagePrepare = new System.Windows.Forms.TabPage();
+            this.buttonApply = new System.Windows.Forms.Button();
+            this.buttonRecent = new System.Windows.Forms.Button();
+            this.buttonSaveAs = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.buttonOpen = new System.Windows.Forms.Button();
+            this.comboBoxUri = new System.Windows.Forms.ComboBox();
+            this.buttonDeleteHeader = new System.Windows.Forms.Button();
+            this.buttonEditHeader = new System.Windows.Forms.Button();
+            this.buttonAddHeader = new System.Windows.Forms.Button();
+            this.listViewHeaders = new System.Windows.Forms.ListView();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.comboBoxMethod = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tabPageText = new System.Windows.Forms.TabPage();
+            this.tabPageBinary = new System.Windows.Forms.TabPage();
+            this.panelResponse = new System.Windows.Forms.Panel();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerRequestResponse)).BeginInit();
+            this.splitContainerRequestResponse.Panel1.SuspendLayout();
+            this.splitContainerRequestResponse.Panel2.SuspendLayout();
+            this.splitContainerRequestResponse.SuspendLayout();
+            this.panelRequest.SuspendLayout();
+            this.tabControlRequest.SuspendLayout();
+            this.tabPagePrepare.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBoxEndPoint
@@ -65,7 +95,7 @@
             this.listViewConnections.HideSelection = false;
             this.listViewConnections.Location = new System.Drawing.Point(12, 38);
             this.listViewConnections.Name = "listViewConnections";
-            this.listViewConnections.Size = new System.Drawing.Size(242, 401);
+            this.listViewConnections.Size = new System.Drawing.Size(242, 480);
             this.listViewConnections.TabIndex = 2;
             this.listViewConnections.UseCompatibleStateImageBehavior = false;
             this.listViewConnections.View = System.Windows.Forms.View.Details;
@@ -87,30 +117,264 @@
             this.buttonConnect.Text = "Connect";
             this.buttonConnect.UseVisualStyleBackColor = true;
             // 
-            // binaryViewGood
+            // splitContainerRequestResponse
             // 
-            this.binaryViewGood.AddressMargin = 0;
-            this.binaryViewGood.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.splitContainerRequestResponse.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.binaryViewGood.BackColor = System.Drawing.SystemColors.Window;
-            this.binaryViewGood.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.binaryViewGood.Bytes = new byte[0];
-            this.binaryViewGood.DumpByteMargin = 16;
-            this.binaryViewGood.HalfLineMargin = 16;
-            this.binaryViewGood.HexMargin = 8;
-            this.binaryViewGood.LineMargin = 16;
-            this.binaryViewGood.Location = new System.Drawing.Point(260, 38);
-            this.binaryViewGood.Name = "binaryViewGood";
-            this.binaryViewGood.Size = new System.Drawing.Size(602, 401);
-            this.binaryViewGood.TabIndex = 5;
+            this.splitContainerRequestResponse.Location = new System.Drawing.Point(260, 38);
+            this.splitContainerRequestResponse.Name = "splitContainerRequestResponse";
+            // 
+            // splitContainerRequestResponse.Panel1
+            // 
+            this.splitContainerRequestResponse.Panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.splitContainerRequestResponse.Panel1.Controls.Add(this.panelRequest);
+            // 
+            // splitContainerRequestResponse.Panel2
+            // 
+            this.splitContainerRequestResponse.Panel2.Controls.Add(this.panelResponse);
+            this.splitContainerRequestResponse.Size = new System.Drawing.Size(805, 480);
+            this.splitContainerRequestResponse.SplitterDistance = 385;
+            this.splitContainerRequestResponse.TabIndex = 4;
+            // 
+            // panelRequest
+            // 
+            this.panelRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelRequest.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelRequest.Controls.Add(this.tabControlRequest);
+            this.panelRequest.Location = new System.Drawing.Point(0, 0);
+            this.panelRequest.Name = "panelRequest";
+            this.panelRequest.Size = new System.Drawing.Size(385, 480);
+            this.panelRequest.TabIndex = 0;
+            // 
+            // tabControlRequest
+            // 
+            this.tabControlRequest.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControlRequest.Controls.Add(this.tabPagePrepare);
+            this.tabControlRequest.Controls.Add(this.tabPageText);
+            this.tabControlRequest.Controls.Add(this.tabPageBinary);
+            this.tabControlRequest.Location = new System.Drawing.Point(3, 3);
+            this.tabControlRequest.Name = "tabControlRequest";
+            this.tabControlRequest.SelectedIndex = 0;
+            this.tabControlRequest.Size = new System.Drawing.Size(378, 473);
+            this.tabControlRequest.TabIndex = 0;
+            // 
+            // tabPagePrepare
+            // 
+            this.tabPagePrepare.Controls.Add(this.buttonApply);
+            this.tabPagePrepare.Controls.Add(this.buttonRecent);
+            this.tabPagePrepare.Controls.Add(this.buttonSaveAs);
+            this.tabPagePrepare.Controls.Add(this.buttonSave);
+            this.tabPagePrepare.Controls.Add(this.buttonOpen);
+            this.tabPagePrepare.Controls.Add(this.comboBoxUri);
+            this.tabPagePrepare.Controls.Add(this.buttonDeleteHeader);
+            this.tabPagePrepare.Controls.Add(this.buttonEditHeader);
+            this.tabPagePrepare.Controls.Add(this.buttonAddHeader);
+            this.tabPagePrepare.Controls.Add(this.listViewHeaders);
+            this.tabPagePrepare.Controls.Add(this.label4);
+            this.tabPagePrepare.Controls.Add(this.label3);
+            this.tabPagePrepare.Controls.Add(this.comboBoxMethod);
+            this.tabPagePrepare.Controls.Add(this.label2);
+            this.tabPagePrepare.Location = new System.Drawing.Point(4, 22);
+            this.tabPagePrepare.Name = "tabPagePrepare";
+            this.tabPagePrepare.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPagePrepare.Size = new System.Drawing.Size(370, 447);
+            this.tabPagePrepare.TabIndex = 0;
+            this.tabPagePrepare.Text = "Prepare";
+            this.tabPagePrepare.UseVisualStyleBackColor = true;
+            // 
+            // buttonApply
+            // 
+            this.buttonApply.Image = ((System.Drawing.Image)(resources.GetObject("buttonApply.Image")));
+            this.buttonApply.Location = new System.Drawing.Point(199, 4);
+            this.buttonApply.Name = "buttonApply";
+            this.buttonApply.Size = new System.Drawing.Size(27, 25);
+            this.buttonApply.TabIndex = 14;
+            this.buttonApply.UseVisualStyleBackColor = true;
+            this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
+            // 
+            // buttonRecent
+            // 
+            this.buttonRecent.Image = ((System.Drawing.Image)(resources.GetObject("buttonRecent.Image")));
+            this.buttonRecent.Location = new System.Drawing.Point(331, 4);
+            this.buttonRecent.Name = "buttonRecent";
+            this.buttonRecent.Size = new System.Drawing.Size(27, 25);
+            this.buttonRecent.TabIndex = 13;
+            this.buttonRecent.UseVisualStyleBackColor = true;
+            // 
+            // buttonSaveAs
+            // 
+            this.buttonSaveAs.Image = ((System.Drawing.Image)(resources.GetObject("buttonSaveAs.Image")));
+            this.buttonSaveAs.Location = new System.Drawing.Point(265, 4);
+            this.buttonSaveAs.Name = "buttonSaveAs";
+            this.buttonSaveAs.Size = new System.Drawing.Size(27, 25);
+            this.buttonSaveAs.TabIndex = 12;
+            this.buttonSaveAs.UseVisualStyleBackColor = true;
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Image = ((System.Drawing.Image)(resources.GetObject("buttonSave.Image")));
+            this.buttonSave.Location = new System.Drawing.Point(232, 4);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(27, 25);
+            this.buttonSave.TabIndex = 11;
+            this.buttonSave.UseVisualStyleBackColor = true;
+            // 
+            // buttonOpen
+            // 
+            this.buttonOpen.Image = ((System.Drawing.Image)(resources.GetObject("buttonOpen.Image")));
+            this.buttonOpen.Location = new System.Drawing.Point(298, 4);
+            this.buttonOpen.Name = "buttonOpen";
+            this.buttonOpen.Size = new System.Drawing.Size(27, 25);
+            this.buttonOpen.TabIndex = 10;
+            this.buttonOpen.UseVisualStyleBackColor = true;
+            // 
+            // comboBoxUri
+            // 
+            this.comboBoxUri.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxUri.FormattingEnabled = true;
+            this.comboBoxUri.Location = new System.Drawing.Point(72, 33);
+            this.comboBoxUri.Name = "comboBoxUri";
+            this.comboBoxUri.Size = new System.Drawing.Size(292, 21);
+            this.comboBoxUri.TabIndex = 9;
+            this.comboBoxUri.TextChanged += new System.EventHandler(this.comboBoxUri_TextChanged);
+            // 
+            // buttonDeleteHeader
+            // 
+            this.buttonDeleteHeader.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDeleteHeader.Location = new System.Drawing.Point(289, 136);
+            this.buttonDeleteHeader.Name = "buttonDeleteHeader";
+            this.buttonDeleteHeader.Size = new System.Drawing.Size(75, 23);
+            this.buttonDeleteHeader.TabIndex = 8;
+            this.buttonDeleteHeader.Text = "Delete";
+            this.buttonDeleteHeader.UseVisualStyleBackColor = true;
+            // 
+            // buttonEditHeader
+            // 
+            this.buttonEditHeader.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEditHeader.Location = new System.Drawing.Point(289, 107);
+            this.buttonEditHeader.Name = "buttonEditHeader";
+            this.buttonEditHeader.Size = new System.Drawing.Size(75, 23);
+            this.buttonEditHeader.TabIndex = 7;
+            this.buttonEditHeader.Text = "Edit...";
+            this.buttonEditHeader.UseVisualStyleBackColor = true;
+            // 
+            // buttonAddHeader
+            // 
+            this.buttonAddHeader.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAddHeader.Location = new System.Drawing.Point(289, 78);
+            this.buttonAddHeader.Name = "buttonAddHeader";
+            this.buttonAddHeader.Size = new System.Drawing.Size(75, 23);
+            this.buttonAddHeader.TabIndex = 6;
+            this.buttonAddHeader.Text = "Add...";
+            this.buttonAddHeader.UseVisualStyleBackColor = true;
+            this.buttonAddHeader.Click += new System.EventHandler(this.buttonAddHeader_Click);
+            // 
+            // listViewHeaders
+            // 
+            this.listViewHeaders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewHeaders.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
+            this.columnHeader4});
+            this.listViewHeaders.FullRowSelect = true;
+            this.listViewHeaders.GridLines = true;
+            this.listViewHeaders.HideSelection = false;
+            this.listViewHeaders.Location = new System.Drawing.Point(6, 78);
+            this.listViewHeaders.Name = "listViewHeaders";
+            this.listViewHeaders.Size = new System.Drawing.Size(277, 173);
+            this.listViewHeaders.TabIndex = 5;
+            this.listViewHeaders.UseCompatibleStateImageBehavior = false;
+            this.listViewHeaders.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Name";
+            this.columnHeader3.Width = 114;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Value";
+            this.columnHeader4.Width = 123;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 62);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(50, 13);
+            this.label4.TabIndex = 4;
+            this.label4.Text = "Headers:";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 36);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(29, 13);
+            this.label3.TabIndex = 3;
+            this.label3.Text = "URI:";
+            // 
+            // comboBoxMethod
+            // 
+            this.comboBoxMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxMethod.FormattingEnabled = true;
+            this.comboBoxMethod.Location = new System.Drawing.Point(72, 6);
+            this.comboBoxMethod.Name = "comboBoxMethod";
+            this.comboBoxMethod.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxMethod.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(46, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Method:";
+            // 
+            // tabPageText
+            // 
+            this.tabPageText.Location = new System.Drawing.Point(4, 22);
+            this.tabPageText.Name = "tabPageText";
+            this.tabPageText.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageText.Size = new System.Drawing.Size(370, 447);
+            this.tabPageText.TabIndex = 1;
+            this.tabPageText.Text = "Text";
+            this.tabPageText.UseVisualStyleBackColor = true;
+            // 
+            // tabPageBinary
+            // 
+            this.tabPageBinary.Location = new System.Drawing.Point(4, 22);
+            this.tabPageBinary.Name = "tabPageBinary";
+            this.tabPageBinary.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageBinary.Size = new System.Drawing.Size(370, 447);
+            this.tabPageBinary.TabIndex = 2;
+            this.tabPageBinary.Text = "Binary";
+            this.tabPageBinary.UseVisualStyleBackColor = true;
+            // 
+            // panelResponse
+            // 
+            this.panelResponse.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelResponse.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelResponse.Location = new System.Drawing.Point(0, 0);
+            this.panelResponse.Name = "panelResponse";
+            this.panelResponse.Size = new System.Drawing.Size(416, 480);
+            this.panelResponse.TabIndex = 0;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(874, 451);
-            this.Controls.Add(this.binaryViewGood);
+            this.ClientSize = new System.Drawing.Size(1077, 530);
+            this.Controls.Add(this.splitContainerRequestResponse);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.listViewConnections);
             this.Controls.Add(this.label1);
@@ -119,6 +383,14 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Client Main Form";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.splitContainerRequestResponse.Panel1.ResumeLayout(false);
+            this.splitContainerRequestResponse.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerRequestResponse)).EndInit();
+            this.splitContainerRequestResponse.ResumeLayout(false);
+            this.panelRequest.ResumeLayout(false);
+            this.tabControlRequest.ResumeLayout(false);
+            this.tabPagePrepare.ResumeLayout(false);
+            this.tabPagePrepare.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -132,7 +404,29 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Button buttonConnect;
-        private Keeker.UI.BinaryView binaryViewGood;
+        private System.Windows.Forms.SplitContainer splitContainerRequestResponse;
+        private System.Windows.Forms.Panel panelRequest;
+        private System.Windows.Forms.Panel panelResponse;
+        private System.Windows.Forms.TabControl tabControlRequest;
+        private System.Windows.Forms.TabPage tabPagePrepare;
+        private System.Windows.Forms.TabPage tabPageText;
+        private System.Windows.Forms.ComboBox comboBoxMethod;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ListView listViewHeaders;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button buttonDeleteHeader;
+        private System.Windows.Forms.Button buttonEditHeader;
+        private System.Windows.Forms.Button buttonAddHeader;
+        private System.Windows.Forms.TabPage tabPageBinary;
+        private System.Windows.Forms.ComboBox comboBoxUri;
+        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.Button buttonOpen;
+        private System.Windows.Forms.Button buttonSaveAs;
+        private System.Windows.Forms.Button buttonRecent;
+        private System.Windows.Forms.Button buttonApply;
     }
 }
 

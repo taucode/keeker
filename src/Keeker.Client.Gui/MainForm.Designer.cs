@@ -39,6 +39,11 @@
             this.panelRequest = new System.Windows.Forms.Panel();
             this.tabControlRequest = new System.Windows.Forms.TabControl();
             this.tabPagePrepare = new System.Windows.Forms.TabPage();
+            this.buttonApply = new System.Windows.Forms.Button();
+            this.buttonRecent = new System.Windows.Forms.Button();
+            this.buttonSaveAs = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.buttonOpen = new System.Windows.Forms.Button();
             this.comboBoxUri = new System.Windows.Forms.ComboBox();
             this.buttonDeleteHeader = new System.Windows.Forms.Button();
             this.buttonEditHeader = new System.Windows.Forms.Button();
@@ -53,10 +58,6 @@
             this.tabPageText = new System.Windows.Forms.TabPage();
             this.tabPageBinary = new System.Windows.Forms.TabPage();
             this.panelResponse = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerRequestResponse)).BeginInit();
             this.splitContainerRequestResponse.Panel1.SuspendLayout();
             this.splitContainerRequestResponse.Panel2.SuspendLayout();
@@ -135,6 +136,7 @@
             this.splitContainerRequestResponse.Size = new System.Drawing.Size(805, 480);
             this.splitContainerRequestResponse.SplitterDistance = 385;
             this.splitContainerRequestResponse.TabIndex = 4;
+            this.splitContainerRequestResponse.Visible = false;
             // 
             // panelRequest
             // 
@@ -164,10 +166,11 @@
             // 
             // tabPagePrepare
             // 
-            this.tabPagePrepare.Controls.Add(this.button4);
-            this.tabPagePrepare.Controls.Add(this.button3);
-            this.tabPagePrepare.Controls.Add(this.button2);
-            this.tabPagePrepare.Controls.Add(this.button1);
+            this.tabPagePrepare.Controls.Add(this.buttonApply);
+            this.tabPagePrepare.Controls.Add(this.buttonRecent);
+            this.tabPagePrepare.Controls.Add(this.buttonSaveAs);
+            this.tabPagePrepare.Controls.Add(this.buttonSave);
+            this.tabPagePrepare.Controls.Add(this.buttonOpen);
             this.tabPagePrepare.Controls.Add(this.comboBoxUri);
             this.tabPagePrepare.Controls.Add(this.buttonDeleteHeader);
             this.tabPagePrepare.Controls.Add(this.buttonEditHeader);
@@ -184,6 +187,51 @@
             this.tabPagePrepare.TabIndex = 0;
             this.tabPagePrepare.Text = "Prepare";
             this.tabPagePrepare.UseVisualStyleBackColor = true;
+            // 
+            // buttonApply
+            // 
+            this.buttonApply.Image = ((System.Drawing.Image)(resources.GetObject("buttonApply.Image")));
+            this.buttonApply.Location = new System.Drawing.Point(199, 4);
+            this.buttonApply.Name = "buttonApply";
+            this.buttonApply.Size = new System.Drawing.Size(27, 25);
+            this.buttonApply.TabIndex = 14;
+            this.buttonApply.UseVisualStyleBackColor = true;
+            // 
+            // buttonRecent
+            // 
+            this.buttonRecent.Image = ((System.Drawing.Image)(resources.GetObject("buttonRecent.Image")));
+            this.buttonRecent.Location = new System.Drawing.Point(331, 4);
+            this.buttonRecent.Name = "buttonRecent";
+            this.buttonRecent.Size = new System.Drawing.Size(27, 25);
+            this.buttonRecent.TabIndex = 13;
+            this.buttonRecent.UseVisualStyleBackColor = true;
+            // 
+            // buttonSaveAs
+            // 
+            this.buttonSaveAs.Image = ((System.Drawing.Image)(resources.GetObject("buttonSaveAs.Image")));
+            this.buttonSaveAs.Location = new System.Drawing.Point(265, 4);
+            this.buttonSaveAs.Name = "buttonSaveAs";
+            this.buttonSaveAs.Size = new System.Drawing.Size(27, 25);
+            this.buttonSaveAs.TabIndex = 12;
+            this.buttonSaveAs.UseVisualStyleBackColor = true;
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Image = ((System.Drawing.Image)(resources.GetObject("buttonSave.Image")));
+            this.buttonSave.Location = new System.Drawing.Point(232, 4);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(27, 25);
+            this.buttonSave.TabIndex = 11;
+            this.buttonSave.UseVisualStyleBackColor = true;
+            // 
+            // buttonOpen
+            // 
+            this.buttonOpen.Image = ((System.Drawing.Image)(resources.GetObject("buttonOpen.Image")));
+            this.buttonOpen.Location = new System.Drawing.Point(298, 4);
+            this.buttonOpen.Name = "buttonOpen";
+            this.buttonOpen.Size = new System.Drawing.Size(27, 25);
+            this.buttonOpen.TabIndex = 10;
+            this.buttonOpen.UseVisualStyleBackColor = true;
             // 
             // comboBoxUri
             // 
@@ -321,42 +369,6 @@
             this.panelResponse.Size = new System.Drawing.Size(416, 480);
             this.panelResponse.TabIndex = 0;
             // 
-            // button1
-            // 
-            this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
-            this.button1.Location = new System.Drawing.Point(265, 4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(27, 25);
-            this.button1.TabIndex = 10;
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Image = ((System.Drawing.Image)(resources.GetObject("button2.Image")));
-            this.button2.Location = new System.Drawing.Point(199, 4);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(27, 25);
-            this.button2.TabIndex = 11;
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Image = ((System.Drawing.Image)(resources.GetObject("button3.Image")));
-            this.button3.Location = new System.Drawing.Point(232, 4);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(27, 25);
-            this.button3.TabIndex = 12;
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
-            this.button4.Location = new System.Drawing.Point(298, 4);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(27, 25);
-            this.button4.TabIndex = 13;
-            this.button4.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -410,10 +422,11 @@
         private System.Windows.Forms.Button buttonAddHeader;
         private System.Windows.Forms.TabPage tabPageBinary;
         private System.Windows.Forms.ComboBox comboBoxUri;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.Button buttonOpen;
+        private System.Windows.Forms.Button buttonSaveAs;
+        private System.Windows.Forms.Button buttonRecent;
+        private System.Windows.Forms.Button buttonApply;
     }
 }
 

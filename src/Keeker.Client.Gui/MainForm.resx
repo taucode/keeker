@@ -118,17 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="button4.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="buttonApply.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAzklEQVQ4T6WRPQrCQBCFcxEv
-        5F32DrmApWipNksKa72ChY2FjSgIgiAWIjamGfdJZs38xEIDH2Tfvvl2SQoi+ov8slzMBSEE0uiOK+By
-        VVUp/jxYa1GKpQCbMUZ61nWm1x+INfZZ4gpu94cAAp25AoST6YzOl6sAAp2hh74R7I8nAwRe7gq2u4MB
-        Ai93Bav1RoBhnTGuYDga58K3YfSMIH3V0ruFB3roa4G5hQefbn4jAr6FJ+LBZrjsErwlgMtteK/pdQoY
-        LrcRHSH4DSpezzTqGUVwtX4AAAAASUVORK5CYII=
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAb5JREFUOE9j
+        GJrA57z1f4ltEpVQLmlAbofY//irAf8nPKv7r75N5j9UmDigtEvqf8qVkP9r3839n/7Q/7/2VnniDZDf
+        Lv6/8nbG/9M/dvyPv+/13/iY0n/phRLEGcCznPd/7a28bxd/7v8fdcflv9lplf8ySyQR4cA1n6cXhMEc
+        NMC9kOd/wrng/8e/b/4fdsvxv+UFtf+KK2X+i8wShdhuelD7/7zXDf+zL0f/BxqC4iTe5Xz/3Y/bfTv6
+        Y/P/mFtu/y0uqPxXXavwX2QGVDMIOB43+J/50PH/xBfF//1Ouf7nnssLlhRYLPjf6IDu/wPf1//Pvx/9
+        3+y80n+Dfar/JWaJofob5A+viwb/Y+9a/q94Gv/f4ajFf+Etgv/V9yj93/F12f/Gxzn/Tc4r/tfcqvhf
+        bR2OUJfbIvPf94rx/+Bbpv9zH4QBoyjw/4aPs//3Pq/8b3pO6b/eXpX/ckulsGuGAZUtcv+9rhj+97pu
+        8D/5ntf/xie5/83Oqf7X368Cth2qDD9Q36Lw3+Oq4X/HK7r/Tc8qA21W/a+1TYk4zTCgvV3pv+053f/6
+        wAAj2mZ0ILNECphQCPgZDBgYALxm3Seyv2KuAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="button3.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="buttonRecent.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAABl0RVh0U29m
+        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADOSURBVDhPpZE9CsJAEIVzES/kXfYOuYClaKk2Swpr
+        vYKFjYWNKAiCIBYiNqYZ90lmzfzEQgMfZN+++XZJCiL6i/yyXMwFIQTS6I4r4HJVVSn+PFhrUYqlAJsx
+        RnrWdabXH4g19lniCm73hwACnbkChJPpjM6XqwACnaGHvhHsjycDBF7uCra7gwECL3cFq/VGgGGdMa5g
+        OBrnwrdh9IwgfdXSu4UHeuhrgbmFB59ufiMCvoUn4sFmuOwSvCWAy214r+l1ChgutxEdIfgNKl7PNOoZ
+        RXC1fgAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="buttonSaveAs.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         xAAADsQBlSsOGwAAArVJREFUOE+d0VtIE1AYwHFfewvCtyAooqJ6kQILCSskEewi9iRFoc6l3UyDvGte
@@ -146,7 +159,7 @@
         RU5ErkJggg==
 </value>
   </data>
-  <data name="button2.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="buttonSave.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAABl0RVh0U29m
         dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAFLSURBVDhPnZHPKwRxGIff/0PKQW3bhiLZIiuh2JQf
@@ -158,7 +171,7 @@
         JzFPAv7ViQXQAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="button1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="buttonOpen.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
         dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAD7SURBVDhPpY87TsNAFEWnyAZYQzaQhgWwjLQmBOTs

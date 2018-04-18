@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Keeker.Client.Gui
@@ -9,12 +13,38 @@ namespace Keeker.Client.Gui
 
         private Program()
         {
-            
+
         }
 
         public void SaveSettings(AppSettings appSettings)
         {
-            throw new NotImplementedException();
+            var json = JsonConvert.SerializeObject(appSettings, Formatting.Indented);
+            var filePath = this.CreateSettingsFilePath();
+            File.WriteAllText(filePath, json, Encoding.UTF8);
+        }
+
+        public AppSettings LoadSettings()
+        {
+            try
+            {
+                var filePath = this.CreateSettingsFilePath();
+                var json = File.ReadAllText(filePath, Encoding.UTF8);
+                var appSettings = JsonConvert.DeserializeObject<AppSettings>(json);
+                return appSettings;
+            }
+            catch
+            {
+                // dismiss for now
+                return null;
+            }
+        }
+
+        private string CreateSettingsFilePath()
+        {
+            var exePath = Assembly.GetEntryAssembly().Location;
+            var exeDirPath = Path.GetDirectoryName(exePath);
+            var path = Path.Combine(exeDirPath, "AppSettings.json");
+            return path;
         }
 
         private void Run()

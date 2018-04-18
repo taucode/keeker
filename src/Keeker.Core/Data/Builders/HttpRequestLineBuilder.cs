@@ -1,11 +1,29 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 
 namespace Keeker.Core.Data.Builders
 {
     public class HttpRequestLineBuilder
     {
         public HttpRequestLineBuilder()
-        {   
+        {
+            this.Method = HttpMethod.Get;
+            this.RequestUri = "/";
+            this.Version = CoreHelper.HttpVersion11;
+        }
+
+        public HttpRequestLineBuilder(string uri)
+        {
+            this.Method = HttpMethod.Get;
+            this.RequestUri = uri ?? throw new ArgumentNullException(nameof(uri));
+            this.Version = CoreHelper.HttpVersion11;
+        }
+
+        public HttpRequestLineBuilder(HttpMethod method, string uri)
+        {
+            this.Method = method ?? throw new ArgumentNullException(nameof(method));
+            this.RequestUri = uri ?? throw new ArgumentNullException(nameof(uri));
+            this.Version = CoreHelper.HttpVersion11;
         }
 
         public HttpRequestLineBuilder(HttpRequestLine line)

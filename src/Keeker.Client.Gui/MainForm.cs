@@ -8,15 +8,35 @@ namespace Keeker.Client.Gui
 {
     public partial class MainForm : Form
     {
+        private bool _autoApplyUri;
+
         public MainForm()
         {
             InitializeComponent();
+
+            _autoApplyUri = true;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
             this.InitMethods();
+
+            //comboBoxUri.Text = "https://rho.me/";
+            //buttonApply_Click(sender, e);
+
+            try
+            {
+                this.LoadSettings();
+            }
+            catch
+            {
+                // dismiss
+            }
+
+            // ASSERT
+            //this.DoSettingsAssert();
         }
+
 
         private void InitMethods()
         {
@@ -37,7 +57,7 @@ namespace Keeker.Client.Gui
         {
             bool parsed = Uri.TryCreate(comboBoxUri.Text, UriKind.Absolute, out var uri);
 
-            if (parsed)
+            if (parsed && _autoApplyUri)
             {
                 var host = uri.Authority;
                 this.SetRequestHeader("Host", host, 0);
@@ -155,7 +175,78 @@ namespace Keeker.Client.Gui
 
         private void SaveSettings()
         {
-            throw new NotImplementedException();
+            var appSettings = new AppSettings
+            {
+                LastMethod = comboBoxMethod.Text,
+                LastUri = comboBoxUri.Text,
+                LastHeaders = this.GetRequestHeaders()
+                    .Select(Helper.HttpHeaderToDto)
+                    .ToList(),
+            };
+
+            Program.Instance.SaveSettings(appSettings);
+        }
+
+        private void LoadSettings()
+        {
+            var appSettings = Program.Instance.LoadSettings();
+            if (appSettings != null)
+            {
+                this.ApplySettings(appSettings);
+            }
+        }
+
+        private void ApplySettings(AppSettings appSettings)
+        {
+            _autoApplyUri = false;
+
+            if (appSettings.LastMethod != null)
+            {
+                comboBoxMethod.Text = appSettings.LastMethod;
+            }
+
+            if (appSettings.LastUri != null)
+            {
+                comboBoxUri.Text = appSettings.LastUri;
+            }
+
+            if (appSettings.LastHeaders != null)
+            {
+                foreach (var headerDto in appSettings.LastHeaders)
+                {
+                    var header = new HttpHeader(headerDto.Name, headerDto.Value);
+                    this.AddRequestHeader(header, null);
+                }
+            }
+
+            _autoApplyUri = true;
+        }
+
+        private static void MustBeTrue(bool assertion)
+        {
+            if (!assertion)
+            {
+                throw new Exception(":(");
+            }
+        }
+
+        private void DoSettingsAssert()
+        {
+            var assert1 = comboBoxMethod.Text == "POST";
+            MustBeTrue(assert1);
+
+            var assert2 = comboBoxUri.Text == "https://rho.me/";
+            MustBeTrue(assert2);
+
+            var headers = this.GetRequestHeaders();
+            var assert3 = headers.Count == 1;
+            MustBeTrue(assert3);
+
+            var assert4 = headers[0].Name == "Host";
+            var assert5 = headers[0].Value == "rho.me";
+
+            MustBeTrue(assert4 && assert5);
+
         }
     }
 }

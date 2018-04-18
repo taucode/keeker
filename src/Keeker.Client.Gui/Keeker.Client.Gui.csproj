@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSettings.cs" />
     <Compile Include="EditHeaderDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,6 +97,9 @@
       <Project>{5154FDB4-1B39-444F-97D8-F560D71255FB}</Project>
       <Name>Keeker.UI</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\folder_open_arrow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

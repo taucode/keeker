@@ -107,6 +107,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "EditHeaderDialog";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "EditHeaderDialog";
             this.ResumeLayout(false);

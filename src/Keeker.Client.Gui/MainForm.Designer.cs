@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.textBoxEndPoint = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.listViewConnections = new System.Windows.Forms.ListView();
@@ -52,6 +53,9 @@
             this.tabPageText = new System.Windows.Forms.TabPage();
             this.tabPageBinary = new System.Windows.Forms.TabPage();
             this.panelResponse = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerRequestResponse)).BeginInit();
             this.splitContainerRequestResponse.Panel1.SuspendLayout();
             this.splitContainerRequestResponse.Panel2.SuspendLayout();
@@ -159,6 +163,9 @@
             // 
             // tabPagePrepare
             // 
+            this.tabPagePrepare.Controls.Add(this.button3);
+            this.tabPagePrepare.Controls.Add(this.button2);
+            this.tabPagePrepare.Controls.Add(this.button1);
             this.tabPagePrepare.Controls.Add(this.comboBoxUri);
             this.tabPagePrepare.Controls.Add(this.buttonDeleteHeader);
             this.tabPagePrepare.Controls.Add(this.buttonEditHeader);
@@ -312,6 +319,33 @@
             this.panelResponse.Size = new System.Drawing.Size(416, 480);
             this.panelResponse.TabIndex = 0;
             // 
+            // button1
+            // 
+            this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
+            this.button1.Location = new System.Drawing.Point(265, 4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(27, 25);
+            this.button1.TabIndex = 10;
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Image = ((System.Drawing.Image)(resources.GetObject("button2.Image")));
+            this.button2.Location = new System.Drawing.Point(199, 4);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(27, 25);
+            this.button2.TabIndex = 11;
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Image = ((System.Drawing.Image)(resources.GetObject("button3.Image")));
+            this.button3.Location = new System.Drawing.Point(232, 4);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(27, 25);
+            this.button3.TabIndex = 12;
+            this.button3.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -365,6 +399,9 @@
         private System.Windows.Forms.Button buttonAddHeader;
         private System.Windows.Forms.TabPage tabPageBinary;
         private System.Windows.Forms.ComboBox comboBoxUri;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button3;
     }
 }
 

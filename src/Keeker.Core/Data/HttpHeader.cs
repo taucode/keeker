@@ -1,4 +1,5 @@
-﻿using Keeker.Core.Exceptions;
+﻿using System;
+using Keeker.Core.Exceptions;
 using System.Text;
 
 namespace Keeker.Core.Data
@@ -7,8 +8,8 @@ namespace Keeker.Core.Data
     {
         public HttpHeader(string name, string value)
         {
-            this.Name = name;
-            this.Value = value;
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Value = value ?? throw new ArgumentNullException(nameof(value));
 
             this.ByteCount =
                 this.Name.Length + 1 + 1 + // ':' and ' '

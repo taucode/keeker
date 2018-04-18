@@ -6,10 +6,10 @@ using System.Net.Http;
 namespace Keeker.Core.Test
 {
     [TestFixture]
-    public class HttpMetadataTest
+    public class HttpRequestLineBuilderTest
     {
         [Test]
-        public void HttpRequestLineBuilder_ConstructorWithNoParameters_CreatesValidRequestLine()
+        public void Constructor_NoParameters_CreatesValidRequestLine()
         {
             // Arrange
             var requestLineBuilder = new HttpRequestLineBuilder();
@@ -19,11 +19,14 @@ namespace Keeker.Core.Test
             var lineString = line.ToString();
 
             // Assert
+            Assert.That(requestLineBuilder.Method.ToString(), Is.EqualTo("GET"));
+            Assert.That(requestLineBuilder.RequestUri, Is.EqualTo("/"));
+            Assert.That(requestLineBuilder.Version, Is.EqualTo("HTTP/1.1"));
             Assert.That(lineString, Is.EqualTo("GET / HTTP/1.1\r\n"));
         }
 
         [Test]
-        public void HttpRequestLineBuilder_ConstructorWithValidUri_CreatesValidRequestLine()
+        public void Constructor_ValidUri_CreatesValidRequestLine()
         {
             // Arrange
             var requestLineBuilder = new HttpRequestLineBuilder("/index.html");
@@ -33,12 +36,15 @@ namespace Keeker.Core.Test
             var lineString = line.ToString();
 
             // Assert
+            Assert.That(requestLineBuilder.Method.ToString(), Is.EqualTo("GET"));
+            Assert.That(requestLineBuilder.RequestUri, Is.EqualTo("/index.html"));
+            Assert.That(requestLineBuilder.Version, Is.EqualTo("HTTP/1.1"));
             Assert.That(lineString, Is.EqualTo("GET /index.html HTTP/1.1\r\n"));
         }
 
         [Test]
-        public void HttpRequestLineBuilder_ConstructorWithNullUri_ThrowsArgumentNullException()
-        {   
+        public void Constructor_NullUri_ThrowsArgumentNullException()
+        {
             // Arrange
             string uri = null;
 
@@ -48,23 +54,26 @@ namespace Keeker.Core.Test
         }
 
         [Test]
-        public void HttpRequestLineBuilder_ConstructorWithValidMethodAndUri_CreatesValidRequestLine()
+        public void Constructor_ValidMethodAndUri_CreatesValidRequestLine()
         {
             // Arrange
-            var requestLineBuilder = new HttpRequestLineBuilder(HttpMethod.Put, "/index.html");
+            var requestLineBuilder = new HttpRequestLineBuilder(HttpMethod.Put, "/do-put-data");
 
             // Act
             var line = requestLineBuilder.Build();
             var lineString = line.ToString();
 
             // Assert
-            Assert.That(lineString, Is.EqualTo("PUT /index.html HTTP/1.1\r\n"));
+            Assert.That(requestLineBuilder.Method.ToString(), Is.EqualTo("PUT"));
+            Assert.That(requestLineBuilder.RequestUri, Is.EqualTo("/do-put-data"));
+            Assert.That(requestLineBuilder.Version, Is.EqualTo("HTTP/1.1"));
+            Assert.That(lineString, Is.EqualTo("PUT /do-put-data HTTP/1.1\r\n"));
         }
 
         [Test]
         [TestCase(null)]
         [TestCase("/index.html")]
-        public void HttpRequestLineBuilder_ConstructorWithNullMethod_ThrowsArgumentNullException(string uri)
+        public void Constructor_NullMethod_ThrowsArgumentNullException(string uri)
         {
             // Arrange
 
@@ -74,7 +83,7 @@ namespace Keeker.Core.Test
         }
 
         [Test]
-        public void HttpRequestLineBuilder_ConstructorWithValidMethodAndNullUri_ThrowsArgumentNullException()
+        public void Constructor_ValidMethodAndNullUri_ThrowsArgumentNullException()
         {
             // Arrange
 

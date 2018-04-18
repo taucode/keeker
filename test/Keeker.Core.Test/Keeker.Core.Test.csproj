@@ -47,7 +47,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HttpMetadataTest.cs" />
+    <Compile Include="HttpHeaderTest.cs" />
+    <Compile Include="HttpRequestLineBuilderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

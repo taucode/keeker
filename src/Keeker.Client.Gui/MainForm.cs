@@ -35,7 +35,13 @@ namespace Keeker.Client.Gui
 
         private void comboBoxUri_TextChanged(object sender, EventArgs e)
         {
-            this.SetRequestHeader("Host", comboBoxUri.Text, 0);
+            bool parsed = Uri.TryCreate(comboBoxUri.Text, UriKind.Absolute, out var uri);
+
+            if (parsed)
+            {
+                var host = uri.Authority;
+                this.SetRequestHeader("Host", host, 0);
+            }
         }
 
         private void SetRequestHeader(string name, string value, int? index = null)
@@ -71,7 +77,7 @@ namespace Keeker.Client.Gui
             }
             else
             {
-                throw new NotImplementedException();
+                listViewHeaders.Items.Add(this.CreateListViewItemFromHeader(header));
             }
         }
 
@@ -127,7 +133,12 @@ namespace Keeker.Client.Gui
         private void buttonAddHeader_Click(object sender, EventArgs e)
         {
             var dlg = new EditHeaderDialog();
-            dlg.ShowDialog();
+            var header = dlg.CreateHeader();
+
+            if (header != null)
+            {
+                this.SetRequestHeader(header.Name, header.Value, null);
+            }
         }
     }
 }

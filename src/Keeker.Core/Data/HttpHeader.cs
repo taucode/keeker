@@ -1,5 +1,5 @@
-﻿using System;
-using Keeker.Core.Exceptions;
+﻿using Keeker.Core.Exceptions;
+using System;
 using System.Text;
 
 namespace Keeker.Core.Data
@@ -8,8 +8,29 @@ namespace Keeker.Core.Data
     {
         public HttpHeader(string name, string value)
         {
-            this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.Value = value ?? throw new ArgumentNullException(nameof(value));
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (!CoreHelper.IsValidHeaderName(name))
+            {
+                throw new ArgumentException($"Bad header name: '{name}'", nameof(name));
+            }
+
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            if (!CoreHelper.IsValidHeaderValue(value))
+            {
+                throw new ArgumentException($"Bad header value: '{value}'", nameof(value));
+            }
+
+
+            this.Name = name;
+            this.Value = value;
 
             this.ByteCount =
                 this.Name.Length + 1 + 1 + // ':' and ' '

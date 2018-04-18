@@ -8,6 +8,8 @@ namespace Keeker.Core.Test
     [TestFixture]
     public class HttpRequestLineBuilderTest
     {
+        // TODO: valid uri chars below
+        // ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=`%
         [Test]
         public void Constructor_NoParameters_CreatesValidRequestLine()
         {
@@ -23,6 +25,47 @@ namespace Keeker.Core.Test
             Assert.That(requestLineBuilder.RequestUri, Is.EqualTo("/"));
             Assert.That(requestLineBuilder.Version, Is.EqualTo("HTTP/1.1"));
             Assert.That(lineString, Is.EqualTo("GET / HTTP/1.1\r\n"));
+        }
+
+        [Test]
+        [TestCase("get")]
+        [TestCase(" GET")]
+        [TestCase("GET ")]
+        [TestCase("")]
+        public void Constructor_BadMethod_ThrowsArgumentException(string badMethod)
+        {
+            // Arrange
+
+            // Act & Assert
+
+            // Assert
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        [TestCase(" /")]
+        [TestCase("/ ")]
+        [TestCase("")]
+        [TestCase("/документ")]
+        [TestCase("\"")]
+        [TestCase("\x7f")]
+        [TestCase("\x1f")]
+        [TestCase("\x01")]
+        [TestCase("\x81")]
+        public void Constructor_BadUri_ThrowsArgumentException(string badUri)
+        {
+            throw new NotImplementedException(); // bad method? bad uri? bad version?
+        }
+
+        [Test]
+        [TestCase("HTTP-3")]
+        [TestCase("")]
+        [TestCase("HTTP/1.1 ")]
+        [TestCase("XTTП")]
+        [TestCase("HTTP\\1")]
+        public void Constructor_BadVersion_ThrowsArgumentException(string badVersion)
+        {
+            throw new NotImplementedException(); // bad method? bad uri? bad version?
         }
 
         [Test]

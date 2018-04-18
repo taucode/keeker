@@ -274,7 +274,7 @@ namespace Keeker.Core
         {
             return httpHeaders.Single(x => x.Name == "Transfer-Encoding").Value.ToEnum<HttpTransferEncoding>();
         }
-        
+
         public static string ToInfoString(this Socket socket, bool includeRemoteEndpoint = false)
         {
             var sb = new StringBuilder();
@@ -440,6 +440,48 @@ namespace Keeker.Core
             builder.Replace("Content-Length", contentLength.ToString());
             return builder;
         }
+
+        private static readonly HashSet<char> ValidHeaderNameChars;
+        private static readonly HashSet<char> ValidHeaderValueChars;
+
+        static CoreHelper()
+        {
+            ValidHeaderNameChars = new HashSet<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-");
+
+            var validHeaderValueChars = Enumerable.Range(0x20, 128 - 0x20 - 1).Select(n => (char)n);
+            ValidHeaderValueChars = new HashSet<char>(validHeaderValueChars);
+        }
+
+        public static bool IsValidHeaderValue(string value)
+        {
+            if (value == null)
+            {
+                return false;
+            }
+
+            if (value.Length == 0)
+            {
+                return true; // RFC allows empty header values
+            }
+
+            return value.All(c => ValidHeaderValueChars.Contains(c));
+        }
+
+        public static bool IsValidHeaderName(string name)
+        {
+            if (name == null)
+            {
+                return false;
+            }
+
+            if (name.Length == 0)
+            {
+                return false;
+            }
+
+            return name.All(c => ValidHeaderNameChars.Contains(c));
+        }
+
 
         #endregion
     }

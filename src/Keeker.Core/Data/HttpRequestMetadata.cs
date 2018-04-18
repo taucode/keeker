@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace Keeker.Core.Data
 {
@@ -25,6 +26,16 @@ namespace Keeker.Core.Data
 
                 return stream.ToArray();
             }
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.Append(this.Line);
+            sb.Append(this.Headers);
+
+            var res = sb.ToString();
+            return res;
         }
 
         public static HttpRequestMetadata Parse(byte[] buffer, int start)

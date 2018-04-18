@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,6 +42,11 @@ namespace Keeker.Core.Data
 
                 return stream.ToArray();
             }
+        }
+
+        public override string ToString()
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerator<HttpHeader> GetEnumerator()

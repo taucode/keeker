@@ -12,7 +12,7 @@ namespace Keeker.Core.Test
         [TestCase("Host", "rho.me")]
         [TestCase("Strange-Empty-Header", "")]
         [TestCase("Strange-Header", "~!@#$%^&*()_+?><,.;\"'")]
-        public void Constructor_ValidArguments_CreatesHeader(string name, string value)
+        public void Constructor_ValidArguments_RunsOk(string name, string value)
         {
             // Arrange
 
@@ -97,6 +97,26 @@ namespace Keeker.Core.Test
             Assert.That(header, Is.Not.Null);
             Assert.That(header.Name, Is.EqualTo("Host"));
             Assert.That(header.Value, Is.EqualTo(expectedHeaderValue));
+        }
+
+        [Test]
+        public void Parse_BufferIsNull_ThrowsArgumentNullException()
+        {
+            // Arrange
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentNullException>(() => HttpHeader.Parse(null, 5));
+            Assert.That(ex.ParamName, Is.EqualTo("buffer"));
+        }
+
+        [Test]
+        public void Parse_StartIsOutOfRange_ThrowsArgumentOutOfRangeException()
+        {
+            // Arrange
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => HttpHeader.Parse(new byte[10], -1));
+            Assert.That(ex.ParamName, Is.EqualTo("start"));
         }
 
         [Test]

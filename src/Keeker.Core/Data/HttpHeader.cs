@@ -55,6 +55,16 @@ namespace Keeker.Core.Data
 
         public static HttpHeader Parse(byte[] buffer, int start)
         {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            if (start < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
             var crlfIndex = buffer.IndexOfSubarray(CoreHelper.CrLfBytes, start);
 
             if (crlfIndex == -1)

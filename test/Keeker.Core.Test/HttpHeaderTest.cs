@@ -1,5 +1,5 @@
-﻿
-using Keeker.Core.Data;
+﻿using Keeker.Core.Data;
+using Keeker.Core.Exceptions;
 using NUnit.Framework;
 using System;
 
@@ -32,7 +32,7 @@ namespace Keeker.Core.Test
         [TestCase("Host\r")]
         [TestCase("Host:")]
         [TestCase("Host&")]
-        [TestCase("")]
+        [TestCase("")] // empty header value is allowed by RFC
         public void Constructor_BadName_ThrowsArgumentException(string badName)
         {
             // Arrange
@@ -62,7 +62,6 @@ namespace Keeker.Core.Test
         [Test]
         [TestCase(null)]
         [TestCase("rho.me")]
-        [TestCase("tau.com")]
         public void Constructor_NameIsNull_ThrowsArgumentNullException(string value)
         {
             // Arrange
@@ -84,59 +83,103 @@ namespace Keeker.Core.Test
         }
 
         [Test]
-        public void Parse_ValidInput_ParsesCorrectly()
+        [TestCase("\xf0\xf0\xf0\xf0\xf0Host: rho.me\r\nxf0\xf0xf0\xf0xf0\xf0", 5, "rho.me")]
+        [TestCase("\xf0\xf0\xf0\xf0\xf0Host: \r\nxf0\xf0xf0\xf0xf0\xf0", 5, "")]
+        public void Parse_ValidInput_ParsesCorrectly(string inputString, int start, string expectedHeaderValue)
         {
             // Arrange
+            var input = inputString.ToAsciiBytes();
 
             // Act
+            var header = HttpHeader.Parse(input, start);
 
             // Assert
-            Assert.Fail();
+            Assert.That(header, Is.Not.Null);
+            Assert.That(header.Name, Is.EqualTo("Host"));
+            Assert.That(header.Value, Is.EqualTo(expectedHeaderValue));
+        }
+
+        [Test]
+        public void Parse_EmptyInput_ReturnsNull()
+        {
+            // Arrange
+            var input = "\xf0\xf0\xf0\xf0\xf0\r\nxf0\xf0xf0\xf0xf0\xf0".ToAsciiBytes();
+
+            // Act
+            var header = HttpHeader.Parse(input, 5);
+
+            // Assert
+            Assert.That(header, Is.Null);
         }
 
         [Test]
         public void Parse_TwoSequentialCrLfs_ParsesCorrectly()
         {
             // Arrange
+            var input = "\xf0\xf0\xf0\xf0\xf0Host: rho.me\r\n\r\nHost: taucode.com\xf0\xf0\xf0\xf0\xf0\xf0".ToAsciiBytes();
 
             // Act
+            var header = HttpHeader.Parse(input, 5);
 
             // Assert
-            Assert.Fail();
+            Assert.That(header, Is.Not.Null);
+            Assert.That(header.Name, Is.EqualTo("Host"));
+            Assert.That(header.Value, Is.EqualTo("rho.me"));
         }
 
         [Test]
         public void Parse_TwoNonSequentialCrLfs_ParsesCorrectly()
         {
             // Arrange
+            var input = "\xf0\xf0\xf0\xf0\xf0Host: rho.me\r\nHost: wat.net\r\nHost: taucode.com\xf0\xf0\xf0\xf0\xf0\xf0".ToAsciiBytes();
 
             // Act
+            var header = HttpHeader.Parse(input, 5);
 
             // Assert
-            Assert.Fail();
+            Assert.That(header, Is.Not.Null);
+            Assert.That(header.Name, Is.EqualTo("Host"));
+            Assert.That(header.Value, Is.EqualTo("rho.me"));
         }
 
         [Test]
-        public void Parse_BadFormedHeader_Error()
+        [TestCase("...Host : rho.me\r\n", 3)]
+        [TestCase("...Host:rho.me\r\n", 3)]
+        [TestCase("...Host rho.me\r\n", 3)]
+        [TestCase("...Host\r\n", 3)]
+        public void Parse_BadFormedHeader_ThrowsBadHttpDataException(string inputString, int start)
         {
             // Arrange
+            var input = inputString.ToAsciiBytes();
 
-            // Act
-
-            // Assert
-            Assert.Fail();
+            // Act & Assert
+            Assert.Throws<BadHttpDataException>(() => HttpHeader.Parse(input, start));
         }
 
         [Test]
-        public void Parse_NoCrLf_ReturnsNull()
+        [TestCase("...Content Length: 1488\r\n", 3)]
+        [TestCase("...Content\0x01Length: 1488\r\n", 3)]
+        [TestCase("...Content\0x81Length: 1488\r\n", 3)]
+        [TestCase("...Content.Length: 1488\r\n", 3)]
+        [TestCase("...Мой-заголовок: 1488\r\n", 3)]
+        public void Parse_BadHeaderName_ThrowsBadHttpDataException(string inputString, int start)
         {
             // Arrange
+            var input = inputString.ToAsciiBytes();
 
-            // Act
-
-            // Assert
-            Assert.Fail();
+            // Act & Assert
+            Assert.Throws<BadHttpDataException>(() => HttpHeader.Parse(input, start));
         }
 
+        [Test]
+        public void Parse_NoCrLf_ThrowsBadHttpDataException()
+        {
+            // Arrange
+            var input = "\xf0\xf0\xf0\xf0\xf0Host: rho.me\r\rxf0\xf0xf0\xf0xf0\xf0".ToAsciiBytes();
+
+            // Act & Assert
+            var ex = Assert.Throws<BadHttpDataException>(() => HttpHeader.Parse(input, 5));
+            Assert.That(ex.Message, Is.EqualTo("Header-delimiting CRLF not found"));
+        }
     }
 }

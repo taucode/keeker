@@ -56,23 +56,43 @@ namespace Keeker.Core.Data
         public static HttpHeader Parse(byte[] buffer, int start)
         {
             var crlfIndex = buffer.IndexOfSubarray(CoreHelper.CrLfBytes, start);
+
+            if (crlfIndex == -1)
+            {
+                throw new BadHttpDataException("Header-delimiting CRLF not found");
+            }
+
             if (crlfIndex == start)
             {
                 return null;
             }
+
             var count = crlfIndex - start;
             var line = buffer.ToAsciiString(start, count);
 
             var colonPos = line.IndexOf(':');
             if (colonPos == -1)
             {
-                throw new BadHttpDataException();
+                throw new BadHttpDataException("Header-splitting colon not found");
+            }
+
+            var spacePos = colonPos + 1;
+            if (spacePos >= line.Length || line[spacePos] != ' ')
+            {
+                throw new BadHttpDataException("Could not parse HTTP header");
             }
 
             var name = line.Substring(0, colonPos);
             var value = line.Substring(colonPos + 2); // skip ':' and following ' '.
 
-            return new HttpHeader(name, value);
+            try
+            {
+                return new HttpHeader(name, value);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new BadHttpDataException("Could not parse HTTP header", ex);
+            }
         }
     }
 }

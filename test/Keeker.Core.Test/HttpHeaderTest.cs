@@ -110,12 +110,14 @@ namespace Keeker.Core.Test
         }
 
         [Test]
-        public void Parse_StartIsOutOfRange_ThrowsArgumentOutOfRangeException()
+        [TestCase(-1)]
+        [TestCase(1000)]
+        public void Parse_StartIsOutOfRange_ThrowsArgumentOutOfRangeException(int start)
         {
             // Arrange
 
             // Act & Assert
-            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => HttpHeader.Parse(new byte[10], -1));
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => HttpHeader.Parse(new byte[10], start));
             Assert.That(ex.ParamName, Is.EqualTo("start"));
         }
 

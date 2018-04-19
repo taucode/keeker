@@ -60,55 +60,62 @@ namespace Keeker.Core.Test
         public void Constructor_VersionIsInvalid_ThrowsBadHttpDataException()
         {
             // Arrange
-            throw new BadHttpDataException();
+
             // Act & Assert
-            var ex = Assert.Throws<ArgumentNullException>(() =>
-                new HttpStatusLine(null, HttpStatusCode.Accepted, "-wrong...reason? :("));
+            var ex = Assert.Throws<ArgumentException>(() =>
+                new HttpStatusLine("HTTP-1.1", HttpStatusCode.Accepted, "-wrong...reason? :("));
             Assert.That(ex.ParamName, Is.EqualTo("version"));
+            Assert.That(ex.Message, Does.StartWith("Invalid HTTP version"));
         }
 
         [Test]
         public void Constructor_ReasonIsNull_ThrowsArgumentNullException()
         {
             // Arrange
-            throw new NotImplementedException();
+
             // Act & Assert
             var ex = Assert.Throws<ArgumentNullException>(() =>
-                new HttpStatusLine(null, HttpStatusCode.Accepted, "-wrong...reason? :("));
-            Assert.That(ex.ParamName, Is.EqualTo("version"));
+                new HttpStatusLine("HTTP/1.1", HttpStatusCode.Accepted, null));
+            Assert.That(ex.ParamName, Is.EqualTo("reason"));
         }
 
         [Test]
         public void Constructor_ReasonIsInvalid_ThrowsBadHttpDataException()
         {
             // Arrange
-            throw new NotImplementedException();
+            
             // Act & Assert
-            var ex = Assert.Throws<ArgumentNullException>(() =>
-                new HttpStatusLine(null, HttpStatusCode.Accepted, "-wrong...reason? :("));
-            Assert.That(ex.ParamName, Is.EqualTo("version"));
+            var ex = Assert.Throws<ArgumentException>(() =>
+                new HttpStatusLine("HTTP/1.1", HttpStatusCode.Accepted, "-wrong...reason? :("));
+            Assert.That(ex.ParamName, Is.EqualTo("reason"));
         }
 
         [Test]
         public void Constructor_CustomCodeAndReason_RunsOk()
         {
             // Arrange
-            throw new NotImplementedException();
-            // Act & Assert
-            var ex = Assert.Throws<ArgumentNullException>(() =>
-                new HttpStatusLine(null, HttpStatusCode.Accepted, "-wrong...reason? :("));
-            Assert.That(ex.ParamName, Is.EqualTo("version"));
+
+            // Act
+            var line = new HttpStatusLine("HTTP/1.1", (HttpStatusCode)1488, "Special Reason");
+
+            // Assert
+            Assert.That(line.Version, Is.EqualTo("HTTP/1.1"));
+            Assert.That((int)line.Code, Is.EqualTo(1488));
+            Assert.That(line.Reason, Is.EqualTo("Special Reason"));
         }
 
         [Test]
-        public void Constructor_CustomCodeWithoutReason_ThrowsBadHttpDataException()
+        public void Constructor_CustomCodeWithoutReason_RunsOkReasonIsUnknown()
         {
             // Arrange
-            throw new BadHttpDataException();
-            // Act & Assert
-            var ex = Assert.Throws<ArgumentNullException>(() =>
-                new HttpStatusLine(null, HttpStatusCode.Accepted, "-wrong...reason? :("));
-            Assert.That(ex.ParamName, Is.EqualTo("version"));
+
+            // Act
+            var line = new HttpStatusLine((HttpStatusCode)1488);
+
+            // Assert
+            Assert.That(line.Version, Is.EqualTo("HTTP/1.1"));
+            Assert.That((int)line.Code, Is.EqualTo(1488));
+            Assert.That(line.Reason, Is.EqualTo("Unknown"));
         }
 
         [Test]
@@ -133,14 +140,48 @@ namespace Keeker.Core.Test
             Assert.That(line.ToArray(), Is.EquivalentTo(expectedString.ToAsciiBytes()));
         }
 
-        // *** parse
-        
-        // null
-        // start -5
-        // bad stream: bad version
-        // bad stream: bad code
-        // bad stream: bad reason
-        // bad stream: violation of spaces
+        [Test]
+        [TestCase(-1)]
+        [TestCase(100)]
+        public void Parse_BufferIsNull_ThrowsArgumentNullException(int start)
+        {
+            // Arrange
 
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentNullException>(() => HttpStatusLine.Parse(null, start));
+            Assert.That(ex.ParamName, Is.EqualTo("buffer"));
+        }
+
+        [Test]
+        [TestCase(-1)]
+        [TestCase(1000)]
+        public void Parse_StartIsOutOfRange_ThrowsArgumentOutOfRangeException(int start)
+        {
+            // Arrange
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => HttpStatusLine.Parse(new byte[10], start));
+            Assert.That(ex.ParamName, Is.EqualTo("start"));
+        }
+
+        [Test]
+        [TestCase("\x01\x01\x01 HTTP/1.1  200 OK\r\n")]
+        [TestCase("\x01\x01\x01HTTP/1.1  200 OK\r\n")]
+        [TestCase("\x01\x01\x01HTTP/1.1 200  OK\r\n")]
+        [TestCase("\x01\x01\x01HTTP/1.1 200 OK\r")]
+        [TestCase("\x01\x01\x01HTTP/1.1 200 OK\n")]
+        [TestCase("\x01\x01\x01HTTP/1.1 200 OK")]
+        [TestCase("\x01\x01\x01HTTP/1.1 200a OK")]
+        [TestCase("\x01\x01\x01HTTP/1.1 200 Reason?\r\n")]
+        [TestCase("\x01\x01\x01\r\n")]
+        [TestCase("\x01\x01\x01s")]
+        public void Parse_BufferIsInvalid_ThrowsBadHttpDataException(string input)
+        {
+            // Arrange
+            var buffer = input.ToAsciiBytes();
+
+            // Act & Assert
+            var ex = Assert.Throws<BadHttpDataException>(() => HttpStatusLine.Parse(buffer, 3));
+        }
     }
 }

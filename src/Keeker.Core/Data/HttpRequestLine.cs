@@ -89,7 +89,7 @@ namespace Keeker.Core.Data
                 throw new ArgumentNullException(nameof(buffer));
             }
 
-            if (start < 0)
+            if (start < 0 || start >= buffer.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(start));
             }
@@ -129,7 +129,6 @@ namespace Keeker.Core.Data
             try
             {
                 var line = new HttpRequestLine(new HttpMethod(method), uri, version);
-
                 return line;
             }
             catch (ArgumentException ex)

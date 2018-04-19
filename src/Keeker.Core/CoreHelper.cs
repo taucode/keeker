@@ -446,7 +446,7 @@ namespace Keeker.Core
         private static readonly HashSet<char> ValidHttpMethodChars;
         private static readonly HashSet<char> ValidUriChars;
         private static readonly HashSet<char> ValidHttpVersionChars;
-        
+        private static readonly HashSet<char> ValidStatusReasonChars;
 
         static CoreHelper()
         {
@@ -460,6 +460,8 @@ namespace Keeker.Core
             ValidUriChars = new HashSet<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=`%");
 
             ValidHttpVersionChars = new HashSet<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./");
+
+            ValidStatusReasonChars = new HashSet<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -");
         }
 
         public static bool IsValidHeaderValue(string value)
@@ -520,6 +522,16 @@ namespace Keeker.Core
             }
 
             return version.Length != 0 && version.All(c => ValidHttpVersionChars.Contains(c));
+        }
+
+        public static bool IsValidStatusReason(string reason)
+        {
+            if (reason == null)
+            {
+                return false;
+            }
+
+            return reason.Length != 0 && reason.All(c => ValidStatusReasonChars.Contains(c));
         }
 
         #endregion

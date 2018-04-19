@@ -84,6 +84,16 @@ namespace Keeker.Core.Data
 
         public static HttpRequestLine Parse(byte[] buffer, int start)
         {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            if (start < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
             var crLfIndex = buffer.IndexOfSubarray(CoreHelper.CrLfBytes, start, -1);
             if (crLfIndex == -1)
             {
@@ -116,8 +126,16 @@ namespace Keeker.Core.Data
             length = crLfIndex - start;
             var version = buffer.ToAsciiString(start, length);
 
-            var line = new HttpRequestLine(new HttpMethod(method), uri, version);
-            return line;
+            try
+            {
+                var line = new HttpRequestLine(new HttpMethod(method), uri, version);
+
+                return line;
+            }
+            catch (ArgumentException ex)
+            {
+                throw new BadHttpDataException("Could not parse request line", ex);
+            }
         }
     }
 }

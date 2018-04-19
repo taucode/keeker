@@ -122,7 +122,7 @@ namespace Keeker.Core.Streams
 
             if (_innerStream is NetworkStream)
             {
-                var ns = (NetworkStream)_innerStream;
+                var ns = (NetworkStream)_innerStream; // todo000000[ak] what is going on here?!
 
 
                 BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;

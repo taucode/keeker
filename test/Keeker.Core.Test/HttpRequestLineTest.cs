@@ -1,4 +1,5 @@
 ﻿using Keeker.Core.Data;
+using Keeker.Core.Exceptions;
 using NUnit.Framework;
 using System;
 using System.Net.Http;
@@ -167,6 +168,44 @@ namespace Keeker.Core.Test
             Assert.That(line.Method.ToString(), Is.EqualTo(expectedMethod));
             Assert.That(line.RequestUri, Is.EqualTo(expectedUri));
             Assert.That(line.Version, Is.EqualTo(expectedVersion));
+        }
+
+        [Test]
+        [TestCase(5)]
+        [TestCase(-1)]
+        public void Parse_BufferIsNull_ThrowsArgumentNullException(int start)
+        {
+            // Arrange
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentNullException>(() => HttpRequestLine.Parse(null, 5));
+            Assert.That(ex.ParamName, Is.EqualTo("buffer"));
+        }
+
+        [Test]
+        public void Parse_StartIsOutOfRange_ThrowsArgumentOutOfRangeException()
+        {
+            // Arrange
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => HttpRequestLine.Parse(new byte[10], -1));
+            Assert.That(ex.ParamName, Is.EqualTo("start"));
+        }
+
+        [Test]
+        [TestCase("\x01\x01\x01GET /index.html HTTP/1.1")]
+        [TestCase("\x01\x01\x01GET /index.html HTTP/1.1\r")]
+        [TestCase("\x01\x01\x01GET /index.html HTTP/1.1\n")]
+        [TestCase("\x01\x01\x01GET1 /index.html HTTP/1.1\r\n")]
+        [TestCase("\x01\x01\x01POST /\x01index.htm HTTP/1.1\r\n")]
+        [TestCase("\x01\x01\x01PUT /do-action HTTP-1.0\r\n\r\n")]
+        public void Parse_BufferIsInvalid_ThrowsBadHttpDataException(string input)
+        {
+            // Arrange
+            var buffer = input.ToAsciiBytes();
+
+            // Act & Assert
+            Assert.Throws<BadHttpDataException>(() => HttpRequestLine.Parse(buffer, 3));
         }
     }
 }

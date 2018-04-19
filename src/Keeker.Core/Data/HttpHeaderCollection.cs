@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Keeker.Core.Data
 {
@@ -40,13 +40,23 @@ namespace Keeker.Core.Data
                     stream.WriteAll(header.ToArray());
                 }
 
+                stream.WriteAll(CoreHelper.CrLfBytes);
+
                 return stream.ToArray();
             }
         }
 
         public override string ToString()
         {
-            throw new NotImplementedException();
+            var sb = new StringBuilder();
+
+            foreach (var header in _headers)
+            {
+                sb.Append(header);
+            }
+
+            sb.Append(CoreHelper.CrLf);
+            return sb.ToString();
         }
 
         public IEnumerator<HttpHeader> GetEnumerator()

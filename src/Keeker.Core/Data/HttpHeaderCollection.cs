@@ -18,6 +18,16 @@ namespace Keeker.Core.Data
 
         public HttpHeaderCollection(IEnumerable<HttpHeader> headers)
         {
+            if (headers == null)
+            {
+                throw new ArgumentNullException(nameof(headers));
+            }
+
+            if (headers.Any(x => x == null))
+            {
+                throw new ArgumentException("'headers' cannot contain nulls", nameof(headers));
+            }
+
             _headers = new List<HttpHeader>(headers);
         }
 
@@ -33,6 +43,11 @@ namespace Keeker.Core.Data
 
         public bool ContainsName(string name)
         {
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
             var contains = _headers.Any(x => x.Name == name);
             return contains;
         }

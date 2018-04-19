@@ -8,6 +8,33 @@ namespace Keeker.Core.Test
     [TestFixture]
     public class HttpHeaderCollectionBuilder
     {
+        private string _initialHeadersString;
+        private HttpHeader[] _initialHeaders;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _initialHeadersString = @"Accept: text/html, application/xhtml+xml, image/jxr, */*
+Accept-Language: ru-RU
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299
+Accept-Encoding: gzip, deflate
+Host: allitebooks.com
+Connection: Keep-Alive
+
+";
+            _initialHeaders = new HttpHeader[]
+            {
+                new HttpHeader("Accept", "text/html, application/xhtml+xml, image/jxr, */*"),
+                new HttpHeader("Accept-Language", "ru-RU"),
+                new HttpHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299"),
+                new HttpHeader("Accept-Encoding", "gzip, deflate"),
+                new HttpHeader("Host", "allitebooks.com"),
+                new HttpHeader("Connection", "Keep-Alive"),
+            };
+
+
+        }
+
         [Test]
         public void Constructor_NoArguments_CreatesEmptyCollection()
         {
@@ -30,41 +57,23 @@ namespace Keeker.Core.Test
         public void Constructor_CollectionOfHeaders_CreatesCollectionWithCopiedHeaders()
         {
             // Arrange
-            var initialHeaders = new HttpHeader[]
-            {
-                new HttpHeader("Accept", "text/html, application/xhtml+xml, image/jxr, */*"),
-                new HttpHeader("Accept-Language", "ru-RU"),
-                new HttpHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299"),
-                new HttpHeader("Accept-Encoding", "gzip, deflate"),
-                new HttpHeader("Host", "allitebooks.com"),
-                new HttpHeader("Connection", "Keep-Alive"),
-            };
 
             // Act
-            var headers = new HttpHeaderCollection(initialHeaders);
+            var headers = new HttpHeaderCollection(_initialHeaders);
 
             // Assert
             Assert.That(headers.Count(), Is.EqualTo(6));
 
             for (int i = 0; i < 6; i++)
             {
-                Assert.That(headers.ElementAt(i), Is.SameAs(initialHeaders[i]));
+                Assert.That(headers.ElementAt(i), Is.SameAs(_initialHeaders[i]));
             }
 
             var headersString = headers.ToString();
-            var expectedHeadersString = @"Accept: text/html, application/xhtml+xml, image/jxr, */*
-Accept-Language: ru-RU
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299
-Accept-Encoding: gzip, deflate
-Host: allitebooks.com
-Connection: Keep-Alive
-
-";
-
-            Assert.That(headersString, Is.EqualTo(expectedHeadersString));
+            Assert.That(headersString, Is.EqualTo(_initialHeadersString));
 
             var binary = headers.ToArray();
-            Assert.That(binary, Is.EquivalentTo(expectedHeadersString.ToAsciiBytes()));
+            Assert.That(binary, Is.EquivalentTo(_initialHeadersString.ToAsciiBytes()));
         }
 
         [Test]
@@ -114,22 +123,40 @@ Connection: Keep-Alive
         public void Add_HeaderIsNull_ThrowsArgumentNullException()
         {
             // Arrange
+            var headers = new HttpHeaderCollection(_initialHeaders);
 
-            // Act
-
-            // Assert
-            Assert.Fail(); // don't forget ToString(), ToArray(), etc!
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentNullException>(() => headers.Add(null));
+            Assert.That(ex.ParamName, Is.EqualTo("header"));
         }
 
         [Test]
         public void Add_HeaderIsRepeating_AddsSameHeader()
         {
             // Arrange
+            var headers = new HttpHeaderCollection(_initialHeaders);
 
             // Act
+            var sameHeader = new HttpHeader(headers.ElementAt(0).Name, headers.ElementAt(0).Value);
+            headers.Add(sameHeader);
 
             // Assert
-            Assert.Fail(); // don't forget ToString(), ToArray(), etc!
+            Assert.That(headers.Count(), Is.EqualTo(7));
+            Assert.That(headers.Last(), Is.SameAs(sameHeader));
+
+            var headersString = headers.ToString();
+            Assert.That(headersString, Is.EqualTo(@"Accept: text/html, application/xhtml+xml, image/jxr, */*
+Accept-Language: ru-RU
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299
+Accept-Encoding: gzip, deflate
+Host: allitebooks.com
+Connection: Keep-Alive
+Accept: text/html, application/xhtml+xml, image/jxr, */*
+
+"));
+
+            var binary = headers.ToArray();
+            Assert.That(binary, Is.EquivalentTo(headersString.ToAsciiBytes()));
         }
 
         [Test]

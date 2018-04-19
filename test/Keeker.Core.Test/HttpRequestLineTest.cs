@@ -25,6 +25,7 @@ namespace Keeker.Core.Test
             Assert.That(line.Version, Is.EqualTo(version));
             Assert.That(line.ToString(), Is.EqualTo($"{method} {uri} {version}\r\n"));
             Assert.That(line.ByteCount, Is.EqualTo($"{method} {uri} {version}\r\n".Length));
+            Assert.That(line.ToArray(), Is.EquivalentTo($"{method} {uri} {version}\r\n".ToAsciiBytes()));
         }
 
         [Test]
@@ -44,6 +45,7 @@ namespace Keeker.Core.Test
             Assert.That(line.Version, Is.EqualTo(version));
             Assert.That(line.ToString(), Is.EqualTo($"{method} {uri} {version}\r\n"));
             Assert.That(line.ByteCount, Is.EqualTo($"{method} {uri} {version}\r\n".Length));
+            Assert.That(line.ToArray(), Is.EquivalentTo($"{method} {uri} {version}\r\n".ToAsciiBytes()));
         }
 
         [Test]
@@ -193,6 +195,7 @@ namespace Keeker.Core.Test
         }
 
         [Test]
+        [TestCase("\x01\x01\x01GET    /index.html    HTTP/1.1\r\n")]
         [TestCase("\x01\x01\x01GET /index.html HTTP/1.1")]
         [TestCase("\x01\x01\x01GET /index.html HTTP/1.1\r")]
         [TestCase("\x01\x01\x01GET /index.html HTTP/1.1\n")]

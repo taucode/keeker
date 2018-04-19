@@ -20,6 +20,11 @@ namespace Keeker.Core.Data
                 this.Reason.Length + CoreHelper.CrLfBytes.Length;
         }
 
+        public HttpStatusLine(HttpStatusCode code)
+            : this(CoreHelper.HttpVersion11, code, code.ToReason())
+        {
+        }
+
         public string Version { get; }
 
         public HttpStatusCode Code { get; }

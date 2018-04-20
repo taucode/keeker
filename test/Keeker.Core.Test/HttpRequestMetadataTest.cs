@@ -183,7 +183,7 @@ Connection: Keep-Alive
             var stringWithBadHeaders = @"жжжGET / HTTP/1.1
 Accept: text/html, application/xhtml+xml, image/jxr, */*
 Accept-Language: ru-RU" +
-"\x01Some-bad-header: The-Value" +
+"\x01Some-bad-header: The-Value\r\n" +
 @"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299
 Accept-Encoding: gzip, deflate
 Host: allitebooks.com

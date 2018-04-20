@@ -93,6 +93,16 @@ namespace Keeker.Core.Data
 
         public static HttpHeaderCollection Parse(byte[] buffer, int start)
         {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            if (start < 0 || start >= buffer.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
             var headers = new HttpHeaderCollection();
 
             while (true)

@@ -50,6 +50,8 @@
     <Compile Include="HttpHeaderCollectionTest.cs" />
     <Compile Include="HttpHeaderTest.cs" />
     <Compile Include="HttpRequestLineTest.cs" />
+    <Compile Include="HttpRequestMetadataTest.cs" />
+    <Compile Include="HttpResponseMetadataTest.cs" />
     <Compile Include="HttpStatusLineTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

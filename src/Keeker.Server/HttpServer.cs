@@ -11,7 +11,8 @@ namespace Keeker.Server
     {
         #region Logging
 
-        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+        //private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+        private static ILog GetLogger() => LogProvider.GetCurrentClassLogger();
 
         #endregion
 
@@ -26,6 +27,8 @@ namespace Keeker.Server
 
         private readonly IdGenerator _idGenerator;
         private readonly IHandlerFactory _handlerFactory;
+
+        //private readonly ILog _logger;
 
         #endregion
 
@@ -54,12 +57,12 @@ namespace Keeker.Server
                     _tcpListener = new TcpListener(_endPoint);
                     _tcpListener.Start();
 
-                    Logger.InfoFormat("Server started at {0}", _endPoint);
-                    Logger.InfoFormat("Server listening socket: {0}", _tcpListener.Server.ToInfoString());
+                    GetLogger().InfoFormat("Server started at {0}", _endPoint);
+                    GetLogger().InfoFormat("Server listening socket: {0}", _tcpListener.Server.ToInfoString());
                 }
                 catch (Exception ex)
                 {
-                    Logger.ErrorException("Could not start TCP listener", ex);
+                    GetLogger().ErrorException("Could not start TCP listener", ex);
 
                     try
                     {
@@ -82,7 +85,7 @@ namespace Keeker.Server
                 while (true)
                 {
                     var clientSocket = _tcpListener.AcceptSocket();
-                    Logger.InfoFormat("Server accepted connection: {0}", clientSocket.ToInfoString(true));
+                    GetLogger().InfoFormat("Server accepted connection: {0}", clientSocket.ToInfoString(true));
 
                     try
                     {
@@ -176,14 +179,14 @@ namespace Keeker.Server
 
                     _isRunning = true;
 
-                    Logger.InfoFormat("Starting the server");
+                    GetLogger().InfoFormat("Starting the server");
 
                     _listeningTask.Start();
 
                 }
                 catch (Exception ex)
                 {
-                    Logger.ErrorException("Error occured while starting server", ex);
+                    GetLogger().ErrorException("Error occured while starting server", ex);
                     throw;
                 }
             }
@@ -221,7 +224,7 @@ namespace Keeker.Server
             {
                 if (_isDisposed)
                 {
-                    Logger.Info("Server already disposed");
+                    GetLogger().Info("Server already disposed");
                     return;
                 }
 

@@ -1,5 +1,4 @@
-﻿using Serilog;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Keeker.UI
 {
@@ -9,12 +8,7 @@ namespace Keeker.UI
         {
             InitializeComponent();
 
-            var textBoxWriter = new TextBoxWriter(textBoxLog);
-
-            var log = new LoggerConfiguration()
-                .WriteTo.TextWriter(textBoxWriter, outputTemplate: "{Timestamp:HH:mm} [{Level}] ({Name:l}) {Message}{NewLine}{Exception}")
-                .CreateLogger();
-            Log.Logger = log;
+            this.TextWriter = new TextBoxWriter(textBoxLog);
         }
 
         private void buttonClear_Click(object sender, System.EventArgs e)
@@ -28,9 +22,6 @@ namespace Keeker.UI
             e.Cancel = true;
         }
 
-        public void StopLogging()
-        {
-            Log.Logger = null;
-        }
+        public TextBoxWriter TextWriter { get; }
     }
 }

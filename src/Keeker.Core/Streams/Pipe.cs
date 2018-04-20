@@ -16,7 +16,7 @@ namespace Keeker.Core.Streams
             _byteAccumulator2 = new ByteAccumulator();
 
             _pipeStream1 = new PipeStream(_byteAccumulator1, _byteAccumulator2);
-            _pipeStream1 = new PipeStream(_byteAccumulator2, _byteAccumulator1);
+            _pipeStream2 = new PipeStream(_byteAccumulator2, _byteAccumulator1);
         }
 
         public Stream Stream1 => _pipeStream1;
@@ -25,7 +25,8 @@ namespace Keeker.Core.Streams
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _pipeStream1.Dispose();
+            _pipeStream2.Dispose();
         }
     }
 }

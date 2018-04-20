@@ -196,8 +196,6 @@ namespace Keeker.Core.Test
         [Test]
         public void Parse_NoCrLf_ThrowsBadHttpDataException()
         {
-            throw new NotImplementedException(); // todo0000000[ak]: start out of range!
-
             // Arrange
             var input = "\xf0\xf0\xf0\xf0\xf0Host: rho.me\r\rxf0\xf0xf0\xf0xf0\xf0".ToAsciiBytes();
 

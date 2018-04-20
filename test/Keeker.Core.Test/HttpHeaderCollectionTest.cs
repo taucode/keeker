@@ -1,4 +1,5 @@
 ﻿using Keeker.Core.Data;
+using Keeker.Core.Exceptions;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Linq;
 namespace Keeker.Core.Test
 {
     [TestFixture]
-    public class HttpHeaderCollectionBuilder
+    public class HttpHeaderCollectionTest
     {
         private string _initialHeadersString;
         private HttpHeader[] _initialHeaders;
@@ -278,26 +279,49 @@ Connection: Keep-Alive
         public void Parse_StartIsOutOfRange_ThrowsArgumentOutOfRangeException(int start)
         {
             // Arrange
-            throw new NotImplementedException();
 
             // Act & Assert
-            //var ex = Assert.Throws<ArgumentNullException>(() => HttpHeaderCollection.Parse(null, start));
-            //Assert.That(ex.ParamName, Is.EqualTo("buffer"));
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => HttpHeaderCollection.Parse(new byte[10], start));
+            Assert.That(ex.ParamName, Is.EqualTo("start"));
         }
 
         [Test]
-        [TestCase("only one crlf at the end")]
-        [TestCase("no crlf")]
-        [TestCase("bad name")]
-        [TestCase("bad value")]
-        public void Parse_InputIsValid_ThrowsBadHttpDataException()
+        [TestCase(@"жжжAccept: text/html, application/xhtml+xml, image/jxr, */*
+Accept-Language: ru-RU
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299" +
+"\x01\x0002Accept-Encoding: gzip, deflate\r\n" +
+@"Host: allitebooks.com
+Connection: Keep-Alive
+
+")]
+        [TestCase(@"жжжAccept: text/html, application/xhtml+xml, image/jxr, */*
+Accept-Language: ru-RU
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299" +
+"\x01\x0002Accept-Encoding: gzip, deflate\r\n" +
+@"Host: allitebooks.com
+Connection: Keep-Alive
+
+")]
+        [TestCase(@"жжжAccept: text/html, application/xhtml+xml, image/jxr, */*
+Accept-Language: ru-RU
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299
+Плохое-имя: gzip, deflate
+Host: allitebooks.com
+Connection: Keep-Alive
+")] // one CRLF
+        [TestCase(@"жжжAccept: text/html, application/xhtml+xml, image/jxr, */*
+Accept-Language: ru-RU
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299
+Плохое-имя: gzip, deflate
+Host: allitebooks.com
+Connection: Keep-Alive")] // no CRLF at all
+        public void Parse_InputIsValid_ThrowsBadHttpDataException(string input)
         {
             // Arrange
+            var buffer = input.ToAsciiBytes();
 
-            // Act
-
-            // Assert
-            Assert.Fail(); // don't forget ToString(), ToArray(), etc!
+            // Act & Assert
+            Assert.Throws<BadHttpDataException>(() => HttpHeaderCollection.Parse(buffer, 3));
         }
     }
 }

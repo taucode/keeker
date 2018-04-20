@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Keeker.Core.Exceptions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -96,14 +97,21 @@ namespace Keeker.Core.Data
 
             while (true)
             {
-                var header = HttpHeader.Parse(buffer, start);
-                if (header == null)
+                try
                 {
-                    break;
-                }
+                    var header = HttpHeader.Parse(buffer, start);
+                    if (header == null)
+                    {
+                        break;
+                    }
 
-                headers.Add(header);
-                start += header.ByteCount;
+                    headers.Add(header);
+                    start += header.ByteCount;
+                }
+                catch (Exception ex)
+                {
+                    throw new BadHttpDataException("Could not parse header", ex);
+                }
             }
 
             return headers;

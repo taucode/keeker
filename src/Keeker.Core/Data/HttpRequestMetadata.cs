@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 
 namespace Keeker.Core.Data
@@ -7,8 +8,8 @@ namespace Keeker.Core.Data
     {
         public HttpRequestMetadata(HttpRequestLine line, HttpHeaderCollection headers)
         {
-            this.Line = line;
-            this.Headers = headers;
+            this.Line = line ?? throw new ArgumentNullException(nameof(line));
+            this.Headers = headers ?? throw new ArgumentNullException(nameof(headers));
         }
 
         public HttpRequestLine Line { get; }
@@ -21,8 +22,6 @@ namespace Keeker.Core.Data
             {
                 stream.WriteAll(this.Line.ToArray());
                 stream.WriteAll(this.Headers.ToArray());
-
-                stream.WriteAll(CoreHelper.CrLfBytes);
 
                 return stream.ToArray();
             }
@@ -41,7 +40,7 @@ namespace Keeker.Core.Data
         public static HttpRequestMetadata Parse(byte[] buffer, int start)
         {
             // parse line
-            var line = HttpRequestLine.Parse(buffer, 0);
+            var line = HttpRequestLine.Parse(buffer, start);
             start += line.ByteCount;
 
             // parse headers

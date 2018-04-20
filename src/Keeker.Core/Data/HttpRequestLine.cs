@@ -135,6 +135,10 @@ namespace Keeker.Core.Data
             {
                 throw new BadHttpDataException("Could not parse request line", ex);
             }
+            catch (FormatException ex)
+            {
+                throw new BadHttpDataException("Could not parse request line", ex);
+            }
         }
     }
 }

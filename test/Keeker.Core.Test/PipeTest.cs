@@ -1,12 +1,13 @@
 ﻿using Keeker.Core.Streams;
 using NUnit.Framework;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Keeker.Core.Test
 {
     [TestFixture]
     public class PipeTest
     {
-
         [Test]
         public void Write_ValidData_IsRead()
         {
@@ -38,6 +39,38 @@ namespace Keeker.Core.Test
 
             Assert.That(bytesReadByClient, Is.EqualTo(greeting.Length));
             Assert.That(greetingObtainedByClient, Is.EqualTo("Hello, Andy!"));
+
+            pipe.Dispose();
+        }
+
+        [Test]
+        public void Read_WriteZeroBytes_Reads()
+        {
+            // Arrange
+            var pipe = new Pipe();
+
+            var client = (PipeStream)pipe.Stream1;
+            var server = (PipeStream)pipe.Stream2;
+
+            byte[] serverBuffer = new byte[10];
+            int byteCountReadByServer = -999; // just to not be 0
+
+            // Act & Assert
+            var readingTask = new Task(() =>
+            {
+                byteCountReadByServer = server.Read(serverBuffer, 0, 10);
+            });
+            readingTask.Start();
+
+            Thread.Sleep(10);
+            Assert.That(server.IsReading, Is.True);
+
+            client.Write(new byte[0], 0, 0);
+
+            Thread.Sleep(10);
+            Assert.That(server.IsReading, Is.False);
+
+            Assert.That(byteCountReadByServer, Is.Zero);
 
             pipe.Dispose();
         }

@@ -22,13 +22,15 @@ namespace Keeker.Core.Streams
 
         public PipeStream(
             ByteAccumulator to,
-            ByteAccumulator from)
+            AutoResetEvent toSingal,
+            ByteAccumulator from,
+            AutoResetEvent fromSignal)
         {
             _to = to;
-            _toSignal = new AutoResetEvent(false);
+            _toSignal = toSingal;
 
             _from = from;
-            _fromSignal = new AutoResetEvent(false);
+            _fromSignal = fromSignal;
 
             _lock = new object();
 
@@ -36,6 +38,14 @@ namespace Keeker.Core.Streams
 
         public override void Flush()
         {
+            lock (_lock)
+            {
+                if (_isDisposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().Name);
+                }
+            }
+
             // idle
         }
 
@@ -80,15 +90,13 @@ namespace Keeker.Core.Streams
                         var gotSignal = _fromSignal.WaitOne(WAIT_MILLISECONDS);
                         if (gotSignal)
                         {
-                            throw new NotImplementedException();
-                        }
-                        else
-                        {
-                            throw new NotImplementedException();
+                            var countBittenAfterWaiting = _from.Bite(buffer, offset, count);
+                            return countBittenAfterWaiting; // we've got signal, so return wheither we have bitten or not.
                         }
                     }
                     else
                     {
+                        // got some bytes
                         return countBitten;
                     }
                 }
@@ -106,11 +114,14 @@ namespace Keeker.Core.Streams
         {
             lock (_lock)
             {
-
-
                 if (_isWriting)
                 {
                     throw new InvalidOperationException("Write operation already in progress");
+                }
+
+                if (_isDisposed)
+                {
+                    throw new ObjectDisposedException(this.GetType().Name);
                 }
 
                 _isWriting = true;
@@ -118,7 +129,11 @@ namespace Keeker.Core.Streams
 
             try
             {
-                _to.Put(buffer, offset, count);
+                if (count > 0)
+                {
+                    _to.Put(buffer, offset, count);
+                }
+
                 _toSignal.Set();
             }
             finally 
@@ -152,9 +167,6 @@ namespace Keeker.Core.Streams
             }
 
             this.WaitStopReadingAndWriting();
-
-            _toSignal.Dispose();
-            _fromSignal.Dispose();
         }
 
         private void WaitStopReadingAndWriting()
@@ -179,6 +191,39 @@ namespace Keeker.Core.Streams
 
             task.Start();
             task.Wait();
+        }
+
+        public bool IsReading
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _isReading;
+                }
+            }
+        }
+
+        public bool IsWriting
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _isWriting;
+                }
+            }
+        }
+
+        public bool IsDisposed
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _isDisposed;
+                }
+            }
         }
     }
 }

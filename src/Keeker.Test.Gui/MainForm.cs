@@ -1,7 +1,9 @@
 ﻿using Keeker.Test.DemoFirst;
 using Keeker.Test.DemoSecond;
 using Keeker.UI;
+using Keeker.Utils;
 using Serilog;
+using Serilog.Context;
 using System.Windows.Forms;
 
 namespace Keeker.Test.Gui
@@ -31,12 +33,18 @@ namespace Keeker.Test.Gui
             var logFirst = new LoggerConfiguration()
                 .WriteTo.TextWriter(_logFormFirst.TextWriter, outputTemplate: "{Timestamp:HH:mm} [{Level}] ({Name:l}) {Message}{NewLine}{Exception}")
                 .CreateLogger();
-            FirstComponent.SetSerilog(logFirst);
+            FirstHelper.SetLogger(
+                name => new SerilogDebugWrapper<Keeker.Test.DemoFirst.Logging.LogLevel>(logFirst).Log, 
+                message => LogContext.PushProperty("NDC", message),
+                (key, value) => LogContext.PushProperty(key, value, false));
 
             var logSecond = new LoggerConfiguration()
                 .WriteTo.TextWriter(_logFormSecond.TextWriter, outputTemplate: "{Timestamp:HH:mm} [{Level}] ({Name:l}) {Message}{NewLine}{Exception}")
                 .CreateLogger();
-            SecondComponent.SetSerilog(logSecond);
+            SecondHelper.SetLogger(
+                name => new SerilogDebugWrapper<Keeker.Test.DemoSecond.Logging.LogLevel>(logSecond).Log,
+                message => LogContext.PushProperty("NDC", message),
+                (key, value) => LogContext.PushProperty(key, value, false));
 
             _first = new FirstComponent();
             _second = new SecondComponent();

@@ -56,21 +56,20 @@ namespace Keeker.Utils
             switch (logLevel.ToString())
             {
                 case "Fatal":
-                    return Serilog.Events.LogEventLevel.Fatal;
+                    return LogEventLevel.Fatal;
                 case "Error":
-                    return Serilog.Events.LogEventLevel.Error;
+                    return LogEventLevel.Error;
                 case "Warn":
-                    return Serilog.Events.LogEventLevel.Warning;
+                    return LogEventLevel.Warning;
                 case "Info":
-                    return Serilog.Events.LogEventLevel.Information;
+                    return LogEventLevel.Information;
                 case "Trace":
-                    return Serilog.Events.LogEventLevel.Verbose;
+                    return LogEventLevel.Verbose;
                 case "Debug":
-                    return Serilog.Events.LogEventLevel.Debug;
+                    return LogEventLevel.Debug;
                 default:
-                    return Serilog.Events.LogEventLevel.Debug;
+                    return LogEventLevel.Debug;
             }
         }
-
     }
 }

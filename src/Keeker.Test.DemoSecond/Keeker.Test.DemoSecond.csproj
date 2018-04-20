@@ -44,9 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
-    <Compile Include="CustomSerilogLogProvider.cs" />
     <Compile Include="SecondComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SecondHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

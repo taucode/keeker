@@ -98,6 +98,10 @@
       <Project>{5154FDB4-1B39-444F-97D8-F560D71255FB}</Project>
       <Name>Keeker.UI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Keeker.Utils\Keeker.Utils.csproj">
+      <Project>{37D748B7-73B8-4DD5-9615-155EAF8189E0}</Project>
+      <Name>Keeker.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using Keeker.Core.Exceptions;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Keeker.Core.Data
 {
@@ -16,16 +19,36 @@ namespace Keeker.Core.Data
 
         public HttpHeaderCollection(IEnumerable<HttpHeader> headers)
         {
+            if (headers == null)
+            {
+                throw new ArgumentNullException(nameof(headers));
+            }
+
+            if (headers.Any(x => x == null))
+            {
+                throw new ArgumentException("'headers' cannot contain nulls", nameof(headers));
+            }
+
             _headers = new List<HttpHeader>(headers);
         }
 
         public void Add(HttpHeader header)
         {
+            if (header == null)
+            {
+                throw new ArgumentNullException(nameof(header));
+            }
+
             _headers.Add(header);
         }
 
         public bool ContainsName(string name)
         {
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
             var contains = _headers.Any(x => x.Name == name);
             return contains;
         }
@@ -39,8 +62,23 @@ namespace Keeker.Core.Data
                     stream.WriteAll(header.ToArray());
                 }
 
+                stream.WriteAll(CoreHelper.CrLfBytes);
+
                 return stream.ToArray();
             }
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            foreach (var header in _headers)
+            {
+                sb.Append(header);
+            }
+
+            sb.Append(CoreHelper.CrLf);
+            return sb.ToString();
         }
 
         public IEnumerator<HttpHeader> GetEnumerator()
@@ -55,18 +93,35 @@ namespace Keeker.Core.Data
 
         public static HttpHeaderCollection Parse(byte[] buffer, int start)
         {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            if (start < 0 || start >= buffer.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
             var headers = new HttpHeaderCollection();
 
             while (true)
             {
-                var header = HttpHeader.Parse(buffer, start);
-                if (header == null)
+                try
                 {
-                    break;
-                }
+                    var header = HttpHeader.Parse(buffer, start);
+                    if (header == null)
+                    {
+                        break;
+                    }
 
-                headers.Add(header);
-                start += header.ByteCount;
+                    headers.Add(header);
+                    start += header.ByteCount;
+                }
+                catch (Exception ex)
+                {
+                    throw new BadHttpDataException("Could not parse header", ex);
+                }
             }
 
             return headers;

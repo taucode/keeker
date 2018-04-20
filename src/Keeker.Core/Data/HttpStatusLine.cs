@@ -1,4 +1,5 @@
 ﻿using Keeker.Core.Exceptions;
+using System;
 using System.Net;
 using System.Text;
 
@@ -10,6 +11,26 @@ namespace Keeker.Core.Data
 
         public HttpStatusLine(string version, HttpStatusCode code, string reason)
         {
+            if (version == null)
+            {
+                throw new ArgumentNullException(nameof(version));
+            }
+
+            if (!CoreHelper.IsValidHttpVersion(version))
+            {
+                throw new ArgumentException("Invalid HTTP version", nameof(version)); // todo1[ak] copy/paste
+            }
+
+            if (reason == null)
+            {
+                throw new ArgumentNullException(nameof(reason));
+            }
+
+            if (!CoreHelper.IsValidStatusReason(reason))
+            {
+                throw new ArgumentException("Invalid status reason", nameof(reason));
+            }
+
             this.Version = version;
             this.Code = code;
             this.Reason = reason;
@@ -18,6 +39,11 @@ namespace Keeker.Core.Data
                 this.Version.Length + 1 +
                 ((int)this.Code).ToString().Length + 1 +
                 this.Reason.Length + CoreHelper.CrLfBytes.Length;
+        }
+
+        public HttpStatusLine(HttpStatusCode code)
+            : this(CoreHelper.HttpVersion11, code, code.ToReason())
+        {
         }
 
         public string Version { get; }
@@ -40,6 +66,16 @@ namespace Keeker.Core.Data
 
         public static HttpStatusLine Parse(byte[] buffer, int start)
         {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            if (start < 0 || start >= buffer.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(start));
+            }
+
             var crLfIndex = buffer.IndexOfSubarray(CoreHelper.CrLfBytes, start, -1);
             if (crLfIndex == -1)
             {
@@ -54,6 +90,13 @@ namespace Keeker.Core.Data
             }
 
             var length = indexOfSpaceAfterVersion - start;
+
+            if (length == 0)
+            {
+                // version length is 0
+                throw new BadHttpDataException("Could not parse status line"); // todo1[ak] a lot of copy/paste
+            }
+
             var version = buffer.ToAsciiString(start, length);
 
             // advance
@@ -63,18 +106,42 @@ namespace Keeker.Core.Data
             var indexOfSpaceAfterCode = buffer.IndexOf(SPACE_BYTE, start);
 
             length = indexOfSpaceAfterCode - start;
+            if (length == 0)
+            {
+                // code length is 0
+                throw new BadHttpDataException("Could not parse status line");
+            }
+
             var codeNumber = buffer.ToAsciiString(start, length).ToInt32();
             var code = (HttpStatusCode)codeNumber;
 
             // advance
             start = indexOfSpaceAfterCode + 1; // skip ' '
 
-            // http version
+            // reason
             length = crLfIndex - start;
-            var reason = buffer.ToAsciiString(start, length);
+            if (length == 0)
+            {
+                // reason length is 0
+                throw new BadHttpDataException("Could not parse status line");
+            }
 
-            var line = new HttpStatusLine(version, code, reason);
-            return line;
+            var reason = buffer.ToAsciiString(start, length);
+            if (reason[0] == ' ')
+            {
+                // reason must not start with space
+                throw new BadHttpDataException("Could not parse status line");
+            }
+
+            try
+            {
+                var line = new HttpStatusLine(version, code, reason);
+                return line;
+            }
+            catch (ArgumentException ex)
+            {
+                throw new BadHttpDataException("Could not parse request line", ex);
+            }
         }
     }
 }

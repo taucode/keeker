@@ -274,7 +274,7 @@ namespace Keeker.Core
         {
             return httpHeaders.Single(x => x.Name == "Transfer-Encoding").Value.ToEnum<HttpTransferEncoding>();
         }
-        
+
         public static string ToInfoString(this Socket socket, bool includeRemoteEndpoint = false)
         {
             var sb = new StringBuilder();
@@ -439,6 +439,99 @@ namespace Keeker.Core
         {
             builder.Replace("Content-Length", contentLength.ToString());
             return builder;
+        }
+
+        private static readonly HashSet<char> ValidHeaderNameChars;
+        private static readonly HashSet<char> ValidHeaderValueChars;
+        private static readonly HashSet<char> ValidHttpMethodChars;
+        private static readonly HashSet<char> ValidUriChars;
+        private static readonly HashSet<char> ValidHttpVersionChars;
+        private static readonly HashSet<char> ValidStatusReasonChars;
+
+        static CoreHelper()
+        {
+            ValidHeaderNameChars = new HashSet<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-");
+
+            var validHeaderValueChars = Enumerable.Range(0x20, 128 - 0x20 - 1).Select(n => (char)n);
+            ValidHeaderValueChars = new HashSet<char>(validHeaderValueChars);
+
+            ValidHttpMethodChars = new HashSet<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+            ValidUriChars = new HashSet<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=`%");
+
+            ValidHttpVersionChars = new HashSet<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./");
+
+            ValidStatusReasonChars = new HashSet<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz -");
+        }
+
+        public static bool IsValidHeaderValue(string value)
+        {
+            if (value == null)
+            {
+                return false;
+            }
+
+            if (value.Length == 0)
+            {
+                return true; // RFC allows empty header values
+            }
+
+            return value.All(c => ValidHeaderValueChars.Contains(c));
+        }
+
+        public static bool IsValidHeaderName(string name)
+        {
+            if (name == null)
+            {
+                return false;
+            }
+
+            if (name.Length == 0)
+            {
+                return false;
+            }
+
+            return name.All(c => ValidHeaderNameChars.Contains(c));
+        }
+
+        public static bool IsValidHttpMethod(string method)
+        {
+            if (method == null)
+            {
+                return false;
+            }
+
+            return method.Length != 0 && method.All(c => ValidHttpMethodChars.Contains(c));
+        }
+
+        public static bool IsValidUri(string uri)
+        {
+            if (uri == null)
+            {
+                return false;
+            }
+
+            return uri.Length != 0 && uri.All(c => ValidUriChars.Contains(c));
+        }
+
+        public static bool IsValidHttpVersion(string version)
+        {
+            if (version == null)
+            {
+                return false;
+            }
+
+            return version.Length != 0 && version.All(c => ValidHttpVersionChars.Contains(c));
+        }
+
+        public static bool IsValidStatusReason(string reason)
+        {
+            if (reason == null)
+            {
+                return false;
+            }
+
+            return reason.Length != 0 && reason.All(c => ValidStatusReasonChars.Contains(c));
         }
 
         #endregion

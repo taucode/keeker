@@ -60,6 +60,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Streams\ByteAccumulator.cs" />
     <Compile Include="Streams\KeekStream.cs" />
+    <Compile Include="Streams\Pipe.cs" />
+    <Compile Include="Streams\PipeStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

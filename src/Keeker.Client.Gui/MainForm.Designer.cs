@@ -73,6 +73,7 @@
             this.textBoxEndPoint.Name = "textBoxEndPoint";
             this.textBoxEndPoint.Size = new System.Drawing.Size(100, 20);
             this.textBoxEndPoint.TabIndex = 0;
+            this.textBoxEndPoint.Text = "pipe:1488";
             // 
             // label1
             // 
@@ -116,6 +117,7 @@
             this.buttonConnect.TabIndex = 3;
             this.buttonConnect.Text = "Connect";
             this.buttonConnect.UseVisualStyleBackColor = true;
+            this.buttonConnect.Click += new System.EventHandler(this.buttonConnect_Click);
             // 
             // splitContainerRequestResponse
             // 
@@ -148,6 +150,7 @@
             this.panelRequest.Name = "panelRequest";
             this.panelRequest.Size = new System.Drawing.Size(385, 480);
             this.panelRequest.TabIndex = 0;
+            this.panelRequest.Visible = false;
             // 
             // tabControlRequest
             // 

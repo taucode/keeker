@@ -1,4 +1,5 @@
 ﻿using Keeker.Server;
+using System;
 using System.Windows.Forms;
 
 namespace Keeker.Client.Gui
@@ -22,6 +23,18 @@ namespace Keeker.Client.Gui
         {
             textBoxListening.Text = _server.ListenedAddress;
             textBoxHosts.Text = string.Join(", ", _server.Hosts);
+        }
+
+        private void buttonStart_Click(object sender, System.EventArgs e)
+        {
+            try
+            {
+                _server.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

@@ -70,9 +70,9 @@ namespace Keeker.Server.Impl
             }
         }
 
-        public string ListenedAddress => throw new NotImplementedException();
+        public string ListenedAddress => "[todo00]ak";
 
-        public string[] Hosts => throw new NotImplementedException();
+        public string[] Hosts => new string[] { "[todo00]ak" };
 
         private void ListeningRoutine()
         {

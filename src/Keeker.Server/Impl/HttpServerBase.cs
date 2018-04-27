@@ -70,6 +70,10 @@ namespace Keeker.Server.Impl
             }
         }
 
+        public string ListenedAddress => throw new NotImplementedException();
+
+        public string[] Hosts => throw new NotImplementedException();
+
         private void ListeningRoutine()
         {
             lock (_lock)
@@ -178,9 +182,9 @@ namespace Keeker.Server.Impl
 
         protected abstract IStreamListener CreateStreamListener();
 
-        public bool IsRunning { get; }
+        public bool IsRunning => throw new NotImplementedException();
 
-        public bool IsDisposed { get; }
+        public bool IsDisposed => throw new NotImplementedException();
 
         #endregion
 

@@ -189,6 +189,10 @@ namespace Keeker.Server
             }
         }
 
+        public string ListenedAddress => throw new NotImplementedException();
+
+        public string[] Hosts => throw new NotImplementedException();
+
         public bool IsRunning
         {
             get

@@ -62,9 +62,13 @@
     <Compile Include="Listeners\LinkStreamListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Streams\ByteAccumulator.cs" />
+    <Compile Include="Streams\ByteDelivery.cs" />
+    <Compile Include="Streams\FragmentedByteSender.cs" />
+    <Compile Include="Streams\IByteSender.cs" />
     <Compile Include="Streams\KeekStream.cs" />
     <Compile Include="Streams\Link.cs" />
     <Compile Include="Streams\LinkStream.cs" />
+    <Compile Include="Streams\TransparentByteSender.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

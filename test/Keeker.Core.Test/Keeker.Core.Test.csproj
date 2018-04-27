@@ -53,7 +53,7 @@
     <Compile Include="HttpRequestMetadataTest.cs" />
     <Compile Include="HttpResponseMetadataTest.cs" />
     <Compile Include="HttpStatusLineTest.cs" />
-    <Compile Include="PipeTest.cs" />
+    <Compile Include="LinkTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

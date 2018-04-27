@@ -9,7 +9,6 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Keeker.Client.Gui
@@ -17,7 +16,7 @@ namespace Keeker.Client.Gui
     public partial class MainForm : Form
     {
         private bool _autoApplyUri;
-        private PipeHttpServer _pipeServer;
+        private LinkHttpServer _linkServer;
 
         public MainForm()
         {
@@ -42,7 +41,7 @@ namespace Keeker.Client.Gui
                 // dismiss
             }
 
-            this.StartPipeListening();
+            this.StartLinkListening();
             Thread.Sleep(50);
 
             buttonConnect_Click(sender, e);
@@ -51,28 +50,10 @@ namespace Keeker.Client.Gui
             //this.DoSettingsAssert();
         }
 
-        private void StartPipeListening()
+        private void StartLinkListening()
         {
-            _pipeServer = new PipeHttpServer(1488);
-            _pipeServer.Start();
-
-            //var listener = new PipeStreamListener(1488);
-            //listener.Start();
-            //Thread.Sleep(50);
-
-            //if (!listener.IsRunning)
-            //{
-            //    throw new ApplicationException(); // wtf
-            //}
-
-            //new Task(() =>
-            //{
-            //    while (true)
-            //    {
-            //        var stream = listener.AcceptStream();
-            //        throw new  NotImplementedException();
-            //    }
-            //}).Start();
+            _linkServer = new LinkHttpServer(1488);
+            _linkServer.Start();
         }
 
 
@@ -292,12 +273,12 @@ namespace Keeker.Client.Gui
             try
             {
                 var endPoint = textBoxEndPoint.Text;
-                if (IsPipeEndpoint(endPoint))
+                if (IsLinkEndpoint(endPoint))
                 {
                     var port = endPoint.Split(':')[1].ToInt32();
 
-                    var pipe = new Pipe();
-                    PipeStreamListener.Connect(port, pipe);
+                    var link = new Link();
+                    LinkStreamListener.Connect(port, link);
                 }
                 else if (IsIPEndpoint(endPoint))
                 {
@@ -330,9 +311,9 @@ namespace Keeker.Client.Gui
             return int.TryParse(parts[1], out var dummyPort);
         }
 
-        private static bool IsPipeEndpoint(string endPoint)
+        private static bool IsLinkEndpoint(string endPoint)
         {
-            return Regex.IsMatch(endPoint, @"pipe:\d+");
+            return Regex.IsMatch(endPoint, @"link:\d+");
         }
     }
 }

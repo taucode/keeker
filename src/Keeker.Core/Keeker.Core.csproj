@@ -59,12 +59,12 @@
     <Compile Include="IdGenerator.cs" />
     <Compile Include="Listeners\IStreamListener.cs" />
     <Compile Include="Listeners\NetworkStreamListener.cs" />
-    <Compile Include="Listeners\PipeStreamListener.cs" />
+    <Compile Include="Listeners\LinkStreamListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Streams\ByteAccumulator.cs" />
     <Compile Include="Streams\KeekStream.cs" />
-    <Compile Include="Streams\Pipe.cs" />
-    <Compile Include="Streams\PipeStream.cs" />
+    <Compile Include="Streams\Link.cs" />
+    <Compile Include="Streams\LinkStream.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

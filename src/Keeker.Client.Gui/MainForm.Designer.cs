@@ -73,7 +73,7 @@
             this.textBoxEndPoint.Name = "textBoxEndPoint";
             this.textBoxEndPoint.Size = new System.Drawing.Size(100, 20);
             this.textBoxEndPoint.TabIndex = 0;
-            this.textBoxEndPoint.Text = "pipe:1488";
+            this.textBoxEndPoint.Text = "link:1488";
             // 
             // label1
             // 

@@ -2,18 +2,18 @@
 
 namespace Keeker.Server.Impl
 {
-    public class PipeHttpServer : HttpServerBase
+    public class LinkHttpServer : HttpServerBase
     {
         private readonly int _port;
 
-        public PipeHttpServer(int port)
+        public LinkHttpServer(int port)
         {
             _port = port;
         }
 
         protected override IStreamListener CreateStreamListener()
         {
-            return new PipeStreamListener(_port);
+            return new LinkStreamListener(_port);
         }
     }
 }

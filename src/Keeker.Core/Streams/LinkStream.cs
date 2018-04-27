@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Keeker.Core.Streams
 {
-    public class PipeStream : Stream
+    public class LinkStream : Stream
     {
         private const int WAIT_MILLISECONDS = 1;
         
@@ -20,7 +20,7 @@ namespace Keeker.Core.Streams
         private bool _isDisposed;
         private readonly object _lock;
 
-        public PipeStream(
+        public LinkStream(
             ByteAccumulator to,
             AutoResetEvent toSingal,
             ByteAccumulator from,

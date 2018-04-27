@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Keeker.Core.Listeners
 {
-    public class PipeStreamListener : IStreamListener
+    public class LinkStreamListener : IStreamListener
     {
         #region Constants
 
@@ -51,19 +51,19 @@ namespace Keeker.Core.Listeners
 
         #region Static
 
-        private static readonly HashSet<ObjectAddress> _usedPipes;
+        private static readonly HashSet<ObjectAddress> _usedLinks;
         private static readonly object _staticLock;
 
-        private static readonly Dictionary<int, PipeStreamListener> _runningListeners;
+        private static readonly Dictionary<int, LinkStreamListener> _runningListeners;
 
-        static PipeStreamListener()
+        static LinkStreamListener()
         {
             _staticLock = new object();
-            _usedPipes = new HashSet<ObjectAddress>();
-            _runningListeners = new Dictionary<int, PipeStreamListener>();
+            _usedLinks = new HashSet<ObjectAddress>();
+            _runningListeners = new Dictionary<int, LinkStreamListener>();
         }
 
-        private static PipeStreamListener GetRunningListener(int port)
+        private static LinkStreamListener GetRunningListener(int port)
         {
             lock (_staticLock)
             {
@@ -72,7 +72,7 @@ namespace Keeker.Core.Listeners
             }
         }
 
-        private static void RegisterRunningListener(PipeStreamListener listener)
+        private static void RegisterRunningListener(LinkStreamListener listener)
         {
             lock (_staticLock)
             {
@@ -80,12 +80,12 @@ namespace Keeker.Core.Listeners
             }
         }
 
-        public static void Connect(int port, Pipe pipe)
+        public static void Connect(int port, Link link)
         {
             lock (_staticLock)
             {
-                var address = new ObjectAddress(pipe);
-                if (_usedPipes.Contains(address))
+                var address = new ObjectAddress(link);
+                if (_usedLinks.Contains(address))
                 {
                     throw new ApplicationException(); // todo2[ak]
                 }
@@ -97,8 +97,8 @@ namespace Keeker.Core.Listeners
                     throw new ApplicationException("Connection refused"); // todo2[ak] connection refused
                 }
 
-                _usedPipes.Add(new ObjectAddress(pipe));
-                listener.QueuePipeForAcceptance(pipe);
+                _usedLinks.Add(new ObjectAddress(link));
+                listener.QueueLinkForAcceptance(link);
             }
         }
 
@@ -108,17 +108,17 @@ namespace Keeker.Core.Listeners
 
         private readonly object _lock;
         private bool _isDisposed;
-        private readonly Queue<Pipe> _pipes;
+        private readonly Queue<Link> _links;
         private readonly AutoResetEvent _signal;
 
         #endregion
 
         #region Constructor
 
-        public PipeStreamListener(int port)
+        public LinkStreamListener(int port)
         {
             this.Port = port;
-            _pipes = new Queue<Pipe>();
+            _links = new Queue<Link>();
             _signal = new AutoResetEvent(false);
             _lock = new object();
         }
@@ -127,11 +127,11 @@ namespace Keeker.Core.Listeners
 
         #region Private
 
-        private void QueuePipeForAcceptance(Pipe pipe)
+        private void QueueLinkForAcceptance(Link link)
         {
             lock (_lock)
             {
-                _pipes.Enqueue(pipe);
+                _links.Enqueue(link);
                 _signal.Set();
             }
         }
@@ -168,7 +168,7 @@ namespace Keeker.Core.Listeners
             }
         }
 
-        public string LocalEndpointName => $"pipe:{this.Port}";
+        public string LocalEndpointName => $"link:{this.Port}";
 
         public Stream AcceptStream()
         {
@@ -181,10 +181,10 @@ namespace Keeker.Core.Listeners
                         throw new ObjectDisposedException(this.GetType().Name);
                     }
 
-                    if (_pipes.Count > 0)
+                    if (_links.Count > 0)
                     {
-                        var pipe = _pipes.Dequeue();
-                        return pipe.Stream2;
+                        var link = _links.Dequeue();
+                        return link.Stream2;
                     }
 
                     _signal.WaitOne(TIMEOUT_MILLISECONDS);

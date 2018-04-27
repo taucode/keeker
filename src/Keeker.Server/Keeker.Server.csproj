@@ -54,7 +54,7 @@
     <Compile Include="IHandler.cs" />
     <Compile Include="IHttpServer.cs" />
     <Compile Include="Impl\HttpServerBase.cs" />
-    <Compile Include="Impl\PipeHttpServer.cs" />
+    <Compile Include="Impl\LinkHttpServer.cs" />
     <Compile Include="StaticContentResolver.cs" />
     <Compile Include="IStaticContentResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

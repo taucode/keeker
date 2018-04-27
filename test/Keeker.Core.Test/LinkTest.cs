@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 namespace Keeker.Core.Test
 {
     [TestFixture]
-    public class PipeTest
+    public class LinkTest
     {
         [Test]
         public void Write_ValidData_IsRead()
         {
             // Arrange
-            var pipe = new Pipe();
+            var link = new Link();
             var data = "Andy";
 
-            var client = pipe.Stream1;
-            var server = pipe.Stream2;
+            var client = link.Stream1;
+            var server = link.Stream2;
 
             var serverBuffer = new byte[data.Length];
 
@@ -40,17 +40,17 @@ namespace Keeker.Core.Test
             Assert.That(bytesReadByClient, Is.EqualTo(greeting.Length));
             Assert.That(greetingObtainedByClient, Is.EqualTo("Hello, Andy!"));
 
-            pipe.Dispose();
+            link.Dispose();
         }
 
         [Test]
         public void Read_WriteZeroBytes_Reads()
         {
             // Arrange
-            var pipe = new Pipe();
+            var link = new Link();
 
-            var client = (PipeStream)pipe.Stream1;
-            var server = (PipeStream)pipe.Stream2;
+            var client = (LinkStream)link.Stream1;
+            var server = (LinkStream)link.Stream2;
 
             byte[] serverBuffer = new byte[10];
             int byteCountReadByServer = -999; // just to not be 0
@@ -72,7 +72,7 @@ namespace Keeker.Core.Test
 
             Assert.That(byteCountReadByServer, Is.Zero);
 
-            pipe.Dispose();
+            link.Dispose();
         }
     }
 }

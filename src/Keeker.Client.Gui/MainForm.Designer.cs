@@ -58,6 +58,7 @@
             this.tabPageText = new System.Windows.Forms.TabPage();
             this.tabPageBinary = new System.Windows.Forms.TabPage();
             this.panelResponse = new System.Windows.Forms.Panel();
+            this.buttonInProcServer = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerRequestResponse)).BeginInit();
             this.splitContainerRequestResponse.Panel1.SuspendLayout();
             this.splitContainerRequestResponse.Panel2.SuspendLayout();
@@ -73,6 +74,7 @@
             this.textBoxEndPoint.Name = "textBoxEndPoint";
             this.textBoxEndPoint.Size = new System.Drawing.Size(100, 20);
             this.textBoxEndPoint.TabIndex = 0;
+            this.textBoxEndPoint.Text = "link:1488";
             // 
             // label1
             // 
@@ -116,6 +118,7 @@
             this.buttonConnect.TabIndex = 3;
             this.buttonConnect.Text = "Connect";
             this.buttonConnect.UseVisualStyleBackColor = true;
+            this.buttonConnect.Click += new System.EventHandler(this.buttonConnect_Click);
             // 
             // splitContainerRequestResponse
             // 
@@ -148,6 +151,7 @@
             this.panelRequest.Name = "panelRequest";
             this.panelRequest.Size = new System.Drawing.Size(385, 480);
             this.panelRequest.TabIndex = 0;
+            this.panelRequest.Visible = false;
             // 
             // tabControlRequest
             // 
@@ -369,11 +373,22 @@
             this.panelResponse.Size = new System.Drawing.Size(416, 480);
             this.panelResponse.TabIndex = 0;
             // 
+            // buttonInProcServer
+            // 
+            this.buttonInProcServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonInProcServer.Location = new System.Drawing.Point(925, 10);
+            this.buttonInProcServer.Name = "buttonInProcServer";
+            this.buttonInProcServer.Size = new System.Drawing.Size(140, 23);
+            this.buttonInProcServer.TabIndex = 5;
+            this.buttonInProcServer.Text = "In-Proc Server";
+            this.buttonInProcServer.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1077, 530);
+            this.Controls.Add(this.buttonInProcServer);
             this.Controls.Add(this.splitContainerRequestResponse);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.listViewConnections);
@@ -427,6 +442,7 @@
         private System.Windows.Forms.Button buttonSaveAs;
         private System.Windows.Forms.Button buttonRecent;
         private System.Windows.Forms.Button buttonApply;
+        private System.Windows.Forms.Button buttonInProcServer;
     }
 }
 

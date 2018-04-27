@@ -1,7 +1,14 @@
-﻿using Keeker.Core.Data;
+﻿using Keeker.Core;
+using Keeker.Core.Data;
+using Keeker.Core.Listeners;
+using Keeker.Core.Streams;
+using Keeker.Server.Impl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Keeker.Client.Gui
@@ -9,6 +16,7 @@ namespace Keeker.Client.Gui
     public partial class MainForm : Form
     {
         private bool _autoApplyUri;
+        private LinkHttpServer _linkServer;
 
         public MainForm()
         {
@@ -33,8 +41,19 @@ namespace Keeker.Client.Gui
                 // dismiss
             }
 
+            this.StartLinkListening();
+            Thread.Sleep(50);
+
+            buttonConnect_Click(sender, e);
+
             // ASSERT
             //this.DoSettingsAssert();
+        }
+
+        private void StartLinkListening()
+        {
+            _linkServer = new LinkHttpServer(1488);
+            _linkServer.Start();
         }
 
 
@@ -247,6 +266,54 @@ namespace Keeker.Client.Gui
 
             MustBeTrue(assert4 && assert5);
 
+        }
+
+        private void buttonConnect_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var endPoint = textBoxEndPoint.Text;
+                if (IsLinkEndpoint(endPoint))
+                {
+                    var port = endPoint.Split(':')[1].ToInt32();
+
+                    var link = new Link();
+                    LinkStreamListener.Connect(port, link);
+                }
+                else if (IsIPEndpoint(endPoint))
+                {
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    throw new ApplicationException();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private static bool IsIPEndpoint(string endPoint)
+        {
+            var parts = endPoint.Split(':');
+            if (parts.Length != 2)
+            {
+                return false;
+            }
+
+            if (!IPAddress.TryParse(parts[0], out var dummyIpAddress))
+            {
+                return false;
+            }
+
+            return int.TryParse(parts[1], out var dummyPort);
+        }
+
+        private static bool IsLinkEndpoint(string endPoint)
+        {
+            return Regex.IsMatch(endPoint, @"link:\d+");
         }
     }
 }

@@ -56,6 +56,12 @@
       <DependentUpon>EditHeaderDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Helper.cs" />
+    <Compile Include="HttpServerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HttpServerForm.Designer.cs">
+      <DependentUpon>HttpServerForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -66,6 +72,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="EditHeaderDialog.resx">
       <DependentUpon>EditHeaderDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HttpServerForm.resx">
+      <DependentUpon>HttpServerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -97,6 +106,10 @@
     <ProjectReference Include="..\Keeker.Core\Keeker.Core.csproj">
       <Project>{3195BB27-0EE2-432F-914E-974B318F2A78}</Project>
       <Name>Keeker.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Keeker.Server\Keeker.Server.csproj">
+      <Project>{3AB7C111-F064-4E02-98F7-A7D39230DEE3}</Project>
+      <Name>Keeker.Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\Keeker.UI\Keeker.UI.csproj">
       <Project>{5154FDB4-1B39-444F-97D8-F560D71255FB}</Project>

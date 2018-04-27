@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
-using System.Reflection;
 
 namespace Keeker.Core.Streams
 {
@@ -14,6 +13,7 @@ namespace Keeker.Core.Streams
         private readonly object _readLock;
 
         private readonly ByteAccumulator _accumulator;
+        private IByteSender _byteSender;
 
         #endregion
 
@@ -22,6 +22,7 @@ namespace Keeker.Core.Streams
         public KeekStream(Stream innerStream, bool leaveInnerStreamOpen)
         {
             _innerStream = innerStream ?? throw new ArgumentException(nameof(innerStream));
+            _byteSender = new TransparentByteSender(_innerStream);
             _leaveInnerStreamOpen = leaveInnerStreamOpen;
             _accumulator = new ByteAccumulator();
             _readLock = new object();
@@ -78,7 +79,7 @@ namespace Keeker.Core.Streams
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            _innerStream.Write(buffer, offset, count);
+            _byteSender.Send(buffer, offset, count);
         }
 
         public override bool CanRead => true;
@@ -125,13 +126,13 @@ namespace Keeker.Core.Streams
                 var ns = (NetworkStream)_innerStream; // todo000000[ak] what is going on here?!
 
 
-                BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+                throw new NotImplementedException();
 
-                PropertyInfo pi = ns.GetType().GetProperty("Socket", bindingFlags);
+                
 
-                var sock = (Socket) pi.GetValue(ns);
+                
 
-                int a = 33;
+                
 
             }
         }
@@ -192,6 +193,28 @@ namespace Keeker.Core.Streams
         public int AccumulatedBytesCount
         {
             get { return _accumulator.Count; }
+        }
+
+        public IByteSender ByteSender
+        {
+            get
+            {
+                return _byteSender;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(ByteSender));
+                }
+
+                if (!ReferenceEquals(this._innerStream, _byteSender.TargetStream))
+                {
+                    throw new InvalidOperationException("ByteSender's stream is not the same as inner stream of this instance");
+                }
+
+                _byteSender = value;
+            }
         }
 
         #endregion

@@ -11,7 +11,6 @@ namespace Keeker.Server
     {
         #region Logging
 
-        //private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         private static ILog GetLogger() => LogProvider.GetCurrentClassLogger();
 
         #endregion
@@ -27,8 +26,6 @@ namespace Keeker.Server
 
         private readonly IdGenerator _idGenerator;
         private readonly IHandlerFactory _handlerFactory;
-
-        //private readonly ILog _logger;
 
         #endregion
 
@@ -191,6 +188,10 @@ namespace Keeker.Server
                 }
             }
         }
+
+        public string ListenedAddress => throw new NotImplementedException();
+
+        public string[] Hosts => throw new NotImplementedException();
 
         public bool IsRunning
         {

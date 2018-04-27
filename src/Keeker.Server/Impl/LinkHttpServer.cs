@@ -6,7 +6,8 @@ namespace Keeker.Server.Impl
     {
         private readonly int _port;
 
-        public LinkHttpServer(int port)
+        public LinkHttpServer(string[] hosts, int port)
+            : base(hosts)
         {
             _port = port;
         }
@@ -14,6 +15,11 @@ namespace Keeker.Server.Impl
         protected override IStreamListener CreateStreamListener()
         {
             return new LinkStreamListener(_port);
+        }
+
+        protected override string GetListenedAddressImpl()
+        {
+            return $"link://{_port}";
         }
     }
 }

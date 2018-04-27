@@ -18,6 +18,11 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+
+            if (_server != null)
+            {
+                _server.ConnectionAccepted -= server_ConnectionAccepted;
+            }
         }
 
         #region Windows Form Designer generated code
@@ -34,6 +39,9 @@
             this.textBoxHosts = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.listViewConnections = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // buttonStart
@@ -89,11 +97,35 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Hosts:";
             // 
+            // listViewConnections
+            // 
+            this.listViewConnections.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.listViewConnections.FullRowSelect = true;
+            this.listViewConnections.GridLines = true;
+            this.listViewConnections.Location = new System.Drawing.Point(12, 93);
+            this.listViewConnections.Name = "listViewConnections";
+            this.listViewConnections.Size = new System.Drawing.Size(267, 311);
+            this.listViewConnections.TabIndex = 6;
+            this.listViewConnections.UseCompatibleStateImageBehavior = false;
+            this.listViewConnections.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Id";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Description";
+            this.columnHeader2.Width = 163;
+            // 
             // HttpServerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(650, 416);
+            this.Controls.Add(this.listViewConnections);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxHosts);
@@ -116,5 +148,8 @@
         private System.Windows.Forms.TextBox textBoxHosts;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ListView listViewConnections;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
     }
 }

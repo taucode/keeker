@@ -21,6 +21,7 @@ namespace Keeker.Core.Streams
         private readonly object _lock;
 
         public LinkStream(
+            string id,
             ByteAccumulator to,
             AutoResetEvent toSingal,
             ByteAccumulator from,

@@ -17,6 +17,19 @@ namespace Keeker.Client.Gui
             : this()
         {
             _server = server;
+            _server.ConnectionAccepted += server_ConnectionAccepted;
+        }
+
+        private void server_ConnectionAccepted(object sender, Connection connection)
+        {
+            this.Invoke(new Action(() => this.ReflectConnection(connection)));
+        }
+
+        private void ReflectConnection(Connection connection)
+        {
+            var item = new ListViewItem(connection.Id);
+            item.SubItems.Add("con prop");
+            listViewConnections.Items.Add(item);
         }
 
         private void HttpServerForm_Load(object sender, System.EventArgs e)

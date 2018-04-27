@@ -17,23 +17,29 @@ namespace Keeker.Core.Streams
 
         public Link()
         {
+            this.Id = Guid.NewGuid().ToString();
+
             _byteAccumulator1 = new ByteAccumulator();
             _byteAccumulator2 = new ByteAccumulator();
             _toSignal1 = new AutoResetEvent(false);
             _toSignal2 = new AutoResetEvent(false);
 
             _linkStream1 = new LinkStream(
+                this.Id,
                 _byteAccumulator1,
                 _toSignal1,
                 _byteAccumulator2,
                 _toSignal2);
 
             _linkStream2 = new LinkStream(
+                this.Id,
                 _byteAccumulator2,
                 _toSignal2,
                 _byteAccumulator1,
                 _toSignal1);
         }
+
+        public string Id { get; }
 
         public Stream Stream1 => _linkStream1;
 

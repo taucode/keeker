@@ -12,6 +12,8 @@ namespace Keeker.Server
 
         bool IsRunning { get; }
 
+        event EventHandler<Connection> ConnectionAccepted;
+
         bool IsDisposed { get; }
     }
 }

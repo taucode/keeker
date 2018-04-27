@@ -2,6 +2,8 @@
 using Keeker.Core.Listeners;
 using Keeker.Server.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Keeker.Server.Impl
@@ -23,56 +25,34 @@ namespace Keeker.Server.Impl
         private IStreamListener _streamListener;
         private readonly IdGenerator _idGenerator;
         private readonly IHandlerFactory _handlerFactory;
+        private readonly string[] _hosts;
+        private readonly Dictionary<string, Connection> _connections;
 
         #endregion
 
         #region Constructor
 
-        protected HttpServerBase()
+        protected HttpServerBase(string[] hosts)
         {
+            if (hosts == null)
+            {
+                throw new ArgumentNullException(nameof(hosts));
+            }
+
+            if (!hosts.Any())
+            {
+                throw new ArgumentException("At least one host is needed", nameof(hosts));
+            }
+
             _lock = new object();
+            _hosts = hosts;
             _idGenerator = new IdGenerator();
+            _connections = new Dictionary<string, Connection>();
         }
 
         #endregion
 
-        #region IHttpServer Members
-
-        public void Start()
-        {
-            lock (_lock)
-            {
-                try
-                {
-                    if (_isRunning)
-                    {
-                        throw new InvalidOperationException("Server already running");
-                    }
-
-                    if (_isDisposed)
-                    {
-                        throw new ObjectDisposedException("Server");
-                    }
-
-                    _isRunning = true;
-
-                    GetLogger().InfoFormat("Starting the server");
-
-                    _listeningTask = new Task(this.ListeningRoutine);
-                    _listeningTask.Start();
-
-                }
-                catch (Exception ex)
-                {
-                    GetLogger().ErrorException("Error occured while starting server", ex);
-                    throw;
-                }
-            }
-        }
-
-        public string ListenedAddress => "[todo00]ak";
-
-        public string[] Hosts => new string[] { "[todo00]ak" };
+        #region Private
 
         private void ListeningRoutine()
         {
@@ -116,6 +96,13 @@ namespace Keeker.Server.Impl
                         var id = _idGenerator.Generate();
                         var connection = new Connection(id, stream, _handlerFactory);
 
+                        lock (_lock)
+                        {
+                            _connections.Add(connection.Id, connection);
+                        }
+
+                        this.ConnectionAccepted?.Invoke(this, connection);
+
                         connection.Start();
                     }
                     catch (Exception ex)
@@ -128,61 +115,59 @@ namespace Keeker.Server.Impl
             {
                 throw new NotImplementedException(); // todo00000000000[ak]
             }
-
-
-            //Socket clientSocket;
-
-            //throw new NotImplementedException(); // todo00000000[ak]
-
-            //TcpClient client = null;
-            //Relay relay = null;
-
-            //try
-            //{
-            //    while (true)
-            //    {
-            //        client = _tcpListener.AcceptTcpClient();
-
-            //        Logger.InfoFormat("Listener {0} accepted client: {1}", _conf.Id, client.Client.RemoteEndPoint);
-
-            //        try
-            //        {
-            //            relay = this.EstablishConnection(client);
-            //            relay.Start();
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            try
-            //            {
-            //                client?.Dispose();
-            //            }
-            //            catch
-            //            {
-            //                // dismiss
-            //            }
-
-            //            try
-            //            {
-            //                relay?.Dispose();
-            //            }
-            //            catch
-            //            {
-            //                // dismiss
-            //            }
-
-            //            Logger.ErrorException("Could not start relay", ex);
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new NotImplementedException(); // todo000000[ak]
-            //}
         }
+
+        #endregion
+
+        #region Abstract
 
         protected abstract IStreamListener CreateStreamListener();
 
+        protected abstract string GetListenedAddressImpl();
+
+        #endregion
+
+        #region IHttpServer Members
+
+        public void Start()
+        {
+            lock (_lock)
+            {
+                try
+                {
+                    if (_isRunning)
+                    {
+                        throw new InvalidOperationException("Server already running");
+                    }
+
+                    if (_isDisposed)
+                    {
+                        throw new ObjectDisposedException("Server");
+                    }
+
+                    _isRunning = true;
+
+                    GetLogger().InfoFormat("Starting the server");
+
+                    _listeningTask = new Task(this.ListeningRoutine);
+                    _listeningTask.Start();
+
+                }
+                catch (Exception ex)
+                {
+                    GetLogger().ErrorException("Error occured while starting server", ex);
+                    throw;
+                }
+            }
+        }
+
+        public string ListenedAddress => this.GetListenedAddressImpl();
+
+        public string[] Hosts => _hosts.ToArray();
+
         public bool IsRunning => throw new NotImplementedException();
+
+        public event EventHandler<Connection> ConnectionAccepted;
 
         public bool IsDisposed => throw new NotImplementedException();
 

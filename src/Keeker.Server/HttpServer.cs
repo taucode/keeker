@@ -204,6 +204,8 @@ namespace Keeker.Server
             }
         }
 
+        public event EventHandler<Connection> ConnectionAccepted;
+
         public bool IsDisposed
         {
             get

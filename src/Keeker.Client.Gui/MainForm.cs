@@ -41,7 +41,7 @@ namespace Keeker.Client.Gui
                 // dismiss
             }
 
-            _linkServer = new LinkHttpServer(1488);
+            _linkServer = new LinkHttpServer(new[] { "rho.me", }, 1488);
             _serverForm = new HttpServerForm(_linkServer);
             _serverForm.Show();
 

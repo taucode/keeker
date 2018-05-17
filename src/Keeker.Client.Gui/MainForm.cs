@@ -5,10 +5,10 @@ using Keeker.Core.Streams;
 using Keeker.Server.Impl;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace Keeker.Client.Gui
@@ -17,6 +17,7 @@ namespace Keeker.Client.Gui
     {
         private bool _autoApplyUri;
         private LinkHttpServer _linkServer;
+        private HttpServerForm _serverForm;
 
         public MainForm()
         {
@@ -41,20 +42,24 @@ namespace Keeker.Client.Gui
                 // dismiss
             }
 
-            this.StartLinkListening();
-            Thread.Sleep(50);
+            _linkServer = new LinkHttpServer(new[] { "rho.me", }, 1488);
+            _serverForm = new HttpServerForm(_linkServer);
+            _serverForm.Show();
 
-            buttonConnect_Click(sender, e);
+            //this.StartLinkListening();
+            //Thread.Sleep(50);
+
+            //buttonConnect_Click(sender, e);
 
             // ASSERT
             //this.DoSettingsAssert();
         }
 
-        private void StartLinkListening()
-        {
-            _linkServer = new LinkHttpServer(1488);
-            _linkServer.Start();
-        }
+        //private void StartLinkListening()
+        //{
+        //    _linkServer = new LinkHttpServer(1488);
+        //    _linkServer.Start();
+        //}
 
 
         private void InitMethods()
@@ -272,6 +277,8 @@ namespace Keeker.Client.Gui
         {
             try
             {
+                Stream clientStream;
+
                 var endPoint = textBoxEndPoint.Text;
                 if (IsLinkEndpoint(endPoint))
                 {
@@ -279,6 +286,7 @@ namespace Keeker.Client.Gui
 
                     var link = new Link();
                     LinkStreamListener.Connect(port, link);
+                    clientStream = link.Stream1;
                 }
                 else if (IsIPEndpoint(endPoint))
                 {
@@ -288,6 +296,8 @@ namespace Keeker.Client.Gui
                 {
                     throw new ApplicationException();
                 }
+
+                MessageBox.Show(clientStream.ToString());
             }
             catch (Exception ex)
             {

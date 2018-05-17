@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Keeker.Server.Impl
 {
-    public abstract class HttpServerBase : IHttpServer
+    public class HttpServerBase : IHttpServer
     {
         #region Logging
 
@@ -22,7 +22,7 @@ namespace Keeker.Server.Impl
         private bool _isDisposed;
         private readonly object _lock;
         private Task _listeningTask;
-        private IStreamListener _streamListener;
+        private readonly IStreamListener _streamListener;
         private readonly IdGenerator _idGenerator;
         private readonly IHandlerFactory _handlerFactory;
         private readonly string[] _hosts;
@@ -32,7 +32,7 @@ namespace Keeker.Server.Impl
 
         #region Constructor
 
-        protected HttpServerBase(string[] hosts)
+        protected HttpServerBase(IStreamListener streamListener, string[] hosts)
         {
             if (hosts == null)
             {
@@ -45,6 +45,7 @@ namespace Keeker.Server.Impl
             }
 
             _lock = new object();
+            _streamListener = streamListener ?? throw new ArgumentNullException(nameof(streamListener));
             _hosts = hosts;
             _idGenerator = new IdGenerator();
             _connections = new Dictionary<string, Connection>();
@@ -60,7 +61,7 @@ namespace Keeker.Server.Impl
             {
                 try
                 {
-                    _streamListener = this.CreateStreamListener();
+                    //_streamListener = this.CreateStreamListener();
                     _streamListener.Start();
 
                     GetLogger().InfoFormat("Listener started at {0}", _streamListener.LocalEndpointName);
@@ -121,9 +122,9 @@ namespace Keeker.Server.Impl
 
         #region Abstract
 
-        protected abstract IStreamListener CreateStreamListener();
+        //protected abstract IStreamListener CreateStreamListener();
 
-        protected abstract string GetListenedAddressImpl();
+        //protected abstract string GetListenedAddressImpl();
 
         #endregion
 
@@ -161,7 +162,7 @@ namespace Keeker.Server.Impl
             }
         }
 
-        public string ListenedAddress => this.GetListenedAddressImpl();
+        //public string ListenedAddress => this.GetListenedAddressImpl();
 
         public string[] Hosts => _hosts.ToArray();
 

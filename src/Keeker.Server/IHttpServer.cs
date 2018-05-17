@@ -6,7 +6,7 @@ namespace Keeker.Server
     {
         void Start();
 
-        string ListenedAddress { get; }
+        //string ListenedAddress { get; }
 
         string[] Hosts { get; }
 

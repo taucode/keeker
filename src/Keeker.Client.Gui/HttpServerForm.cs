@@ -34,8 +34,10 @@ namespace Keeker.Client.Gui
 
         private void HttpServerForm_Load(object sender, System.EventArgs e)
         {
-            textBoxListening.Text = _server.ListenedAddress;
-            textBoxHosts.Text = string.Join(", ", _server.Hosts);
+            throw new NotImplementedException();
+
+            //textBoxListening.Text = _server.ListenedAddress;
+            //textBoxHosts.Text = string.Join(", ", _server.Hosts);
         }
 
         private void buttonStart_Click(object sender, System.EventArgs e)

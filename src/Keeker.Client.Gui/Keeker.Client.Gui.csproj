@@ -103,6 +103,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Keeker.Client\Keeker.Client.csproj">
+      <Project>{14C9A83C-B7C9-48F0-9724-E769198365B4}</Project>
+      <Name>Keeker.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Keeker.Core\Keeker.Core.csproj">
       <Project>{3195BB27-0EE2-432F-914E-974B318F2A78}</Project>
       <Name>Keeker.Core</Name>

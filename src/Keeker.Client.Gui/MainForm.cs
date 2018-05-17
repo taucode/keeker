@@ -2,7 +2,6 @@
 using Keeker.Core.Data;
 using Keeker.Core.Listeners;
 using Keeker.Core.Streams;
-using Keeker.Server.Impl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +15,6 @@ namespace Keeker.Client.Gui
     public partial class MainForm : Form
     {
         private bool _autoApplyUri;
-        private LinkHttpServer _linkServer;
         private HttpServerForm _serverForm;
 
         public MainForm()
@@ -42,9 +40,9 @@ namespace Keeker.Client.Gui
                 // dismiss
             }
 
-            _linkServer = new LinkHttpServer(new[] { "rho.me", }, 1488);
-            _serverForm = new HttpServerForm(_linkServer);
-            _serverForm.Show();
+            //_linkServer = new LinkHttpServer(new[] { "rho.me", }, 1488);
+            //_serverForm = new HttpServerForm(_linkServer);
+            //_serverForm.Show();
 
             //this.StartLinkListening();
             //Thread.Sleep(50);
@@ -297,11 +295,25 @@ namespace Keeker.Client.Gui
                     throw new ApplicationException();
                 }
 
-                MessageBox.Show(clientStream.ToString());
+                var client = new HttpClient(clientStream);
+                this.AddClient(client);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void AddClient(HttpClient client)
+        {
+            var stream = client.Stream;
+            if (stream is LinkStream)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
         }
 

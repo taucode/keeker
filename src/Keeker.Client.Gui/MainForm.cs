@@ -5,6 +5,7 @@ using Keeker.Core.Streams;
 using Keeker.Server.Impl;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -276,6 +277,8 @@ namespace Keeker.Client.Gui
         {
             try
             {
+                Stream clientStream;
+
                 var endPoint = textBoxEndPoint.Text;
                 if (IsLinkEndpoint(endPoint))
                 {
@@ -283,6 +286,7 @@ namespace Keeker.Client.Gui
 
                     var link = new Link();
                     LinkStreamListener.Connect(port, link);
+                    clientStream = link.Stream1;
                 }
                 else if (IsIPEndpoint(endPoint))
                 {
@@ -292,6 +296,8 @@ namespace Keeker.Client.Gui
                 {
                     throw new ApplicationException();
                 }
+
+                MessageBox.Show(clientStream.ToString());
             }
             catch (Exception ex)
             {

@@ -1,4 +1,6 @@
 ﻿using Keeker.Core.Data;
+using System;
+using System.Windows.Forms;
 
 namespace Keeker.Client.Gui
 {
@@ -13,6 +15,18 @@ namespace Keeker.Client.Gui
             };
 
             return dto;
+        }
+
+        public static void DoLater(Action action, int timeout)
+        {
+            var timer = new Timer();
+            timer.Interval = timeout;
+            timer.Tick += (sender, e) =>
+            {
+                timer.Dispose();
+                action();
+            };
+            timer.Start();
         }
     }
 }

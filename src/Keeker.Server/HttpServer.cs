@@ -1,259 +1,259 @@
-﻿using Keeker.Core;
-using Keeker.Server.Logging;
-using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading.Tasks;
+﻿//using Keeker.Core;
+//using Keeker.Server.Logging;
+//using System;
+//using System.Net;
+//using System.Net.Sockets;
+//using System.Threading.Tasks;
 
-namespace Keeker.Server
-{
-    public class HttpServer : IHttpServer
-    {
-        #region Logging
+//namespace Keeker.Server
+//{
+//    public class HttpServer : IHttpServer
+//    {
+//        #region Logging
 
-        private static ILog GetLogger() => LogProvider.GetCurrentClassLogger();
+//        private static ILog GetLogger() => LogProvider.GetCurrentClassLogger();
 
-        #endregion
+//        #endregion
 
-        #region Fields
+//        #region Fields
 
-        private bool _isRunning;
-        private bool _isDisposed;
-        private readonly object _lock;
-        private readonly IPEndPoint _endPoint;
-        private TcpListener _tcpListener;
-        private readonly Task _listeningTask;
+//        private bool _isRunning;
+//        private bool _isDisposed;
+//        private readonly object _lock;
+//        private readonly IPEndPoint _endPoint;
+//        private TcpListener _tcpListener;
+//        private readonly Task _listeningTask;
 
-        private readonly IdGenerator _idGenerator;
-        private readonly IHandlerFactory _handlerFactory;
+//        private readonly IdGenerator _idGenerator;
+//        private readonly IHandlerFactory _handlerFactory;
 
-        #endregion
+//        #endregion
 
-        #region Constructor
+//        #region Constructor
 
-        public HttpServer(IPEndPoint endPoint, IHandlerFactory handlerFactory)
-        {
-            _lock = new object();
-            _endPoint = new IPEndPoint(endPoint.Address, endPoint.Port);
-            _handlerFactory = handlerFactory;
-            _listeningTask = new Task(this.ListeningRoutine);
+//        public HttpServer(IPEndPoint endPoint, IHandlerFactory handlerFactory)
+//        {
+//            _lock = new object();
+//            _endPoint = new IPEndPoint(endPoint.Address, endPoint.Port);
+//            _handlerFactory = handlerFactory;
+//            _listeningTask = new Task(this.ListeningRoutine);
 
-            _idGenerator = new IdGenerator();
-        }
+//            _idGenerator = new IdGenerator();
+//        }
 
-        #endregion
+//        #endregion
 
-        #region Private
+//        #region Private
 
-        private void ListeningRoutine()
-        {
-            lock (_lock)
-            {
-                try
-                {
-                    _tcpListener = new TcpListener(_endPoint);
-                    _tcpListener.Start();
+//        private void ListeningRoutine()
+//        {
+//            lock (_lock)
+//            {
+//                try
+//                {
+//                    _tcpListener = new TcpListener(_endPoint);
+//                    _tcpListener.Start();
 
-                    GetLogger().InfoFormat("Server started at {0}", _endPoint);
-                    GetLogger().InfoFormat("Server listening socket: {0}", _tcpListener.Server.ToInfoString());
-                }
-                catch (Exception ex)
-                {
-                    GetLogger().ErrorException("Could not start TCP listener", ex);
+//                    GetLogger().InfoFormat("Server started at {0}", _endPoint);
+//                    GetLogger().InfoFormat("Server listening socket: {0}", _tcpListener.Server.ToInfoString());
+//                }
+//                catch (Exception ex)
+//                {
+//                    GetLogger().ErrorException("Could not start TCP listener", ex);
 
-                    try
-                    {
-                        _tcpListener.Stop();
-                    }
-                    catch
-                    {
-                        // dismiss
-                    }
+//                    try
+//                    {
+//                        _tcpListener.Stop();
+//                    }
+//                    catch
+//                    {
+//                        // dismiss
+//                    }
 
-                    _isRunning = false;
+//                    _isRunning = false;
 
-                    // no re-throw
-                    return;
-                }
-            }
+//                    // no re-throw
+//                    return;
+//                }
+//            }
 
-            try
-            {
-                while (true)
-                {
-                    var clientSocket = _tcpListener.AcceptSocket();
-                    GetLogger().InfoFormat("Server accepted connection: {0}", clientSocket.ToInfoString(true));
+//            try
+//            {
+//                while (true)
+//                {
+//                    var clientSocket = _tcpListener.AcceptSocket();
+//                    GetLogger().InfoFormat("Server accepted connection: {0}", clientSocket.ToInfoString(true));
 
-                    try
-                    {
-                        var id = _idGenerator.Generate();
-                        var stream = new NetworkStream(clientSocket);
-                        var connection = new Connection(id, stream, _handlerFactory);
+//                    try
+//                    {
+//                        var id = _idGenerator.Generate();
+//                        var stream = new NetworkStream(clientSocket);
+//                        var connection = new Connection(id, stream, _handlerFactory);
 
-                        connection.Start();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new NotImplementedException(); // todo00000000000[ak]
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new NotImplementedException(); // todo00000000000[ak]
-            }
+//                        connection.Start();
+//                    }
+//                    catch (Exception ex)
+//                    {
+//                        throw new NotImplementedException(); // todo00000000000[ak]
+//                    }
+//                }
+//            }
+//            catch (Exception ex)
+//            {
+//                throw new NotImplementedException(); // todo00000000000[ak]
+//            }
 
 
-            //Socket clientSocket;
+//            //Socket clientSocket;
 
-            //throw new NotImplementedException(); // todo00000000[ak]
+//            //throw new NotImplementedException(); // todo00000000[ak]
 
-            //TcpClient client = null;
-            //Relay relay = null;
+//            //TcpClient client = null;
+//            //Relay relay = null;
 
-            //try
-            //{
-            //    while (true)
-            //    {
-            //        client = _tcpListener.AcceptTcpClient();
+//            //try
+//            //{
+//            //    while (true)
+//            //    {
+//            //        client = _tcpListener.AcceptTcpClient();
 
-            //        Logger.InfoFormat("Listener {0} accepted client: {1}", _conf.Id, client.Client.RemoteEndPoint);
+//            //        Logger.InfoFormat("Listener {0} accepted client: {1}", _conf.Id, client.Client.RemoteEndPoint);
 
-            //        try
-            //        {
-            //            relay = this.EstablishConnection(client);
-            //            relay.Start();
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            try
-            //            {
-            //                client?.Dispose();
-            //            }
-            //            catch
-            //            {
-            //                // dismiss
-            //            }
+//            //        try
+//            //        {
+//            //            relay = this.EstablishConnection(client);
+//            //            relay.Start();
+//            //        }
+//            //        catch (Exception ex)
+//            //        {
+//            //            try
+//            //            {
+//            //                client?.Dispose();
+//            //            }
+//            //            catch
+//            //            {
+//            //                // dismiss
+//            //            }
 
-            //            try
-            //            {
-            //                relay?.Dispose();
-            //            }
-            //            catch
-            //            {
-            //                // dismiss
-            //            }
+//            //            try
+//            //            {
+//            //                relay?.Dispose();
+//            //            }
+//            //            catch
+//            //            {
+//            //                // dismiss
+//            //            }
 
-            //            Logger.ErrorException("Could not start relay", ex);
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new NotImplementedException(); // todo000000[ak]
-            //}
-        }
+//            //            Logger.ErrorException("Could not start relay", ex);
+//            //        }
+//            //    }
+//            //}
+//            //catch (Exception ex)
+//            //{
+//            //    throw new NotImplementedException(); // todo000000[ak]
+//            //}
+//        }
 
-        #endregion
+//        #endregion
 
-        #region IHttpServer Members
+//        #region IHttpServer Members
 
-        public void Start()
-        {
-            lock (_lock)
-            {
-                try
-                {
-                    if (_isRunning)
-                    {
-                        throw new InvalidOperationException("Server already running");
-                    }
+//        public void Start()
+//        {
+//            lock (_lock)
+//            {
+//                try
+//                {
+//                    if (_isRunning)
+//                    {
+//                        throw new InvalidOperationException("Server already running");
+//                    }
 
-                    if (_isDisposed)
-                    {
-                        throw new ObjectDisposedException("Server");
-                    }
+//                    if (_isDisposed)
+//                    {
+//                        throw new ObjectDisposedException("Server");
+//                    }
 
-                    _isRunning = true;
+//                    _isRunning = true;
 
-                    GetLogger().InfoFormat("Starting the server");
+//                    GetLogger().InfoFormat("Starting the server");
 
-                    _listeningTask.Start();
+//                    _listeningTask.Start();
 
-                }
-                catch (Exception ex)
-                {
-                    GetLogger().ErrorException("Error occured while starting server", ex);
-                    throw;
-                }
-            }
-        }
+//                }
+//                catch (Exception ex)
+//                {
+//                    GetLogger().ErrorException("Error occured while starting server", ex);
+//                    throw;
+//                }
+//            }
+//        }
 
-        public string ListenedAddress => throw new NotImplementedException();
+//        public string ListenedAddress => throw new NotImplementedException();
 
-        public string[] Hosts => throw new NotImplementedException();
+//        public string[] Hosts => throw new NotImplementedException();
 
-        public bool IsRunning
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    return _isRunning;
-                }
-            }
-        }
+//        public bool IsRunning
+//        {
+//            get
+//            {
+//                lock (_lock)
+//                {
+//                    return _isRunning;
+//                }
+//            }
+//        }
 
-        public event EventHandler<Connection> ConnectionAccepted;
+//        public event EventHandler<Connection> ConnectionAccepted;
 
-        public bool IsDisposed
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    return _isDisposed;
-                }
-            }
-        }
+//        public bool IsDisposed
+//        {
+//            get
+//            {
+//                lock (_lock)
+//                {
+//                    return _isDisposed;
+//                }
+//            }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region IDisposable Members
+//        #region IDisposable Members
 
-        public void Dispose()
-        {
-            lock (_lock)
-            {
-                if (_isDisposed)
-                {
-                    GetLogger().Info("Server already disposed");
-                    return;
-                }
+//        public void Dispose()
+//        {
+//            lock (_lock)
+//            {
+//                if (_isDisposed)
+//                {
+//                    GetLogger().Info("Server already disposed");
+//                    return;
+//                }
 
-                try
-                {
-                    _tcpListener.Stop();
-                }
-                catch
-                {
-                    // dismiss
-                }
+//                try
+//                {
+//                    _tcpListener.Stop();
+//                }
+//                catch
+//                {
+//                    // dismiss
+//                }
 
-                try
-                {
-                    _tcpListener.Server.Dispose();
-                }
-                catch
-                {
-                    // dismiss
-                }
+//                try
+//                {
+//                    _tcpListener.Server.Dispose();
+//                }
+//                catch
+//                {
+//                    // dismiss
+//                }
 
-                _isRunning = false;
-                _isDisposed = true;
-            }
-        }
+//                _isRunning = false;
+//                _isDisposed = true;
+//            }
+//        }
 
-        #endregion
-    }
-}
+//        #endregion
+//    }
+//}

@@ -2,6 +2,8 @@
 using Keeker.Core.Data;
 using Keeker.Core.Listeners;
 using Keeker.Core.Streams;
+using Keeker.Server.Impl;
+using Keeker.Server.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +17,7 @@ namespace Keeker.Client.Gui
     public partial class MainForm : Form
     {
         private bool _autoApplyUri;
-        private HttpServerForm _serverForm;
+        //private HttpServerForm _serverForm;
 
         public MainForm()
         {
@@ -51,7 +53,22 @@ namespace Keeker.Client.Gui
 
             // ASSERT
             //this.DoSettingsAssert();
+
+            //var timer = new Timer();
+            //timer.Interval = 100;
+            //timer.Tick += (senderArg, eArg) =>
+            //{
+            //    timer.Dispose();
+            //    this.buttonCreateServer_Click(sender, e);
+            //};
+
+
+            //timer.Start();
+
+            Helper.DoLater(() => this.buttonCreateServer_Click(sender, e), 100);
+            Helper.DoLater(() => SendKeys.Send("{ENTER}"), 200);
         }
+
 
         //private void StartLinkListening()
         //{
@@ -336,6 +353,19 @@ namespace Keeker.Client.Gui
         private static bool IsLinkEndpoint(string endPoint)
         {
             return Regex.IsMatch(endPoint, @"link:\d+");
+        }
+
+        private void buttonCreateServer_Click(object sender, EventArgs e)
+        {
+            var dialog = new CreateListenerDialog();
+            var listener = dialog.ShowCreateListener("link://3333");
+
+            if (listener != null)
+            {
+                var server = new HttpServerBase(listener, new[] { "rho.me", });
+                var serverForm = new HttpServerForm(server);
+                serverForm.Show();
+            }
         }
     }
 }

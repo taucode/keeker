@@ -25,23 +25,24 @@ namespace Keeker.Server.Gui
 
         private void buttonCreate_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (_server != null)
-                {
-                    throw new ApplicationException();
-                }
+            throw new NotImplementedException();
+            //try
+            //{
+            //    if (_server != null)
+            //    {
+            //        throw new ApplicationException();
+            //    }
 
-                var section = (ServerSection)ConfigurationManager.GetSection("server");
-                var plainConf = section.ToPlainConf();
+            //    var section = (ServerSection)ConfigurationManager.GetSection("server");
+            //    var plainConf = section.ToPlainConf();
 
-                var factory = this.CreateHandlerFactory();
-                _server = new HttpServer(plainConf.EndPoint, factory);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            //    var factory = this.CreateHandlerFactory();
+            //    _server = new HttpServer(plainConf.EndPoint, factory);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
 
         private IHandlerFactory CreateHandlerFactory()

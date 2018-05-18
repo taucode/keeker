@@ -32,7 +32,7 @@ namespace Keeker.Server.Impl
 
         #region Constructor
 
-        protected HttpServerBase(IStreamListener streamListener, string[] hosts)
+        public HttpServerBase(IStreamListener streamListener, string[] hosts)
         {
             if (hosts == null)
             {

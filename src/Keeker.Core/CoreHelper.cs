@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Keeker.Core
@@ -535,5 +536,37 @@ namespace Keeker.Core
         }
 
         #endregion
+
+        public static IPEndPoint TryParseIPEndPoint(string endPoint)
+        {
+            if (endPoint == null)
+            {
+                throw new ArgumentNullException(nameof(endPoint));
+            }
+
+            var m = Regex.Match(endPoint, @"tcp://(\d+\.\d+\.\d+\.\d+):(\d+)");
+            if (!m.Success)
+            {
+                return null;
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public static int? TryParseLinkEndpoint(string endPoint)
+        {
+            if (endPoint == null)
+            {
+                throw new ArgumentNullException(nameof(endPoint));
+            }
+
+            var m = Regex.Match(endPoint, @"link://(\d+)");
+            if (!m.Success)
+            {
+                return null;
+            }
+
+            return m.Result("$1").ToInt32();
+        }
     }
 }

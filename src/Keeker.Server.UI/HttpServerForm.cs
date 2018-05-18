@@ -17,6 +17,7 @@ namespace Keeker.Server.UI
         }
 
         public HttpServerForm(IHttpServer server)
+            : this()
         {
             _server = server;
         }

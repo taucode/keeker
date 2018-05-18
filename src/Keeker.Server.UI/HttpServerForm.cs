@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace Keeker.Server.UI
 {
@@ -20,6 +21,35 @@ namespace Keeker.Server.UI
             : this()
         {
             _server = server;
+        }
+
+        private void HttpServerForm_Load(object sender, System.EventArgs e)
+        {
+            textBoxEndPoint.Text = _server.StreamListener.LocalEndpointName;
+        }
+
+        private void buttonStart_Click(object sender, System.EventArgs e)
+        {
+            try
+            {
+                _server.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void buttonDispose_Click(object sender, System.EventArgs e)
+        {
+            try
+            {
+                throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

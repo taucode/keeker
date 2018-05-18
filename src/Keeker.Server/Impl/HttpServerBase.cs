@@ -130,6 +130,8 @@ namespace Keeker.Server.Impl
 
         #region IHttpServer Members
 
+        public IStreamListener StreamListener => _streamListener;
+
         public void Start()
         {
             lock (_lock)
@@ -161,8 +163,6 @@ namespace Keeker.Server.Impl
                 }
             }
         }
-
-        //public string ListenedAddress => this.GetListenedAddressImpl();
 
         public string[] Hosts => _hosts.ToArray();
 

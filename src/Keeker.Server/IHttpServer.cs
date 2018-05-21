@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Keeker.Core.Listeners;
+using System;
 
 namespace Keeker.Server
 {
     public interface IHttpServer : IDisposable
     {
+        IStreamListener StreamListener { get; }
+
         void Start();
-
-        string ListenedAddress { get; }
-
+        
         string[] Hosts { get; }
 
         bool IsRunning { get; }

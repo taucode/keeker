@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keeker.Test.DemoFirst", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keeker.Test.DemoSecond", "src\Keeker.Test.DemoSecond\Keeker.Test.DemoSecond.csproj", "{CE08407F-8084-4EC1-A27D-58E428768671}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keeker.Server.UI", "src\Keeker.Server.UI\Keeker.Server.UI.csproj", "{B01AA1DC-4EE6-4E74-97CA-1C2ED8B8ADAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,10 @@ Global
 		{CE08407F-8084-4EC1-A27D-58E428768671}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE08407F-8084-4EC1-A27D-58E428768671}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE08407F-8084-4EC1-A27D-58E428768671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B01AA1DC-4EE6-4E74-97CA-1C2ED8B8ADAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B01AA1DC-4EE6-4E74-97CA-1C2ED8B8ADAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B01AA1DC-4EE6-4E74-97CA-1C2ED8B8ADAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B01AA1DC-4EE6-4E74-97CA-1C2ED8B8ADAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{1C9DF059-183B-42D4-AE75-11383BDF04C2} = {CC46CD06-CEC1-416E-8F6E-22825FC60D8E}
 		{69E568A2-3606-442D-81F9-D29E38E98A4F} = {CC46CD06-CEC1-416E-8F6E-22825FC60D8E}
 		{CE08407F-8084-4EC1-A27D-58E428768671} = {CC46CD06-CEC1-416E-8F6E-22825FC60D8E}
+		{B01AA1DC-4EE6-4E74-97CA-1C2ED8B8ADAE} = {CC46CD06-CEC1-416E-8F6E-22825FC60D8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89390666-BFE2-414C-9E00-CC60CB9DA997}

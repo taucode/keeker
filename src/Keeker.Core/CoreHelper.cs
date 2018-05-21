@@ -1,5 +1,6 @@
 ﻿using Keeker.Core.Data;
 using Keeker.Core.Data.Builders;
+using Keeker.Core.Listeners;
 using Keeker.Core.Streams;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Keeker.Core
@@ -535,5 +537,82 @@ namespace Keeker.Core
         }
 
         #endregion
+
+        public static IPEndPoint TryParseIPEndPoint(string endPoint)
+        {
+            if (endPoint == null)
+            {
+                throw new ArgumentNullException(nameof(endPoint));
+            }
+
+            var m = Regex.Match(endPoint, @"tcp://(\d+\.\d+\.\d+\.\d+):(\d+)");
+            if (!m.Success)
+            {
+                return null;
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public static bool IsIPEndPoint(string endPoint)
+        {
+            return TryParseIPEndPoint(endPoint) != null;
+        }
+
+        public static int? TryParseLinkEndPoint(string endPoint)
+        {
+            if (endPoint == null)
+            {
+                throw new ArgumentNullException(nameof(endPoint));
+            }
+
+            var m = Regex.Match(endPoint, @"link://(\d+)");
+            if (!m.Success)
+            {
+                return null;
+            }
+
+            return m.Result("$1").ToInt32();
+        }
+
+        public static bool IsLinkEndPoint(string endPoint)
+        {
+            return TryParseLinkEndPoint(endPoint) != null;
+        }
+
+        public static IStreamListener CreateListenerForEndPoint(string endPoint)
+        {
+            if (IsLinkEndPoint(endPoint))
+            {
+                return new LinkStreamListener(TryParseLinkEndPoint(endPoint).Value);
+            }
+            else if (IsIPEndPoint(endPoint))
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                throw new ApplicationException();
+            }
+        }
+
+        public static Stream CreateStreamFromEndPoint(string endPoint)
+        {
+            if (IsLinkEndPoint(endPoint))
+            {
+                var port = TryParseLinkEndPoint(endPoint).Value;
+                var link = new Link();
+                LinkStreamListener.Connect(port, link);
+                return link.Stream1;
+            }
+            else if (IsIPEndPoint(endPoint))
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                throw new ApplicationException();
+            }
+        }
     }
 }

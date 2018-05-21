@@ -6,6 +6,19 @@ namespace Keeker.Client
 {
     public class HttpClient : IHttpClient
     {
+        #region Fields
+
+        private readonly Stream _stream;
+
+        #endregion
+
+        public HttpClient(Stream stream)
+        {
+            // todo1[ak] checks
+
+            _stream = stream;
+        }
+
         #region IHttpClient Members
 
         public void Connect(Stream stream)
@@ -13,7 +26,7 @@ namespace Keeker.Client
             throw new NotImplementedException();
         }
 
-        public Stream Stream { get; }
+        public Stream Stream => _stream;
 
         public void Send(HttpRequestMetadata metadata, byte[] content)
         {

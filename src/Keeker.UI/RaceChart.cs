@@ -28,7 +28,6 @@ namespace Keeker.UI
 
         private int _base;
 
-
         private readonly int _itemHeightWithSpacing;
         private readonly int _scrollStep;
         private int _pictureHeight;
@@ -93,7 +92,7 @@ namespace Keeker.UI
         {
             base.OnClick(e);
 
-
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -132,8 +131,7 @@ namespace Keeker.UI
             this.RefreshScrollBars();
             this.Invalidate();
         }
-
-
+        
         [Browsable(false)]
         public int ParticipantCount => _entryCollections.Count;
 

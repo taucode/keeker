@@ -1,10 +1,7 @@
-﻿using Keeker.Convey.Conf;
-using Keeker.Convey.Proxies;
-using Keeker.Gui.Data;
+﻿using Keeker.Gui.Data;
 using Keeker.Gui.Panes;
 using Keeker.UI;
 using System;
-using System.Configuration;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -14,7 +11,7 @@ namespace Keeker.Gui
     {
         private readonly LogForm _logForm;
 
-        private IProxy _proxy;
+        //private IProxy _proxy;
         private readonly object _lock;
 
         private Pane _currentPane;
@@ -45,14 +42,15 @@ namespace Keeker.Gui
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
-            try
-            {
-                _proxy.Start();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            throw new NotImplementedException();
+            //try
+            //{
+            //    _proxy.Start();
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -169,47 +167,50 @@ namespace Keeker.Gui
 
         private void buttonCreate_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (_proxy != null)
-                {
-                    throw new ApplicationException();
-                }
+            throw new NotImplementedException();
+            //try
+            //{
+            //    if (_proxy != null)
+            //    {
+            //        throw new ApplicationException();
+            //    }
 
-                var conf = (ProxySection)ConfigurationManager.GetSection("proxy");
-                var plainConf = conf.ToPlainConf();
+            //    var conf = (ProxySection)ConfigurationManager.GetSection("proxy");
+            //    var plainConf = conf.ToPlainConf();
 
-                _proxy = new Proxy(plainConf);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            //    _proxy = new Proxy(plainConf);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
         {
-            try
-            {
-                _proxy.Stop();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            throw new NotImplementedException();
+            //try
+            //{
+            //    _proxy.Stop();
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
 
         private void buttonDispose_Click(object sender, EventArgs e)
         {
-            try
-            {
-                _proxy.Dispose();
-                _proxy = null;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            throw new NotImplementedException();
+            //try
+            //{
+            //    _proxy.Dispose();
+            //    _proxy = null;
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
 
         private void buttonLog_Click(object sender, EventArgs e)

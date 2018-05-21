@@ -29,12 +29,12 @@ namespace Keeker.Server.UI
             this.Invoke(action);
         }
 
-        private void server_ConnectionAccepted(object sender, Connection connection)
+        private void server_ConnectionAccepted(object sender, ServerConnection connection)
         {
             this.DoInvoke(() => this.ReflectConnection(connection));
         }
 
-        private void ReflectConnection(Connection connection)
+        private void ReflectConnection(ServerConnection connection)
         {
             var item = new ListViewItem(connection.Id);
             listViewConnections.Items.Add(item);

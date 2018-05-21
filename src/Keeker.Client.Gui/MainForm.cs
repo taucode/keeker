@@ -32,7 +32,7 @@ namespace Keeker.Client.Gui
             if (endPoint != null)
             {
                 var listener = CoreHelper.CreateListenerForEndPoint(endPoint);
-                var server = new HttpServerBase(listener, new[] { "rho.me" });
+                var server = new HttpServerBase(listener, new[] { "rho.me" }, Program.Instance.HandlerFactory);
                 var form = new HttpServerForm(server);
                 form.Show();
             }

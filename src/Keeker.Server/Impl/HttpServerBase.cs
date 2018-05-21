@@ -26,14 +26,22 @@ namespace Keeker.Server.Impl
         private readonly IdGenerator _idGenerator;
         private readonly IHandlerFactory _handlerFactory;
         private readonly string[] _hosts;
-        private readonly Dictionary<string, Connection> _connections;
+        private readonly Dictionary<string, ServerConnection> _connections;
 
         #endregion
 
         #region Constructor
 
-        public HttpServerBase(IStreamListener streamListener, string[] hosts)
+        public HttpServerBase(
+            IStreamListener streamListener,
+            string[] hosts,
+            IHandlerFactory handlerFactory)
         {
+            if (streamListener == null)
+            {
+                throw new ArgumentNullException(nameof(streamListener));
+            }
+
             if (hosts == null)
             {
                 throw new ArgumentNullException(nameof(hosts));
@@ -44,11 +52,17 @@ namespace Keeker.Server.Impl
                 throw new ArgumentException("At least one host is needed", nameof(hosts));
             }
 
+            if (handlerFactory == null)
+            {
+                throw new ArgumentNullException(nameof(handlerFactory));
+            }
+
             _lock = new object();
-            _streamListener = streamListener ?? throw new ArgumentNullException(nameof(streamListener));
+            _streamListener = streamListener;
             _hosts = hosts;
             _idGenerator = new IdGenerator();
-            _connections = new Dictionary<string, Connection>();
+            _connections = new Dictionary<string, ServerConnection>();
+            _handlerFactory = handlerFactory;
         }
 
         #endregion
@@ -95,7 +109,7 @@ namespace Keeker.Server.Impl
                     try
                     {
                         var id = _idGenerator.Generate();
-                        var connection = new Connection(id, stream, _handlerFactory);
+                        var connection = new ServerConnection(id, stream, _handlerFactory);
 
                         lock (_lock)
                         {
@@ -168,7 +182,7 @@ namespace Keeker.Server.Impl
 
         public bool IsRunning => throw new NotImplementedException();
 
-        public event EventHandler<Connection> ConnectionAccepted;
+        public event EventHandler<ServerConnection> ConnectionAccepted;
 
         public bool IsDisposed => throw new NotImplementedException();
 

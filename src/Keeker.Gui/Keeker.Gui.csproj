@@ -65,13 +65,6 @@
     <Compile Include="ClientForm.Designer.cs">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\RaceChart.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\RaceChart.Designer.cs">
-      <DependentUpon>RaceChart.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\RaceChartEntry.cs" />
     <Compile Include="Data\HostConfDto.cs" />
     <Compile Include="Data\ListenerConfDto.cs" />
     <Compile Include="FooData.cs" />
@@ -110,9 +103,6 @@
     </Compile>
     <EmbeddedResource Include="ClientForm.resx">
       <DependentUpon>ClientForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\RaceChart.resx">
-      <DependentUpon>RaceChart.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -157,6 +147,9 @@
       <Project>{5154FDB4-1B39-444F-97D8-F560D71255FB}</Project>
       <Name>Keeker.UI</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controls\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -50,11 +50,16 @@
             this.comboBoxMethod = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabPageText = new System.Windows.Forms.TabPage();
+            this.textBoxRequestText = new System.Windows.Forms.TextBox();
+            this.buttonSendText = new System.Windows.Forms.Button();
+            this.buttonApplyText = new System.Windows.Forms.Button();
             this.tabPageBinary = new System.Windows.Forms.TabPage();
             this.panelResponse = new System.Windows.Forms.Panel();
-            this.buttonApplyText = new System.Windows.Forms.Button();
-            this.buttonSendText = new System.Windows.Forms.Button();
-            this.textBoxRequestText = new System.Windows.Forms.TextBox();
+            this.tabControlCommunication = new System.Windows.Forms.TabControl();
+            this.tabPageByteStream = new System.Windows.Forms.TabPage();
+            this.tabPageDataStream = new System.Windows.Forms.TabPage();
+            this.raceChartPackets = new Keeker.UI.RaceChart();
+            this.binaryViewPacket = new Keeker.UI.BinaryView();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerRequestResponse)).BeginInit();
             this.splitContainerRequestResponse.Panel1.SuspendLayout();
             this.splitContainerRequestResponse.Panel2.SuspendLayout();
@@ -63,6 +68,9 @@
             this.tabControlRequest.SuspendLayout();
             this.tabPagePrepare.SuspendLayout();
             this.tabPageText.SuspendLayout();
+            this.panelResponse.SuspendLayout();
+            this.tabControlCommunication.SuspendLayout();
+            this.tabPageByteStream.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainerRequestResponse
@@ -300,6 +308,39 @@
             this.tabPageText.Text = "Text";
             this.tabPageText.UseVisualStyleBackColor = true;
             // 
+            // textBoxRequestText
+            // 
+            this.textBoxRequestText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxRequestText.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBoxRequestText.Location = new System.Drawing.Point(6, 35);
+            this.textBoxRequestText.Multiline = true;
+            this.textBoxRequestText.Name = "textBoxRequestText";
+            this.textBoxRequestText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxRequestText.Size = new System.Drawing.Size(476, 432);
+            this.textBoxRequestText.TabIndex = 2;
+            this.textBoxRequestText.WordWrap = false;
+            // 
+            // buttonSendText
+            // 
+            this.buttonSendText.Location = new System.Drawing.Point(87, 6);
+            this.buttonSendText.Name = "buttonSendText";
+            this.buttonSendText.Size = new System.Drawing.Size(75, 23);
+            this.buttonSendText.TabIndex = 1;
+            this.buttonSendText.Text = "Send";
+            this.buttonSendText.UseVisualStyleBackColor = true;
+            this.buttonSendText.Click += new System.EventHandler(this.buttonSendText_Click);
+            // 
+            // buttonApplyText
+            // 
+            this.buttonApplyText.Location = new System.Drawing.Point(6, 6);
+            this.buttonApplyText.Name = "buttonApplyText";
+            this.buttonApplyText.Size = new System.Drawing.Size(75, 23);
+            this.buttonApplyText.TabIndex = 0;
+            this.buttonApplyText.Text = "Apply";
+            this.buttonApplyText.UseVisualStyleBackColor = true;
+            // 
             // tabPageBinary
             // 
             this.tabPageBinary.Location = new System.Drawing.Point(4, 22);
@@ -316,43 +357,74 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelResponse.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelResponse.Controls.Add(this.tabControlCommunication);
             this.panelResponse.Location = new System.Drawing.Point(0, 0);
             this.panelResponse.Name = "panelResponse";
             this.panelResponse.Size = new System.Drawing.Size(546, 506);
             this.panelResponse.TabIndex = 0;
             // 
-            // buttonApplyText
+            // tabControlCommunication
             // 
-            this.buttonApplyText.Location = new System.Drawing.Point(6, 6);
-            this.buttonApplyText.Name = "buttonApplyText";
-            this.buttonApplyText.Size = new System.Drawing.Size(75, 23);
-            this.buttonApplyText.TabIndex = 0;
-            this.buttonApplyText.Text = "Apply";
-            this.buttonApplyText.UseVisualStyleBackColor = true;
-            // 
-            // buttonSendText
-            // 
-            this.buttonSendText.Location = new System.Drawing.Point(87, 6);
-            this.buttonSendText.Name = "buttonSendText";
-            this.buttonSendText.Size = new System.Drawing.Size(75, 23);
-            this.buttonSendText.TabIndex = 1;
-            this.buttonSendText.Text = "Send";
-            this.buttonSendText.UseVisualStyleBackColor = true;
-            this.buttonSendText.Click += new System.EventHandler(this.buttonSendText_Click);
-            // 
-            // textBoxRequestText
-            // 
-            this.textBoxRequestText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tabControlCommunication.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxRequestText.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBoxRequestText.Location = new System.Drawing.Point(6, 35);
-            this.textBoxRequestText.Multiline = true;
-            this.textBoxRequestText.Name = "textBoxRequestText";
-            this.textBoxRequestText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxRequestText.Size = new System.Drawing.Size(476, 432);
-            this.textBoxRequestText.TabIndex = 2;
-            this.textBoxRequestText.WordWrap = false;
+            this.tabControlCommunication.Controls.Add(this.tabPageByteStream);
+            this.tabControlCommunication.Controls.Add(this.tabPageDataStream);
+            this.tabControlCommunication.Location = new System.Drawing.Point(3, 3);
+            this.tabControlCommunication.Name = "tabControlCommunication";
+            this.tabControlCommunication.SelectedIndex = 0;
+            this.tabControlCommunication.Size = new System.Drawing.Size(538, 498);
+            this.tabControlCommunication.TabIndex = 0;
+            // 
+            // tabPageByteStream
+            // 
+            this.tabPageByteStream.Controls.Add(this.binaryViewPacket);
+            this.tabPageByteStream.Controls.Add(this.raceChartPackets);
+            this.tabPageByteStream.Location = new System.Drawing.Point(4, 22);
+            this.tabPageByteStream.Name = "tabPageByteStream";
+            this.tabPageByteStream.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageByteStream.Size = new System.Drawing.Size(530, 472);
+            this.tabPageByteStream.TabIndex = 0;
+            this.tabPageByteStream.Text = "Byte Stream";
+            this.tabPageByteStream.UseVisualStyleBackColor = true;
+            // 
+            // tabPageDataStream
+            // 
+            this.tabPageDataStream.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDataStream.Name = "tabPageDataStream";
+            this.tabPageDataStream.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDataStream.Size = new System.Drawing.Size(530, 472);
+            this.tabPageDataStream.TabIndex = 1;
+            this.tabPageDataStream.Text = "Data Stream";
+            this.tabPageDataStream.UseVisualStyleBackColor = true;
+            // 
+            // raceChartPackets
+            // 
+            this.raceChartPackets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.raceChartPackets.BackColor = System.Drawing.Color.White;
+            this.raceChartPackets.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.raceChartPackets.Location = new System.Drawing.Point(6, 6);
+            this.raceChartPackets.Name = "raceChartPackets";
+            this.raceChartPackets.Size = new System.Drawing.Size(175, 460);
+            this.raceChartPackets.TabIndex = 0;
+            // 
+            // binaryViewPacket
+            // 
+            this.binaryViewPacket.AddressMargin = 0;
+            this.binaryViewPacket.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.binaryViewPacket.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.binaryViewPacket.Bytes = new byte[0];
+            this.binaryViewPacket.DumpByteMargin = 16;
+            this.binaryViewPacket.HalfLineMargin = 16;
+            this.binaryViewPacket.HexMargin = 8;
+            this.binaryViewPacket.LineMargin = 16;
+            this.binaryViewPacket.Location = new System.Drawing.Point(187, 6);
+            this.binaryViewPacket.Name = "binaryViewPacket";
+            this.binaryViewPacket.Size = new System.Drawing.Size(337, 460);
+            this.binaryViewPacket.TabIndex = 1;
             // 
             // ClientForm
             // 
@@ -374,6 +446,9 @@
             this.tabPagePrepare.PerformLayout();
             this.tabPageText.ResumeLayout(false);
             this.tabPageText.PerformLayout();
+            this.panelResponse.ResumeLayout(false);
+            this.tabControlCommunication.ResumeLayout(false);
+            this.tabPageByteStream.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -405,6 +480,11 @@
         private System.Windows.Forms.TextBox textBoxRequestText;
         private System.Windows.Forms.Button buttonSendText;
         private System.Windows.Forms.Button buttonApplyText;
+        private System.Windows.Forms.TabControl tabControlCommunication;
+        private System.Windows.Forms.TabPage tabPageByteStream;
+        private System.Windows.Forms.TabPage tabPageDataStream;
+        private UI.BinaryView binaryViewPacket;
+        private UI.RaceChart raceChartPackets;
     }
 }
 

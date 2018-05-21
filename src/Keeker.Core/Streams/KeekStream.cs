@@ -55,6 +55,8 @@ namespace Keeker.Core.Streams
                 {
                     // read all from inner stream
                     var readFromInnerStreamBytesCount = _innerStream.Read(buffer, offset, count);
+                    this.ReadFromInnerStream?.Invoke(buffer, offset, readFromInnerStreamBytesCount);
+
                     return readFromInnerStreamBytesCount;
                 }
                 else
@@ -69,6 +71,7 @@ namespace Keeker.Core.Streams
                     if (remaining > 0)
                     {
                         readFromInnerStreamBytesCount = _innerStream.Read(buffer, offset + bittenBytesCount, remaining);
+                        this.ReadFromInnerStream?.Invoke(buffer, offset + bittenBytesCount, readFromInnerStreamBytesCount);
                     }
 
                     var totalRead = bittenBytesCount + readFromInnerStreamBytesCount;
@@ -141,7 +144,7 @@ namespace Keeker.Core.Streams
 
         #region Public
 
-        public int ReadInnerStream(int maxCount, Action<byte[], int> callback = null)
+        public int ReadInnerStream(int maxCount)
         {
             if (maxCount < 1)
             {
@@ -153,12 +156,7 @@ namespace Keeker.Core.Streams
                 var buffer = new byte[maxCount];
                 var bytesRead = _innerStream.Read(buffer, 0, maxCount);
 
-                //if (bytesRead == 0)
-                //{
-                //    throw new NotImplementedException(); // tood909090[ak] temp
-                //}
-
-                callback?.Invoke(buffer, bytesRead);
+                this.ReadFromInnerStream?.Invoke(buffer, 0, bytesRead);
 
                 if (bytesRead == 0)
                 {
@@ -197,25 +195,19 @@ namespace Keeker.Core.Streams
 
         public IByteSender ByteSender
         {
-            get
-            {
-                return _byteSender;
-            }
+            get => _byteSender;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(ByteSender));
-                }
-
                 if (!ReferenceEquals(this._innerStream, _byteSender.TargetStream))
                 {
                     throw new InvalidOperationException("ByteSender's stream is not the same as inner stream of this instance");
                 }
 
-                _byteSender = value;
+                _byteSender = value ?? throw new ArgumentNullException(nameof(ByteSender));
             }
         }
+
+        public event Action<byte[], int, int> ReadFromInnerStream;
 
         #endregion
     }

@@ -39,7 +39,6 @@
             this.buttonSet = new System.Windows.Forms.Button();
             this.buttonGet = new System.Windows.Forms.Button();
             this.buttonToggle = new System.Windows.Forms.Button();
-            this.raceChartMain = new Keeker.Gui.Controls.RaceChart();
             this.SuspendLayout();
             // 
             // buttonClient
@@ -50,7 +49,6 @@
             this.buttonClient.TabIndex = 3;
             this.buttonClient.Text = "Client";
             this.buttonClient.UseVisualStyleBackColor = true;
-            this.buttonClient.Click += new System.EventHandler(this.buttonClient_Click);
             // 
             // buttonServer
             // 
@@ -60,7 +58,6 @@
             this.buttonServer.TabIndex = 4;
             this.buttonServer.Text = "Server";
             this.buttonServer.UseVisualStyleBackColor = true;
-            this.buttonServer.Click += new System.EventHandler(this.buttonServer_Click);
             // 
             // label1
             // 
@@ -140,18 +137,6 @@
             this.buttonToggle.UseVisualStyleBackColor = true;
             this.buttonToggle.Click += new System.EventHandler(this.buttonToggle_Click);
             // 
-            // raceChartMain
-            // 
-            this.raceChartMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.raceChartMain.BackColor = System.Drawing.Color.White;
-            this.raceChartMain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.raceChartMain.Location = new System.Drawing.Point(12, 12);
-            this.raceChartMain.Name = "raceChartMain";
-            this.raceChartMain.Size = new System.Drawing.Size(188, 294);
-            this.raceChartMain.TabIndex = 2;
-            this.raceChartMain.Scroll += new System.Windows.Forms.ScrollEventHandler(this.raceChartMain_Scroll);
-            // 
             // RaceChartForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -168,7 +153,6 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonServer);
             this.Controls.Add(this.buttonClient);
-            this.Controls.Add(this.raceChartMain);
             this.Name = "RaceChartForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "RaceChartForm";
@@ -179,7 +163,6 @@
         }
 
         #endregion
-        private Controls.RaceChart raceChartMain;
         private System.Windows.Forms.Button buttonClient;
         private System.Windows.Forms.Button buttonServer;
         private System.Windows.Forms.Label label1;

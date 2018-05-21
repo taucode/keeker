@@ -27,10 +27,23 @@ namespace Keeker.Client
             // todo1[ak] checks
 
             _stream = new KeekStream(stream, true);
+            _stream.ReadFromInnerStream += stream_ReadFromInnerStream;
+
             _stopSignal = new ManualResetEvent(false);
             _metadataReader = new HttpResponseMetadataReader(_stream, _stopSignal);
             _readingTask = new Task(this.ReadingRoutine);
             _readingTask.Start();
+        }
+
+        private void stream_ReadFromInnerStream(byte[] buffer, int offset, int count)
+        {
+            if (this.RawDataReceived != null)
+            {
+                var copy = new byte[count];
+                Buffer.BlockCopy(buffer, offset, copy, 0, count);
+
+                this.RawDataReceived(copy);
+            }
         }
 
         #endregion
@@ -79,9 +92,15 @@ namespace Keeker.Client
         public void Send(HttpRequestMetadata metadata, byte[] content)
         {
             var metadataBuffer = metadata.Serialize();
+            
             _stream.Write(metadataBuffer, 0, metadataBuffer.Length);
+            this.RawDataSent?.Invoke(metadataBuffer);
+
             _stream.Write(content, 0, content.Length);
+            this.RawDataSent?.Invoke(content);
         }
+
+        public event Action<byte[]> RawDataSent;
 
         public event Action<byte[]> RawDataReceived;
 

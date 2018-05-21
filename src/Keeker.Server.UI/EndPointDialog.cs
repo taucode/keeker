@@ -1,55 +1,49 @@
 ﻿using Keeker.Core;
-using Keeker.Core.Listeners;
 using System;
 using System.Windows.Forms;
 
 namespace Keeker.Server.UI
 {
-    public partial class CreateListenerDialog : Form
+    public partial class EndPointDialog : Form
     {
         private string _endpoint;
-        private IStreamListener _streamListener;
 
-        public CreateListenerDialog()
+        public EndPointDialog()
         {
             InitializeComponent();
         }
 
-        public IStreamListener ShowCreateListener(string initialEndpoint = null)
+        public string ShowEndPoint(string initialEndpoint = null)
         {
             _endpoint = initialEndpoint;
-            _streamListener = null;
 
             var dialogResult = this.ShowDialog();
 
-            return dialogResult == DialogResult.OK ? _streamListener : null;
+            return dialogResult == DialogResult.OK ? _endpoint : null;
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
             try
             {
+                _endpoint = comboBoxEndpoint.Text;
+
                 if (_endpoint == null)
                 {
                     throw new ApplicationException();
                 }
 
-                var ipEndPoint = CoreHelper.TryParseIPEndPoint(_endpoint);
+                var valid =
+                    CoreHelper.IsIPEndPoint(_endpoint) ||
+                    CoreHelper.IsLinkEndPoint(_endpoint);
 
-                if (ipEndPoint != null)
+                if (!valid)
                 {
-                    throw new NotImplementedException();
+                    throw new ApplicationException();
                 }
 
-                var linkEndpointPort = CoreHelper.TryParseLinkEndpoint(_endpoint);
-                if (linkEndpointPort != null)
-                {
-                    _streamListener = new LinkStreamListener(linkEndpointPort.Value);
-                    this.DialogResult = DialogResult.OK;
-                    return;
-                }
-
-                throw new ApplicationException();
+                this.DialogResult = DialogResult.OK;
+                this.Close();
             }
             catch (Exception ex)
             {

@@ -42,11 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CreateListenerDialog.cs">
+    <Compile Include="EndPointDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CreateListenerDialog.Designer.cs">
-      <DependentUpon>CreateListenerDialog.cs</DependentUpon>
+    <Compile Include="EndPointDialog.Designer.cs">
+      <DependentUpon>EndPointDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="HttpServerForm.cs">
       <SubType>Form</SubType>
@@ -57,8 +57,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CreateListenerDialog.resx">
-      <DependentUpon>CreateListenerDialog.cs</DependentUpon>
+    <EmbeddedResource Include="EndPointDialog.resx">
+      <DependentUpon>EndPointDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HttpServerForm.resx">
       <DependentUpon>HttpServerForm.cs</DependentUpon>

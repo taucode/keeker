@@ -1,7 +1,5 @@
 ﻿using Keeker.Core.Data;
 using Keeker.Core.Streams;
-using Keeker.Server.Impl;
-using Keeker.Server.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +10,8 @@ namespace Keeker.Client.Gui
     public partial class ClientForm : Form
     {
         private bool _autoApplyUri;
+
+        private readonly IHttpClient _client;
         //private HttpServerForm _serverForm;
 
         public ClientForm()
@@ -19,6 +19,12 @@ namespace Keeker.Client.Gui
             InitializeComponent();
 
             _autoApplyUri = true;
+        }
+
+        public ClientForm(IHttpClient client)
+            : this()
+        {
+            _client = client;
         }
 
         private void ClientForm_Load(object sender, EventArgs e)
@@ -60,8 +66,8 @@ namespace Keeker.Client.Gui
 
             //timer.Start();
 
-            Helper.DoLater(() => this.buttonCreateServer_Click(sender, e), 100);
-            Helper.DoLater(() => SendKeys.Send("{ENTER}"), 200);
+            //Helper.DoLater(() => this.buttonCreateServer_Click(sender, e), 100);
+            //Helper.DoLater(() => SendKeys.Send("{ENTER}"), 200);
         }
 
 
@@ -315,18 +321,5 @@ namespace Keeker.Client.Gui
         //{
         //    return Regex.IsMatch(endPoint, @"link:\d+");
         //}
-
-        private void buttonCreateServer_Click(object sender, EventArgs e)
-        {
-            var dialog = new CreateListenerDialog();
-            var listener = dialog.ShowCreateListener("link://3333");
-
-            if (listener != null)
-            {
-                var server = new HttpServerBase(listener, new[] { "rho.me", });
-                var serverForm = new HttpServerForm(server);
-                serverForm.Show();
-            }
-        }
     }
 }

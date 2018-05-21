@@ -1,6 +1,6 @@
 ﻿namespace Keeker.Server.UI
 {
-    partial class CreateListenerDialog
+    partial class EndPointDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -39,7 +39,7 @@
             this.buttonOk.Location = new System.Drawing.Point(102, 66);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 0;
+            this.buttonOk.TabIndex = 1;
             this.buttonOk.Text = "OK";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
@@ -50,7 +50,7 @@
             this.buttonCancel.Location = new System.Drawing.Point(183, 66);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 1;
+            this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Canel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
@@ -63,7 +63,7 @@
             this.comboBoxEndpoint.Location = new System.Drawing.Point(70, 12);
             this.comboBoxEndpoint.Name = "comboBoxEndpoint";
             this.comboBoxEndpoint.Size = new System.Drawing.Size(188, 21);
-            this.comboBoxEndpoint.TabIndex = 2;
+            this.comboBoxEndpoint.TabIndex = 0;
             // 
             // label1
             // 
@@ -74,7 +74,7 @@
             this.label1.TabIndex = 3;
             this.label1.Text = "Endpoint:";
             // 
-            // CreateListenerDialog
+            // EndPointDialog
             // 
             this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -88,10 +88,10 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "CreateListenerDialog";
+            this.Name = "EndPointDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Create Listener";
+            this.Text = "End Point";
             this.Load += new System.EventHandler(this.CreateListenerDialog_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

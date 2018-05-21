@@ -153,10 +153,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Keeker.Convey\Keeker.Convey.csproj">
-      <Project>{D8F75A30-3E2F-45F2-A9EC-34B73BC8CAA6}</Project>
-      <Name>Keeker.Convey</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Keeker.UI\Keeker.UI.csproj">
       <Project>{5154FDB4-1B39-444F-97D8-F560D71255FB}</Project>
       <Name>Keeker.UI</Name>

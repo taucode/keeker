@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Keeker.Core.Data
 {
-    public class HttpResponseMetadata : IHttpMetadata
+    public class HttpResponseMetadata : HttpMetadataBase
     {
         public HttpResponseMetadata(HttpStatusLine line, HttpHeaderCollection headers)
         {
@@ -16,7 +16,7 @@ namespace Keeker.Core.Data
 
         public HttpHeaderCollection Headers { get; }
 
-        public byte[] Serialize()
+        public override byte[] Serialize()
         {
             using (var stream = new MemoryStream())
             {

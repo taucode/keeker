@@ -6,8 +6,6 @@ namespace Keeker.Client
 {
     public interface IHttpClient : IDisposable
     {
-        void Connect(Stream stream);
-
         Stream Stream { get; }
 
         void Send(HttpRequestMetadata metadata, byte[] content);

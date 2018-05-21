@@ -21,6 +21,23 @@ namespace Keeker.Server.UI
             : this()
         {
             _server = server;
+            _server.ConnectionAccepted += server_ConnectionAccepted;
+        }
+
+        private void DoInvoke(Action action)
+        {
+            this.Invoke(action);
+        }
+
+        private void server_ConnectionAccepted(object sender, ServerConnection connection)
+        {
+            this.DoInvoke(() => this.ReflectConnection(connection));
+        }
+
+        private void ReflectConnection(ServerConnection connection)
+        {
+            var item = new ListViewItem(connection.Id);
+            listViewConnections.Items.Add(item);
         }
 
         private void HttpServerForm_Load(object sender, System.EventArgs e)

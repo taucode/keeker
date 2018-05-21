@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Keeker.Server;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Reflection;
@@ -13,7 +14,11 @@ namespace Keeker.Client.Gui
 
         private Program()
         {
+            var exePath = Assembly.GetEntryAssembly().Location;
+            var exeDirPath = Path.GetDirectoryName(exePath);
+            var homeDirectory = Path.Combine(exeDirPath, "HomeServer");
 
+            this.HandlerFactory = new HandlerFactoryBase(new StaticContentResolver(homeDirectory));
         }
 
         public void SaveSettings(AppSettings appSettings)
@@ -38,6 +43,8 @@ namespace Keeker.Client.Gui
                 return null;
             }
         }
+
+        public IHandlerFactory HandlerFactory { get; private set; }
 
         private string CreateSettingsFilePath()
         {

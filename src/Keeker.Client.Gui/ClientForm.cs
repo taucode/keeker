@@ -1,8 +1,11 @@
-﻿using Keeker.Core.Data;
+﻿using Keeker.Core;
+using Keeker.Core.Data;
 using Keeker.Core.Streams;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Windows.Forms;
 
 namespace Keeker.Client.Gui
@@ -25,6 +28,12 @@ namespace Keeker.Client.Gui
             : this()
         {
             _client = client;
+            _client.ResponseReceived += client_ResponseReceived;
+        }
+
+        private void client_ResponseReceived(HttpResponseMetadata metadata, byte[] content)
+        {
+            Trace.TraceInformation(metadata.ToString());
         }
 
         private void ClientForm_Load(object sender, EventArgs e)
@@ -205,12 +214,27 @@ namespace Keeker.Client.Gui
         {
             try
             {
-                this.SaveSettings();
+                this.DoApply();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void DoApply()
+        {
+            var line = new HttpRequestLine(new HttpMethod(comboBoxMethod.Text), comboBoxUri.Text);
+            var headers = new HttpHeaderCollection(listViewHeaders.Items
+                .Cast<ListViewItem>()
+                .Select(item => new HttpHeader(
+                    item.SubItems[0].Text,
+                    item.SubItems[1].Text)));
+
+            var metadata = new HttpRequestMetadata(line, headers);
+
+            var metadataText = metadata.ToString();
+            textBoxRequestText.Text = metadataText;
         }
 
         private void SaveSettings()
@@ -299,6 +323,40 @@ namespace Keeker.Client.Gui
             {
                 throw new NotImplementedException();
             }
+        }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.SaveSettings();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void buttonSendText_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.DoSend();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void DoSend()
+        {
+            var buffer = textBoxRequestText.Text.ToAsciiBytes();
+
+            var metadata = HttpRequestMetadata.Parse(buffer, 0);
+            var len = metadata.ToString().Length;
+            var content = buffer.Skip(len).ToArray();
+            _client.Send(metadata, content);
         }
 
         //private static bool IsIPEndpoint(string endPoint)

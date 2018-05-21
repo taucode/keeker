@@ -52,6 +52,9 @@
             this.tabPageText = new System.Windows.Forms.TabPage();
             this.tabPageBinary = new System.Windows.Forms.TabPage();
             this.panelResponse = new System.Windows.Forms.Panel();
+            this.buttonApplyText = new System.Windows.Forms.Button();
+            this.buttonSendText = new System.Windows.Forms.Button();
+            this.textBoxRequestText = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerRequestResponse)).BeginInit();
             this.splitContainerRequestResponse.Panel1.SuspendLayout();
             this.splitContainerRequestResponse.Panel2.SuspendLayout();
@@ -59,6 +62,7 @@
             this.panelRequest.SuspendLayout();
             this.tabControlRequest.SuspendLayout();
             this.tabPagePrepare.SuspendLayout();
+            this.tabPageText.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainerRequestResponse
@@ -167,6 +171,7 @@
             this.buttonSave.Size = new System.Drawing.Size(27, 25);
             this.buttonSave.TabIndex = 11;
             this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // buttonOpen
             // 
@@ -284,10 +289,13 @@
             // 
             // tabPageText
             // 
+            this.tabPageText.Controls.Add(this.textBoxRequestText);
+            this.tabPageText.Controls.Add(this.buttonSendText);
+            this.tabPageText.Controls.Add(this.buttonApplyText);
             this.tabPageText.Location = new System.Drawing.Point(4, 22);
             this.tabPageText.Name = "tabPageText";
             this.tabPageText.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageText.Size = new System.Drawing.Size(370, 447);
+            this.tabPageText.Size = new System.Drawing.Size(488, 473);
             this.tabPageText.TabIndex = 1;
             this.tabPageText.Text = "Text";
             this.tabPageText.UseVisualStyleBackColor = true;
@@ -297,7 +305,7 @@
             this.tabPageBinary.Location = new System.Drawing.Point(4, 22);
             this.tabPageBinary.Name = "tabPageBinary";
             this.tabPageBinary.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBinary.Size = new System.Drawing.Size(370, 447);
+            this.tabPageBinary.Size = new System.Drawing.Size(488, 473);
             this.tabPageBinary.TabIndex = 2;
             this.tabPageBinary.Text = "Binary";
             this.tabPageBinary.UseVisualStyleBackColor = true;
@@ -312,6 +320,39 @@
             this.panelResponse.Name = "panelResponse";
             this.panelResponse.Size = new System.Drawing.Size(546, 506);
             this.panelResponse.TabIndex = 0;
+            // 
+            // buttonApplyText
+            // 
+            this.buttonApplyText.Location = new System.Drawing.Point(6, 6);
+            this.buttonApplyText.Name = "buttonApplyText";
+            this.buttonApplyText.Size = new System.Drawing.Size(75, 23);
+            this.buttonApplyText.TabIndex = 0;
+            this.buttonApplyText.Text = "Apply";
+            this.buttonApplyText.UseVisualStyleBackColor = true;
+            // 
+            // buttonSendText
+            // 
+            this.buttonSendText.Location = new System.Drawing.Point(87, 6);
+            this.buttonSendText.Name = "buttonSendText";
+            this.buttonSendText.Size = new System.Drawing.Size(75, 23);
+            this.buttonSendText.TabIndex = 1;
+            this.buttonSendText.Text = "Send";
+            this.buttonSendText.UseVisualStyleBackColor = true;
+            this.buttonSendText.Click += new System.EventHandler(this.buttonSendText_Click);
+            // 
+            // textBoxRequestText
+            // 
+            this.textBoxRequestText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxRequestText.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBoxRequestText.Location = new System.Drawing.Point(6, 35);
+            this.textBoxRequestText.Multiline = true;
+            this.textBoxRequestText.Name = "textBoxRequestText";
+            this.textBoxRequestText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxRequestText.Size = new System.Drawing.Size(476, 432);
+            this.textBoxRequestText.TabIndex = 2;
+            this.textBoxRequestText.WordWrap = false;
             // 
             // ClientForm
             // 
@@ -331,6 +372,8 @@
             this.tabControlRequest.ResumeLayout(false);
             this.tabPagePrepare.ResumeLayout(false);
             this.tabPagePrepare.PerformLayout();
+            this.tabPageText.ResumeLayout(false);
+            this.tabPageText.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -359,6 +402,9 @@
         private System.Windows.Forms.Button buttonSaveAs;
         private System.Windows.Forms.Button buttonRecent;
         private System.Windows.Forms.Button buttonApply;
+        private System.Windows.Forms.TextBox textBoxRequestText;
+        private System.Windows.Forms.Button buttonSendText;
+        private System.Windows.Forms.Button buttonApplyText;
     }
 }
 

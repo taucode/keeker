@@ -155,9 +155,7 @@ namespace Keeker.Core.Streams
             {
                 var buffer = new byte[maxCount];
                 var bytesRead = _innerStream.Read(buffer, 0, maxCount);
-
-                this.ReadFromInnerStream?.Invoke(buffer, 0, bytesRead);
-
+                
                 if (bytesRead == 0)
                 {
                     return 0; // we haven't read anything from the inner stream
@@ -165,6 +163,7 @@ namespace Keeker.Core.Streams
                 else
                 {
                     _accumulator.Put(buffer, 0, bytesRead);
+                    this.ReadFromInnerStream?.Invoke(buffer, 0, bytesRead);
                     return bytesRead;
                 }
             }

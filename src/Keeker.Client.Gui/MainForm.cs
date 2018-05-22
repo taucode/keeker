@@ -74,10 +74,15 @@ namespace Keeker.Client.Gui
                 serverForm.Show();
                 serverForm.ClickStartButton();
 
-                var stream = CoreHelper.CreateStreamFromEndPoint("link://3333");
-                var client = new HttpClient(stream);
-                var clientForm = new ClientForm(client);
-                clientForm.Show();
+                Helper.DoLater(() =>
+                {
+                    var stream = CoreHelper.CreateStreamFromEndPoint("link://3333");
+                    var client = new HttpClient(stream);
+                    var clientForm = new ClientForm(client);
+                    clientForm.Show();
+                },
+                100);
+
             }
             catch (Exception ex)
             {

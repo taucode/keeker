@@ -11,8 +11,10 @@
             this.Data = data;
         }
 
-        public object Data { get; set; }
+        public object Data { get; private set; }
 
-        internal int ParticipantIndex { get; set; }
+        public int ParticipantIndex { get; internal set; }
+
+        public int Index { get; internal set; }
     }
 }

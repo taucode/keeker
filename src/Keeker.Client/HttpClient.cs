@@ -96,8 +96,11 @@ namespace Keeker.Client
             _stream.Write(metadataBuffer, 0, metadataBuffer.Length);
             this.RawDataSent?.Invoke(metadataBuffer);
 
-            _stream.Write(content, 0, content.Length);
-            this.RawDataSent?.Invoke(content);
+            if (content.Length > 0)
+            {
+                _stream.Write(content, 0, content.Length);
+                this.RawDataSent?.Invoke(content);
+            }
         }
 
         public event Action<byte[]> RawDataSent;

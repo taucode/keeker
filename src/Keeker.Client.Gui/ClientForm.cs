@@ -395,25 +395,15 @@ namespace Keeker.Client.Gui
             _client.Send(metadata, content);
         }
 
-        //private static bool IsIPEndpoint(string endPoint)
-        //{
-        //    var parts = endPoint.Split(':');
-        //    if (parts.Length != 2)
-        //    {
-        //        return false;
-        //    }
+        private void raceChartPackets_ItemSelected(object sender, ItemEventArgs e)
+        {
+            var packet = (Packet)e.Entry.Data;
+            binaryViewPacket.Bytes = packet.Bytes;
+        }
 
-        //    if (!IPAddress.TryParse(parts[0], out var dummyIpAddress))
-        //    {
-        //        return false;
-        //    }
-
-        //    return int.TryParse(parts[1], out var dummyPort);
-        //}
-
-        //private static bool IsLinkEndpoint(string endPoint)
-        //{
-        //    return Regex.IsMatch(endPoint, @"link:\d+");
-        //}
-    }
+        private void raceChartPackets_ItemUnselected(object sender, EventArgs e)
+        {
+            binaryViewPacket.Bytes = new byte[0];
+        }
+       }
 }

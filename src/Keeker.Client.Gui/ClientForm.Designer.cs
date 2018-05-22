@@ -57,9 +57,9 @@
             this.panelResponse = new System.Windows.Forms.Panel();
             this.tabControlCommunication = new System.Windows.Forms.TabControl();
             this.tabPageByteStream = new System.Windows.Forms.TabPage();
-            this.tabPageDataStream = new System.Windows.Forms.TabPage();
-            this.raceChartPackets = new Keeker.UI.RaceChart();
             this.binaryViewPacket = new Keeker.UI.BinaryView();
+            this.raceChartPackets = new Keeker.UI.RaceChart();
+            this.tabPageDataStream = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerRequestResponse)).BeginInit();
             this.splitContainerRequestResponse.Panel1.SuspendLayout();
             this.splitContainerRequestResponse.Panel2.SuspendLayout();
@@ -388,27 +388,6 @@
             this.tabPageByteStream.Text = "Byte Stream";
             this.tabPageByteStream.UseVisualStyleBackColor = true;
             // 
-            // tabPageDataStream
-            // 
-            this.tabPageDataStream.Location = new System.Drawing.Point(4, 22);
-            this.tabPageDataStream.Name = "tabPageDataStream";
-            this.tabPageDataStream.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDataStream.Size = new System.Drawing.Size(530, 472);
-            this.tabPageDataStream.TabIndex = 1;
-            this.tabPageDataStream.Text = "Data Stream";
-            this.tabPageDataStream.UseVisualStyleBackColor = true;
-            // 
-            // raceChartPackets
-            // 
-            this.raceChartPackets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.raceChartPackets.BackColor = System.Drawing.Color.White;
-            this.raceChartPackets.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.raceChartPackets.Location = new System.Drawing.Point(6, 6);
-            this.raceChartPackets.Name = "raceChartPackets";
-            this.raceChartPackets.Size = new System.Drawing.Size(175, 460);
-            this.raceChartPackets.TabIndex = 0;
-            // 
             // binaryViewPacket
             // 
             this.binaryViewPacket.AddressMargin = 0;
@@ -425,6 +404,29 @@
             this.binaryViewPacket.Name = "binaryViewPacket";
             this.binaryViewPacket.Size = new System.Drawing.Size(337, 460);
             this.binaryViewPacket.TabIndex = 1;
+            // 
+            // raceChartPackets
+            // 
+            this.raceChartPackets.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.raceChartPackets.BackColor = System.Drawing.Color.White;
+            this.raceChartPackets.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.raceChartPackets.Location = new System.Drawing.Point(6, 6);
+            this.raceChartPackets.Name = "raceChartPackets";
+            this.raceChartPackets.Size = new System.Drawing.Size(175, 460);
+            this.raceChartPackets.TabIndex = 0;
+            this.raceChartPackets.ItemSelected += new Keeker.UI.ItemEventHandler(this.raceChartPackets_ItemSelected);
+            this.raceChartPackets.ItemUnselected += new System.EventHandler(this.raceChartPackets_ItemUnselected);
+            // 
+            // tabPageDataStream
+            // 
+            this.tabPageDataStream.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDataStream.Name = "tabPageDataStream";
+            this.tabPageDataStream.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDataStream.Size = new System.Drawing.Size(530, 472);
+            this.tabPageDataStream.TabIndex = 1;
+            this.tabPageDataStream.Text = "Data Stream";
+            this.tabPageDataStream.UseVisualStyleBackColor = true;
             // 
             // ClientForm
             // 

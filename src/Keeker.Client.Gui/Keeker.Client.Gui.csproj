@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppSettings.cs" />
+    <Compile Include="Data\Packet.cs" />
     <Compile Include="EditHeaderDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -125,7 +126,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="HomeServer\index.html" />
+    <Content Include="HomeServer\index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\folder_open_arrow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

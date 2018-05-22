@@ -1,4 +1,6 @@
-﻿namespace Keeker.Gui.Panes
+﻿using System;
+
+namespace Keeker.Gui.Panes
 {
     public partial class RelayPane : Pane
     {
@@ -17,7 +19,8 @@
 
         private void RelayPane_Load(object sender, System.EventArgs e)
         {
-            raceChartPackets.InitParticipants(2);
+            throw new NotImplementedException();
+            //raceChartPackets.InitParticipants(2);
         }
     }
 }

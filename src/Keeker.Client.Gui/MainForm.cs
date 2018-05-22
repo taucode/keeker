@@ -1,4 +1,5 @@
 ﻿using Keeker.Core;
+using Keeker.Core.Listeners;
 using Keeker.Server.Impl;
 using Keeker.Server.UI;
 using System;
@@ -60,6 +61,32 @@ namespace Keeker.Client.Gui
                 var client = new HttpClient(stream);
                 var form = new ClientForm(client);
                 form.Show();
+            }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                var streamListener = new LinkStreamListener(3333);
+                var server = new HttpServerBase(streamListener, new[] { "rho.me", }, Program.Instance.HandlerFactory);
+                var serverForm = new HttpServerForm(server);
+                serverForm.Show();
+                serverForm.ClickStartButton();
+
+                Helper.DoLater(() =>
+                {
+                    var stream = CoreHelper.CreateStreamFromEndPoint("link://3333");
+                    var client = new HttpClient(stream);
+                    var clientForm = new ClientForm(client);
+                    clientForm.Show();
+                },
+                100);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }

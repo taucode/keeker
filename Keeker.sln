@@ -4,11 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{341B9557-A193-4E2A-8CFD-F7D3511C752A}"
-	ProjectSection(SolutionItems) = preProject
-		src\Keeker.Client.Gui\EditHeaderDialog.cs = src\Keeker.Client.Gui\EditHeaderDialog.cs
-		src\Keeker.Client.Gui\EditHeaderDialog.Designer.cs = src\Keeker.Client.Gui\EditHeaderDialog.Designer.cs
-		src\Keeker.Client.Gui\EditHeaderDialog.resx = src\Keeker.Client.Gui\EditHeaderDialog.resx
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nunit", "nunit", "{5273FE0D-AF11-4757-B0D0-F1A87E1EF5E1}"
 EndProject

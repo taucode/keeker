@@ -10,6 +10,8 @@ namespace Keeker.Client
 
         void Send(HttpRequestMetadata metadata, byte[] content);
 
+        event Action<byte[]> RawDataSent;
+
         event Action<byte[]> RawDataReceived;
 
         event Action<HttpResponseMetadata, byte[]> ResponseReceived;

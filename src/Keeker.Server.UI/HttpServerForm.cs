@@ -68,5 +68,10 @@ namespace Keeker.Server.UI
                 MessageBox.Show(ex.Message);
             }
         }
+
+        public void ClickStartButton()
+        {
+            buttonStart_Click(this, EventArgs.Empty);
+        }
     }
 }

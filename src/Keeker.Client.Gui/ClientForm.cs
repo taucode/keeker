@@ -1,6 +1,8 @@
-﻿using Keeker.Core;
+﻿using Keeker.Client.Gui.Data;
+using Keeker.Core;
 using Keeker.Core.Data;
 using Keeker.Core.Streams;
+using Keeker.UI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +30,26 @@ namespace Keeker.Client.Gui
             : this()
         {
             _client = client;
+            _client.RawDataSent += client_RawDataSent;
+            _client.RawDataReceived += client_RawDataReceived;
             _client.ResponseReceived += client_ResponseReceived;
+        }
+
+        private void DoInvoke(Action action)
+        {
+            this.Invoke(action);
+        }
+
+        private void client_RawDataSent(byte[] buffer)
+        {
+            var time = DateTime.Now;
+            this.DoInvoke(() => raceChartPackets.AddEntry(new RaceChartEntry(new Packet(buffer, time)), 0));
+        }
+
+        private void client_RawDataReceived(byte[] buffer)
+        {
+            var time = DateTime.Now;
+            this.DoInvoke(() => raceChartPackets.AddEntry(new RaceChartEntry(new Packet(buffer, time)), 1));
         }
 
         private void client_ResponseReceived(HttpResponseMetadata metadata, byte[] content)
@@ -39,6 +60,9 @@ namespace Keeker.Client.Gui
         private void ClientForm_Load(object sender, EventArgs e)
         {
             this.InitMethods();
+
+            raceChartPackets.InitParticipants(2);
+            raceChartPackets.EntryComparer = ComparePackets;
 
             //comboBoxUri.Text = "https://rho.me/";
             //buttonApply_Click(sender, e);
@@ -77,6 +101,14 @@ namespace Keeker.Client.Gui
 
             //Helper.DoLater(() => this.buttonCreateServer_Click(sender, e), 100);
             //Helper.DoLater(() => SendKeys.Send("{ENTER}"), 200);
+        }
+
+        private static int ComparePackets(RaceChartEntry e1, RaceChartEntry e2)
+        {
+            var packet1 = (Packet)e1.Data;
+            var packet2 = (Packet)e2.Data;
+
+            return packet1.Time.CompareTo(packet2.Time);
         }
 
 
@@ -224,7 +256,10 @@ namespace Keeker.Client.Gui
 
         private void DoApply()
         {
-            var line = new HttpRequestLine(new HttpMethod(comboBoxMethod.Text), comboBoxUri.Text);
+            var uri = new Uri(comboBoxUri.Text);
+            var url = uri.PathAndQuery;
+
+            var line = new HttpRequestLine(new HttpMethod(comboBoxMethod.Text), url);
             var headers = new HttpHeaderCollection(listViewHeaders.Items
                 .Cast<ListViewItem>()
                 .Select(item => new HttpHeader(
@@ -356,28 +391,19 @@ namespace Keeker.Client.Gui
             var metadata = HttpRequestMetadata.Parse(buffer, 0);
             var len = metadata.ToString().Length;
             var content = buffer.Skip(len).ToArray();
+
             _client.Send(metadata, content);
         }
 
-        //private static bool IsIPEndpoint(string endPoint)
-        //{
-        //    var parts = endPoint.Split(':');
-        //    if (parts.Length != 2)
-        //    {
-        //        return false;
-        //    }
+        private void raceChartPackets_ItemSelected(object sender, ItemEventArgs e)
+        {
+            var packet = (Packet)e.Entry.Data;
+            binaryViewPacket.Bytes = packet.Bytes;
+        }
 
-        //    if (!IPAddress.TryParse(parts[0], out var dummyIpAddress))
-        //    {
-        //        return false;
-        //    }
-
-        //    return int.TryParse(parts[1], out var dummyPort);
-        //}
-
-        //private static bool IsLinkEndpoint(string endPoint)
-        //{
-        //    return Regex.IsMatch(endPoint, @"link:\d+");
-        //}
-    }
+        private void raceChartPackets_ItemUnselected(object sender, EventArgs e)
+        {
+            binaryViewPacket.Bytes = new byte[0];
+        }
+       }
 }

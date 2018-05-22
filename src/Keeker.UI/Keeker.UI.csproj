@@ -62,11 +62,21 @@
       <DependentUpon>LogForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RaceChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RaceChart.Designer.cs">
+      <DependentUpon>RaceChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RaceChartEntry.cs" />
     <Compile Include="TextBoxWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LogForm.resx">
       <DependentUpon>LogForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RaceChart.resx">
+      <DependentUpon>RaceChart.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

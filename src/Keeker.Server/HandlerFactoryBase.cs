@@ -16,11 +16,15 @@ namespace Keeker.Server
             _staticContentResolver = staticContentResolver;
         }
 
-        public IHandler CreateHandler(HttpRequestMetadata requestMetadata, Stream stream, ManualResetEvent stopSignal)
+        public IHandler CreateHandler(
+            string connectionId,
+            HttpRequestMetadata requestMetadata,
+            Stream stream,
+            ManualResetEvent stopSignal)
         {
             if (_staticContentResolver == null)
             {
-                return this.CreateNotFoundHandler(requestMetadata, stream);
+                return this.CreateNotFoundHandler(connectionId, requestMetadata, stream);
             }
 
             if (requestMetadata.Line.Method == HttpMethod.Get)
@@ -30,16 +34,21 @@ namespace Keeker.Server
                 if (info != null)
                 {
                     var content = File.ReadAllText(info.FilePath, Encoding.UTF8);
-                    return new StaticContentHandler(requestMetadata, stream, info.ContentType, Encoding.UTF8.GetBytes(content));
+                    return new StaticContentHandler(
+                        connectionId,
+                        requestMetadata,
+                        stream,
+                        info.ContentType,
+                        Encoding.UTF8.GetBytes(content));
                 }
             }
 
-            return this.CreateNotFoundHandler(requestMetadata, stream);
+            return this.CreateNotFoundHandler(connectionId, requestMetadata, stream);
         }
 
-        private IHandler CreateNotFoundHandler(HttpRequestMetadata requestMetadata, Stream stream)
+        private IHandler CreateNotFoundHandler(string connectionId, HttpRequestMetadata requestMetadata, Stream stream)
         {
-            return new NotFoundHandler(requestMetadata, stream);
+            return new NotFoundHandler(connectionId, requestMetadata, stream);
         }
     }
 }

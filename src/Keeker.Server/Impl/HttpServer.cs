@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Keeker.Server.Impl
 {
-    public class HttpServerBase : IHttpServer
+    public class HttpServer : IHttpServer
     {
         #region Logging
 
@@ -32,7 +32,7 @@ namespace Keeker.Server.Impl
 
         #region Constructor
 
-        public HttpServerBase(
+        public HttpServer(
             IStreamListener streamListener,
             string[] hosts,
             IHandlerFactory handlerFactory)
@@ -109,7 +109,7 @@ namespace Keeker.Server.Impl
                     try
                     {
                         var id = _idGenerator.Generate();
-                        var connection = new ServerConnection(id, stream, _handlerFactory);
+                        var connection = new ServerConnection(this, id, stream, _handlerFactory);
 
                         lock (_lock)
                         {
@@ -131,14 +131,6 @@ namespace Keeker.Server.Impl
                 throw new NotImplementedException(); // todo00000000000[ak]
             }
         }
-
-        #endregion
-
-        #region Abstract
-
-        //protected abstract IStreamListener CreateStreamListener();
-
-        //protected abstract string GetListenedAddressImpl();
 
         #endregion
 
@@ -183,6 +175,10 @@ namespace Keeker.Server.Impl
         public bool IsRunning => throw new NotImplementedException();
 
         public event EventHandler<ServerConnection> ConnectionAccepted;
+
+        public event Action<string, byte[]> RawDataReceived;
+
+        public event Action<string, byte[]> RawDataSent;
 
         public bool IsDisposed => throw new NotImplementedException();
 

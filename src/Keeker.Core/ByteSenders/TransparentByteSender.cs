@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 
-namespace Keeker.Core.Streams
+namespace Keeker.Core.ByteSenders
 {
-    public class TransparentByteSender : IByteSender
+    internal class TransparentByteSender : IByteSender
     {
-        public TransparentByteSender(Stream targetStream)
+        internal TransparentByteSender(Stream targetStream)
         {
             this.TargetStream = targetStream ?? throw new ArgumentNullException(nameof(targetStream));
         }

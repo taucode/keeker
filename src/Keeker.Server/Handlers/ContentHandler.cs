@@ -5,10 +5,12 @@ namespace Keeker.Server.Handlers
 {
     public abstract class ContentHandler : IHandler
     {
+        private readonly string _connectionId;
         private readonly Stream _stream;
 
-        protected ContentHandler(HttpRequestMetadata requestMetadata, Stream stream)
+        protected ContentHandler(string connectionId, HttpRequestMetadata requestMetadata, Stream stream)
         {
+            _connectionId = connectionId;
             this.RequestMetadata = requestMetadata;
             _stream = stream;
         }

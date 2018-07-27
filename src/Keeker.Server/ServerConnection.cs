@@ -1,6 +1,7 @@
 ﻿using Keeker.Core.Data;
 using Keeker.Core.HttpReaders;
 using Keeker.Core.Streams;
+using Keeker.Server.Impl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,8 @@ namespace Keeker.Server
     public class ServerConnection : IDisposable
     {
         private const int TIMEOUT_MILLISECONDS = 1;
+
+        private readonly HttpServer _server;
 
         private bool _isRunning;
         private bool _isDisposed;
@@ -31,8 +34,17 @@ namespace Keeker.Server
 
         private readonly Queue<Task> _tasks;
 
-        public ServerConnection(string id, Stream innerStream, IHandlerFactory handlerFactory)
+        internal ServerConnection(
+            HttpServer server,
+            string id,
+            Stream innerStream,
+            IHandlerFactory handlerFactory)
         {
+            if (server == null)
+            {
+                throw new ArgumentNullException(nameof(server));
+            }
+
             if (id == null)
             {
                 throw new ArgumentNullException(nameof(id));
@@ -47,6 +59,8 @@ namespace Keeker.Server
             {
                 throw new ArgumentNullException(nameof(handlerFactory));
             }
+
+            _server = server;
 
             _lock = new object();
             
@@ -85,7 +99,7 @@ namespace Keeker.Server
 
         private IHandler ResolveHandler(HttpRequestMetadata metadata)
         {
-            var handler = _handlerFactory.CreateHandler(metadata, _stream, _stopSignal);
+            var handler = _handlerFactory.CreateHandler(this.Id, metadata, _stream, _stopSignal);
             return handler;
         }
 
@@ -99,7 +113,7 @@ namespace Keeker.Server
                     break;
                 }
 
-                Task currentTask = null;
+                Task currentTask;
 
                 lock (_lock)
                 {

@@ -6,6 +6,6 @@ namespace Keeker.Server
 {
     public interface IHandlerFactory
     {
-        IHandler CreateHandler(HttpRequestMetadata requestMetadata, Stream stream, ManualResetEvent stopSignal);
+        IHandler CreateHandler(string connectionId, HttpRequestMetadata requestMetadata, Stream stream, ManualResetEvent stopSignal);
     }
 }

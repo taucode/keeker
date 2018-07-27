@@ -33,7 +33,7 @@ namespace Keeker.Client.Gui
             if (endPoint != null)
             {
                 var listener = CoreHelper.CreateListenerForEndPoint(endPoint);
-                var server = new HttpServerBase(listener, new[] { "rho.me" }, Program.Instance.HandlerFactory);
+                var server = new HttpServer(listener, new[] { "rho.me" }, Program.Instance.HandlerFactory);
                 var form = new HttpServerForm(server);
                 form.Show();
             }
@@ -69,7 +69,7 @@ namespace Keeker.Client.Gui
             try
             {
                 var streamListener = new LinkStreamListener(3333);
-                var server = new HttpServerBase(streamListener, new[] { "rho.me", }, Program.Instance.HandlerFactory);
+                var server = new HttpServer(streamListener, new[] { "rho.me", }, Program.Instance.HandlerFactory);
                 var serverForm = new HttpServerForm(server);
                 serverForm.Show();
                 serverForm.ClickStartButton();

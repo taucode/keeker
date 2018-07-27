@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace Keeker.Core.Streams
+namespace Keeker.Core.ByteSenders
 {
-    public interface IByteSender
+    internal interface IByteSender
     {
         void Send(byte[] buffer, int offset, int count);
 

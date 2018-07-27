@@ -67,12 +67,12 @@
     <Compile Include="Streams\AutoBuffer.cs" />
     <Compile Include="Streams\ByteAccumulator.cs" />
     <Compile Include="Streams\ByteDelivery.cs" />
-    <Compile Include="Streams\FragmentedByteSender.cs" />
-    <Compile Include="Streams\IByteSender.cs" />
+    <Compile Include="ByteSenders\FragmentedByteSender.cs" />
+    <Compile Include="ByteSenders\IByteSender.cs" />
     <Compile Include="Streams\KeekStream.cs" />
     <Compile Include="Streams\Link.cs" />
     <Compile Include="Streams\LinkStream.cs" />
-    <Compile Include="Streams\TransparentByteSender.cs" />
+    <Compile Include="ByteSenders\TransparentByteSender.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

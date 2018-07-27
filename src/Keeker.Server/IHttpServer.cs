@@ -15,6 +15,10 @@ namespace Keeker.Server
 
         event EventHandler<ServerConnection> ConnectionAccepted;
 
+        event Action<string, byte[]> RawDataReceived;
+
+        event Action<string, byte[]> RawDataSent;
+
         bool IsDisposed { get; }
     }
 }

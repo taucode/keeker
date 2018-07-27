@@ -9,11 +9,12 @@ namespace Keeker.Server.Handlers
     public class StaticContentHandler : ContentHandler
     {
         public StaticContentHandler(
+            string connectionId,
             HttpRequestMetadata requestMetadata,
             Stream stream,
             string contentType,
             byte[] content)
-            : base(requestMetadata, stream)
+            : base(connectionId, requestMetadata, stream)
         {
             this.ContentType = contentType;
             this.Content = content;

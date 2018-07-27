@@ -6,18 +6,6 @@ using System.Windows.Forms;
 
 namespace Keeker.UI
 {
-    public class ItemEventArgs : EventArgs
-    {
-        public ItemEventArgs(RaceChartEntry entry)
-        {
-            this.Entry = entry;
-        }
-
-        public RaceChartEntry Entry { get; }
-    }
-
-    public delegate void ItemEventHandler(object sender, ItemEventArgs e);
-
     public partial class RaceChart : CustomScrollableControl
     {
         #region Drawing Constants
@@ -145,9 +133,20 @@ namespace Keeker.UI
 
                     y -= _base;
 
-                    var pen = ReferenceEquals(entry, _selectedEntry) ? selectedItemPen : itemPen;
+                    var defect = 0;
+                    Pen pen;
 
-                    g.DrawRectangle(pen, x, y, ENTRY_WIDTH, ENTRY_HEIGHT);
+                    if (ReferenceEquals(entry, _selectedEntry))
+                    {
+                        defect = 1;
+                        pen = selectedItemPen;
+                    }
+                    else
+                    {
+                        pen = itemPen;
+                    }
+
+                    g.DrawRectangle(pen, x + defect, y + defect, ENTRY_WIDTH - (defect * 1), ENTRY_HEIGHT - (defect * 1));
                 }
             }
 
@@ -158,6 +157,11 @@ namespace Keeker.UI
 
         private int? GetHitParticipantIndex(int x)
         {
+            if (_entryCollections == null)
+            {
+                return null;
+            }
+
             var participantCount = _entryCollections.Count;
 
             for (var i = 0; i < participantCount; i++)
@@ -236,7 +240,7 @@ namespace Keeker.UI
             }
 
             var lastVisibleIndex = firstVisibleIndex + visibleCount;
-            var entryCount = _allEntries.Count;
+            var entryCount = _allEntries?.Count ?? 0;
 
             for (var i = firstVisibleIndex; i <= lastVisibleIndex; i++)
             {
@@ -329,4 +333,16 @@ namespace Keeker.UI
 
         #endregion
     }
+
+    public class ItemEventArgs : EventArgs
+    {
+        public ItemEventArgs(RaceChartEntry entry)
+        {
+            this.Entry = entry;
+        }
+
+        public RaceChartEntry Entry { get; }
+    }
+
+    public delegate void ItemEventHandler(object sender, ItemEventArgs e);
 }

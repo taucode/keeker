@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Keeker.Core.ByteSenders;
+using System;
 using System.IO;
 using System.Net.Sockets;
 
@@ -13,19 +14,24 @@ namespace Keeker.Core.Streams
         private readonly object _readLock;
 
         private readonly ByteAccumulator _accumulator;
-        private IByteSender _byteSender;
+        private readonly bool _isFragmented;
+        private readonly IByteSender _byteSender;
 
         #endregion
 
         #region Constructor
 
-        public KeekStream(Stream innerStream, bool leaveInnerStreamOpen)
+        public KeekStream(Stream innerStream, bool leaveInnerStreamOpen, bool isFragmented = false)
         {
             _innerStream = innerStream ?? throw new ArgumentException(nameof(innerStream));
             _byteSender = new TransparentByteSender(_innerStream);
             _leaveInnerStreamOpen = leaveInnerStreamOpen;
             _accumulator = new ByteAccumulator();
             _readLock = new object();
+            _isFragmented = isFragmented;
+            _byteSender = _isFragmented ?
+                (IByteSender)new TransparentByteSender(_innerStream) : 
+                (IByteSender)new FragmentedByteSender(_innerStream);
         }
 
         #endregion
@@ -83,6 +89,10 @@ namespace Keeker.Core.Streams
         public override void Write(byte[] buffer, int offset, int count)
         {
             _byteSender.Send(buffer, offset, count);
+            if (!_isFragmented)
+            {
+                this.Written.Invoke(buffer, offset, count);
+            }
         }
 
         public override bool CanRead => true;
@@ -169,6 +179,19 @@ namespace Keeker.Core.Streams
             }
         }
 
+        public void ReleaseWrittenFragment(int byteCount)
+        {
+            if (_isFragmented)
+            {
+                var relesedBytes = ((FragmentedByteSender)_byteSender).Release(byteCount);
+                this.Written?.Invoke(relesedBytes, 0, byteCount);
+            }
+            else
+            {
+                throw new InvalidOperationException("Stream is not fragmented");
+            }
+        }
+
         public int Peek(byte[] buffer, int offset, int count)
         {
             lock (_readLock)
@@ -192,21 +215,9 @@ namespace Keeker.Core.Streams
             get { return _accumulator.Count; }
         }
 
-        public IByteSender ByteSender
-        {
-            get => _byteSender;
-            set
-            {
-                if (!ReferenceEquals(this._innerStream, _byteSender.TargetStream))
-                {
-                    throw new InvalidOperationException("ByteSender's stream is not the same as inner stream of this instance");
-                }
-
-                _byteSender = value ?? throw new ArgumentNullException(nameof(ByteSender));
-            }
-        }
-
         public event Action<byte[], int, int> ReadFromInnerStream;
+
+        public event Action<byte[], int, int> Written;
 
         #endregion
     }
